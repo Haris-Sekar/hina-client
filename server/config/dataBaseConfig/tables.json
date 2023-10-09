@@ -1,0 +1,158 @@
+[
+  {
+    "tableName": "users",
+    "columns": [
+      {
+        "name": "user_id",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isAutoIncrement": true,
+        "isPrimaryKey": true
+      },
+      {
+        "name": "name",
+        "dataType": "VARCHAR",
+        "isNotNull": true
+      },
+      {
+        "name": "email",
+        "dataType": "VARCHAR",
+        "isNotNull": true,
+        "isUnique": true
+      },
+      {
+        "name": "mobile",
+        "dataType": "VARCHAR",
+        "isNotNull": true,
+        "isUnique": true
+      },
+      {
+        "name": "password",
+        "dataType": "VARCHAR",
+        "isNotNull": true,
+        "length": 1000
+      },
+      {
+        "name": "is_verified",
+        "dataType": "BOOLEAN"
+      }
+    ]
+  },
+  {
+    "tableName": "customers",
+    "columns": [
+      {
+        "name": "customer_id",
+        "dataType": "INT",
+        "isAutoIncrement": true,
+        "isPrimaryKey": true
+      },
+      {
+        "name": "first_name",
+        "dataType": "VARCHAR",
+        "isNotNull": true
+      },
+      {
+        "name": "last_name",
+        "dataType": "VARCHAR"
+      },
+      {
+        "name": "phone_number",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      },
+      {
+        "name": "email",
+        "dataType": "VARCHAR"
+      },
+      {
+        "name": "gst_number",
+        "dataType": "VARCHAR"
+      },
+      {
+        "name": "address1",
+        "dataType": "VARCHAR",
+        "length": 1000
+      },
+      {
+        "name": "address2",
+        "dataType": "VARCHAR",
+        "length": 1000
+      },
+      {
+        "name": "main_area_id",
+        "dataType": "INT",
+        "isNotNull": true
+      },
+      {
+        "name": "created_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "created_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      },
+      {
+        "name": "updated_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "updated_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      }
+    ]
+  },
+  {
+    "tableName": "main_area",
+    "columns": [
+      {
+        "name": "main_area_id",
+        "dataType": "INT",
+        "isAutoIncrement": true,
+        "isNotNull": true,
+        "isPrimaryKey": true
+      },
+      {
+        "name": "name",
+        "dataType": "VARCHAR",
+        "isNotNull": true
+      },
+      {
+        "name": "created_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "created_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      },
+      {
+        "name": "updated_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "updated_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      }
+    ]
+  }
+]

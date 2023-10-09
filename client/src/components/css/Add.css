@@ -1,0 +1,22 @@
+.addContainer {    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.addContainer .formContainer .formGroup {
+    display: flex;
+    gap: 3%;
+    margin: 0 1% 1% 0.5%;
+}
+
+.addContainer .formContainer .fromGroupTitle {
+    font-size: 20px; 
+    margin-top: 2%;
+}
+
+.btnContainer { 
+    margin: 1% 2% 0 1% ;
+    display: flex;
+    gap: 2%;
+}

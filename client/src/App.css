@@ -1,0 +1,16 @@
+.browerPage {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+.browerPage .sidebarContainer{
+  width: 10%;
+}
+.browerPage .pageContent {
+  background-color: var(--primaryBackground);
+  width: 90%;
+}
+
+.rightContainer {
+  height: 100vh; 
+}
