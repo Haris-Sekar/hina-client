@@ -9,7 +9,8 @@ export class Column {
     foreignKeyRefColumn;
     isAutoIncrement = false;
     isUnique = false;
-    constructor(name, dataType, length, isNotNull, isPrimaryKey, isForeignKey, foreignKeyRefTable, foreignKeyRefColumn, isAutoIncrement, isUnique){
+    onDelete;
+    constructor(name, dataType, length, isNotNull, isPrimaryKey, isForeignKey, foreignKeyRefTable, foreignKeyRefColumn, isAutoIncrement, isUnique, onDelete){
         this.name = name;
         this.dataType = dataType;
         this.length = length ?? this.length;
@@ -21,6 +22,7 @@ export class Column {
         if(isForeignKey) {
             this.foreignKeyRefColumn = foreignKeyRefColumn;
             this.foreignKeyRefTable = foreignKeyRefTable;
+            this.onDelete = onDelete;
 
         }
 

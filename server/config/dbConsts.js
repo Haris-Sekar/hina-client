@@ -1,0 +1,1 @@
+export const DEL_CASCADE = "ON DELETE CASCADE";

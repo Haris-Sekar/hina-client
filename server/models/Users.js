@@ -63,7 +63,7 @@ export default class Users {
 
     const user = new Users(name, email, mobile, password, is_verified);
 
-    if (user_id != undefined) {
+    if (user_id !== undefined) {
       user.userId = user_id;
     }
  
@@ -121,5 +121,23 @@ export default class Users {
     return user;
 
   }
+
+  static async getUserDetails(userId) {
+    const query = `select * from users where user_id=${userId} limit 0,1`;
+
+    const [ result ] = await db.query(query);
+
+    if(result.length !== 1) {
+      return null;
+    }
+
+    return {
+      userId: result[0].user_id,
+      email: result[0].email,
+      name: result[0].name,
+      mobile: result[0].mobile
+    }
+  }
+
 
 }

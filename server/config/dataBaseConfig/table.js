@@ -1,4 +1,5 @@
- 
+import {DEL_CASCADE} from "../dbConsts.js";
+
 export const createTableQuery = (tableName, columns) => {
     let tableQuery = `CREATE TABLE ${tableName} (`;
 
@@ -26,7 +27,7 @@ export const createTableQuery = (tableName, columns) => {
         }
 
         if (column.isForeignKey) {
-            foreignKeyColumns.push(`FOREIGN KEY (${column.name}) REFERENCES ${column.foreignKeyRefTable}(${column.foreignKeyRefColumn})`);
+            foreignKeyColumns.push(`FOREIGN KEY (${column.name}) REFERENCES ${column.foreignKeyRefTable}(${column.foreignKeyRefColumn}) ${column.onDelete ? DEL_CASCADE : "" }`);
         }
 
         if (index < columns.length - 1) {

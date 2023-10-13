@@ -23,7 +23,7 @@ export const createTable = async () => {
 const parseColumns = (columns) => { 
     let listOfColumns = [];
     columns.forEach((column) => {
-        const columnObj = new Column(column.name, column.dataType, column.length, column.isNotNull, column.isPrimaryKey, column.isForeignKey, column.foreignKeyRefTable, column.foreignKeyRefColumn, column.isAutoIncrement, column.isUnique);
+        const columnObj = new Column(column.name, column.dataType, column.length, column.isNotNull, column.isPrimaryKey, column.isForeignKey, column.foreignKeyRefTable, column.foreignKeyRefColumn, column.isAutoIncrement, column.isUnique, column.onDelete);
         listOfColumns.push(columnObj);
     });
     return listOfColumns;

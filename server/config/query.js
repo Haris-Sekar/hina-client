@@ -53,3 +53,7 @@ export const createUpdateQuery = (tableName, valueMap, condition) => {
 
     return query;
 };
+
+export const createDeleteQuery = (tableName, entityId, entityIdColumnName) => {
+    return `DELETE FROM ${tableName} WHERE ${entityIdColumnName} = ${entityId}`;
+}
