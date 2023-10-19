@@ -113,12 +113,17 @@ export default class Users {
   }
 
   static getUserPojo(tokenObj) {
-    const user = new Users();
-    user.userId = tokenObj.id;
-    user.email = tokenObj.email;
-    user.name = tokenObj.name;
-    user.isVerified = tokenObj.isVerified;
-    return user;
+    try{
+      const user = new Users();
+      user.userId = tokenObj.id;
+      user.email = tokenObj.email;
+      user.name = tokenObj.name;
+      user.isVerified = tokenObj.isVerified;
+      return user;
+    } catch (e) {
+      throw new Error("Invalid Token")
+    }
+
 
   }
 

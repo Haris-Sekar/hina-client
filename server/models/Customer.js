@@ -19,9 +19,10 @@ export default class Customer {
   createdBy;
   updatedBy;
   mainArea;
+  companyId;
   static tableName = "customers";
 
-  constructor(firstName, lastName, phoneNumber, email, gstNumber, address1, address2, mainAreaId) {
+  constructor(firstName, lastName, phoneNumber, email, gstNumber, address1, address2, mainAreaId, companyId) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.phoneNumber = phoneNumber;
@@ -30,6 +31,7 @@ export default class Customer {
     this.address1 = address1;
     this.address2 = address2;
     this.mainAreaId = mainAreaId;
+    this.companyId = companyId;
   }
 
 
@@ -48,7 +50,8 @@ export default class Customer {
       createdBy: this.createdBy,
       createdTime: new Date(this.createdTime).toLocaleString(),
       updatedBy: this.updatedBy,
-      updatedTime: new Date(this.updatedTime).toLocaleString()
+      updatedTime: new Date(this.updatedTime).toLocaleString(),
+      companyId: this.companyId
     };
 
     if (this.customerId !== undefined) {
@@ -59,9 +62,9 @@ export default class Customer {
   }
 
   static fromJSON(json) {
-    const { firstName, lastName, phoneNumber, email, gstNumber, address1, address2, mainAreaId } = json;
+    const { firstName, lastName, phoneNumber, email, gstNumber, address1, address2, mainAreaId, companyId } = json;
 
-    return new Customer(firstName, lastName, phoneNumber, email, gstNumber, address1, address2, mainAreaId);
+    return new Customer(firstName, lastName, phoneNumber, email, gstNumber, address1, address2, mainAreaId,companyId);
   }
 
 
@@ -103,6 +106,9 @@ export default class Customer {
     if (json.main_area_id !== null && json.main_area_id !== undefined) {
        const mainArea = await MainArea.getMainArea(json.main_area_id);
       customer.mainArea = { name: mainArea.name, mainAreaId: json.main_area_id }
+    }
+    if(json.company_id !== null && json.company_id !== undefined) {
+      customer.companyId = json.company_id;
     }
 
     let userDetails;
@@ -178,7 +184,8 @@ export default class Customer {
       created_by: !isUpdate ? userId: undefined,
       created_time:!isUpdate ? Date.now(): undefined,
       updated_by: userId,
-      updated_time: Date.now()
+      updated_time: Date.now(),
+      company_id: this.companyId
     };
     for (const key in json) {
       if (json[key] === undefined) {
@@ -202,7 +209,5 @@ export default class Customer {
     const [result] = await db.query(query);
     return result;
   }
-
-
 
 }

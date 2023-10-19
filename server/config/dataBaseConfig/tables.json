@@ -37,7 +37,60 @@
         "dataType": "BOOLEAN"
       }
     ]
-  },{
+  },
+  {
+    "tableName": "company",
+    "columns": [
+      {
+        "name": "company_id",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isAutoIncrement": true,
+        "isPrimaryKey": true
+      },
+      {
+        "name": "name",
+        "dataType": "VARCHAR",
+        "isNotNull": true
+      },
+      {
+        "name": "gst",
+        "dataType": "VARCHAR",
+        "isNotNull": true,
+        "isUnique": true
+      },
+      {
+        "name": "address",
+        "dataType": "VARCHAR",
+        "isNotNull": true
+      },
+      {
+        "name": "created_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id"
+      },
+      {
+        "name": "created_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      },
+      {
+        "name": "owner_id",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id",
+        "onDelete": "DEL_CASCADE"
+      }
+    ]
+  },
+
+
+  {
   "tableName": "main_area",
   "columns": [
     {
@@ -75,9 +128,13 @@
       "foreignKeyRefColumn": "user_id"
     },
     {
-      "name": "updated_time",
-      "dataType": "BIGINT",
-      "isNotNull": true
+      "name": "company_id",
+      "dataType": "INT",
+      "isNotNull": true,
+      "isForeignKey": true,
+      "foreignKeyRefTable": "company",
+      "foreignKeyRefColumn": "company_id",
+      "onDelete": "DEL_CASCADE"
     }
   ]
 },
@@ -156,6 +213,15 @@
         "name": "updated_time",
         "dataType": "BIGINT",
         "isNotNull": true
+      },
+      {
+        "name": "company_id",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "company",
+        "foreignKeyRefColumn": "company_id",
+        "onDelete": "DEL_CASCADE"
       }
     ]
   }

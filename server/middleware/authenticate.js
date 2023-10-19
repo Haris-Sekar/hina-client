@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import Users from "../models/Users.js";
+import Singleton from "../classes/Context.js";
+import Company from "../models/Company.js";
 
 export const authenticateUser = async (req, res, next) => {
 
@@ -17,7 +19,8 @@ export const authenticateUser = async (req, res, next) => {
             const user = Users.getUserPojo(authJson);
             const userDetails = await user.getUserDetails();
 
-            if(userDetails.email === authJson.email && userDetails.userId === authJson.id && userDetails.isVerified) {
+
+            if(userDetails !== null && userDetails !== undefined && userDetails.email === authJson.email && userDetails.userId === authJson.id && userDetails.isVerified) {
                 req.userId = userDetails.userId;
                 req.email = userDetails.email;
                 next();
@@ -36,6 +39,15 @@ export const authenticateUser = async (req, res, next) => {
             });
         }
     }
+    function getCompanyId(apiEndpoint) {
+        const regex = /\/company\/(\d+)\//;  // Regular expression to extract the number after "company"
+        const match = apiEndpoint.match(regex);
 
+        if (match && match[1]) {
+            return parseInt(match[1], 10);  // Convert the matched number to an integer
+        } else {
+            return null;  // Return null if no match is found
+        }
+    }
 
 }
