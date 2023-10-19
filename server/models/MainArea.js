@@ -9,10 +9,12 @@ export default class MainArea {
     createdTime;
     updatedBy;
     updatedTime;
+    companyId;
     static tableName = "main_area";
 
-    constructor(name) {
+    constructor(name, companyId) {
         this.name = name;
+        this.companyId = companyId;
     }
 
 
@@ -22,7 +24,8 @@ export default class MainArea {
             created_by: userId,
             created_time: Date.now(),
             updated_by: userId,
-            updated_time: Date.now()
+            updated_time: Date.now(),
+            company_id: this.companyId
         };
         for (const key in json) {
             if (json[key] === undefined) {
@@ -64,6 +67,10 @@ export default class MainArea {
             mainArea.mainAreaId = json.main_area_id;
         }
 
+        if(json.company_id !== null && json.company_id !== undefined) {
+            mainArea.companyId = json.company_id;
+        }
+
         return mainArea;
 
     }
@@ -86,7 +93,7 @@ export default class MainArea {
     }
 
     static async getMainAreas(index = 0, range = 1) {
-        const query = `select * from main_area limit ${index}, ${range}`;
+        const query = `select * from main_area limit ${index}, ${range}+1`;
 
         const [result] = await db.query(query);
 

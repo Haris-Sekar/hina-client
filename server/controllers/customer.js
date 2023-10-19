@@ -110,6 +110,7 @@ export const updateCustomer = async (req, res) => {
                     fields: ["customerId"],
                     "message": "The above fields validation failed"
                 }
+                respCode = 400;
                 breakFlag = 1;
         }
         if(!(firstName || lastName || phoneNumber || email || gstNumber || address1 || address2 || mainAreaId)){
@@ -251,7 +252,11 @@ export const getMainArea = async (req, res) => {
             respCode = 200;
             response = customerDetails;
         } else if(index && range) {
-            const customerDetails = await MainArea.getMainAreas(index, range)
+            const customerDetails = await MainArea.getMainAreas(index - 1, range);
+
+            if(customerDetails.length > range) {
+
+            }
             respCode = 200;
             response = customerDetails;
         } else {
