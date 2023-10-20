@@ -39,15 +39,17 @@ export const authenticateUser = async (req, res, next) => {
             });
         }
     }
-    function getCompanyId(apiEndpoint) {
-        const regex = /\/company\/(\d+)\//;  // Regular expression to extract the number after "company"
-        const match = apiEndpoint.match(regex);
+}
+export const authenticateCompany = async (req, res) => {
 
-        if (match && match[1]) {
-            return parseInt(match[1], 10);  // Convert the matched number to an integer
-        } else {
-            return null;  // Return null if no match is found
-        }
+}
+function getCompanyId(apiEndpoint) {
+    const regex = /\/company\/(\d+)\//;  // Regular expression to extract the number after "company"
+    const match = apiEndpoint.match(regex);
+
+    if (match && match[1]) {
+        return parseInt(match[1], 10);  // Convert the matched number to an integer
+    } else {
+        return null;  // Return null if no match is found
     }
-
 }
