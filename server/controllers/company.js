@@ -1,5 +1,6 @@
 import Company from "../models/Company.js";
 import db from "../config/db.js";
+import CompanyUserMapping from "../models/CompanyUserMapping.js";
 
 export const createCompany = async (req, res) => {
 
@@ -22,13 +23,20 @@ export const createCompany = async (req, res) => {
         const result = await company.createCompany(req.userId);
 
         if(result.affectedRows > 0) {
-            respCode = 201;
-            response = {
-                code: 201,
-                message: "Company created successfully"
+
+            const companyUserMapping = new CompanyUserMapping(req.userId, result.insertId);
+
+            const result = await companyUserMapping.addCompanyUserMapping(req.userId);
+
+            if(result.affectedRows > 0) {
+                await db.commit();
+                respCode = 201;
+                response = {
+                    code: 201,
+                    message: "Company created successfully"
+                }
             }
         }
-
 
     } catch (e) {
         await db.rollback();

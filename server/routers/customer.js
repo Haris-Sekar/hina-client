@@ -11,7 +11,7 @@ import {authenticateUser} from "../middleware/authenticate.js";
 
 const router = express.Router();
 
-router.post('/', authenticateUser, addCustomer);
+router.post('/', authenticateUser,authenticateCompany, addCustomer);
 router.get("/", authenticateUser, getCustomers);
 router.patch("/:customerId", authenticateUser, updateCustomer);
 router.delete("/:customerId", authenticateUser, deleteCustomer);
