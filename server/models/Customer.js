@@ -1,5 +1,5 @@
 import db from "../config/db.js";
-import { createInsertQuery, createUpdateQuery } from "../config/query.js";
+import {createInsertQuery, createUpdateQuery, generateUniqueId} from "../config/query.js";
 import customer from "../routers/customer.js";
 import Users from "./Users.js";
 import MainArea from "./MainArea.js";
@@ -154,7 +154,7 @@ export default class Customer {
   }
 
   async createCustomer(userId) {
-    const query = createInsertQuery("customers", this.serializeToSQLQuery(userId, false));
+    const query = createInsertQuery("customers",await this.serializeToSQLQuery(userId, false));
 
     const [result] = await db.query(query);
 
@@ -171,8 +171,10 @@ export default class Customer {
 
 
 
-  serializeToSQLQuery(userId, isUpdate) {
+  async serializeToSQLQuery(userId, isUpdate) {
+    const customerId = await generateUniqueId(Customer.tableName, "customer_id");
     const json = {
+      customer_id: customerId,
       first_name: this.firstName,
       last_name: this.lastName,
       phone_number: this.phoneNumber,

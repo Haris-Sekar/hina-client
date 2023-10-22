@@ -34,7 +34,7 @@ export default class CompanyUserMapping {
     }
 
 
-    async serializeToSQLQuery(userId) {
+    serializeToSQLQuery(userId) {
 
         const currentTimeMillis = Date.now();
 
@@ -61,6 +61,12 @@ export default class CompanyUserMapping {
         userCompanyMapping.updatedTime = json.updated_time;
         userCompanyMapping.updatedBy = json.updated_by;
         return userCompanyMapping;
+    }
+
+    static async validateUserCompany(userId, companyId) {
+        const query = `select * from ${CompanyUserMapping.tableName} where company_id=${companyId} and user_id=${userId} limit 1`;
+        const [result] = await db.query(query);
+        return result.length > 0;
     }
 
 

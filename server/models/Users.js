@@ -1,5 +1,5 @@
 import db from "../config/db.js";
-import { createInsertQuery, createUpdateQuery } from "../config/query.js";
+import {createInsertQuery, createUpdateQuery, generateUniqueId} from "../config/query.js";
 import jwt from "jsonwebtoken";
 export default class Users {
   userId;
@@ -8,6 +8,7 @@ export default class Users {
   mobile;
   password;
   isVerified;
+  static tableName = "users"
   constructor(name, email, mobile, password, isVerified) {
     this.name = name;
     this.email = email;
@@ -42,8 +43,10 @@ export default class Users {
     this.isVerified = isVerified;
   }
 
-  toMySQLJSON() {
+  async serializeToSQLQuery() {
+    const userId = await generateUniqueId(Users.tableName, "user_id")
     const jsonObject = {
+      user_id: userId,
       name: this.name,
       email: this.email,
       mobile: this.mobile,
@@ -85,7 +88,7 @@ export default class Users {
   }
 
   async createUser() {
-    const query = createInsertQuery("users", this.toMySQLJSON());
+    const query = createInsertQuery("users",await this.serializeToSQLQuery());
 
     const [result] = await db.query(query);
 
@@ -142,6 +145,15 @@ export default class Users {
       name: result[0].name,
       mobile: result[0].mobile
     }
+  }
+
+  static async getUserDetail(emailId, phoneNumber) {
+    const query = `select * from users where ${emailId !== undefined ? `email = "${emailId}"` : phoneNumber !== undefined ? `mobile="${phoneNumber}"`: ''}`;
+    const [result] = await db.query(query)
+    if(result.length > 0) {
+      return Users.fromJSON(result[0]);
+    }
+    return null;
   }
 
 

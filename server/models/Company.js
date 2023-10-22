@@ -1,5 +1,7 @@
-import {createInsertQuery, createUpdateQuery} from "../config/query.js";
+import {createInsertQuery, createUpdateQuery, generateUniqueId} from "../config/query.js";
 import db from "../config/db.js";
+import CompanyUserMapping from "./CompanyUserMapping.js";
+import Users from "./Users.js";
 
 export default class Company{
     companyId;
@@ -7,8 +9,7 @@ export default class Company{
     gst;
     address;
     createdTime;
-    createdBy;
-    ownerId;
+    static tableName = "company"
     
     constructor(name, gst, address) {
         this.name = name;
@@ -37,11 +38,11 @@ export default class Company{
     }
 
     static async getUserCompanies(userId) {
-        const query = `select * from company where owner_id=${userId}`;
+        const query = `select company.* from company join ${CompanyUserMapping.tableName} on ${CompanyUserMapping.tableName}.company_id = company.company_id where ${CompanyUserMapping.tableName}.user_id=${userId}`;
         const [result] = await db.query(query);
 
         if (result.length === 1) {
-            return await Company.deserializeFromJson(result[0]);
+            return [await Company.deserializeFromJson(result[0])];
         } else if (result.length > 1) {
             let listOfCompany = [];
 
@@ -61,7 +62,7 @@ export default class Company{
     }
     
     async serializeToSQLQuery(userId) {
-        let companyId = await this.generateUniqueCompanyId();
+        let companyId = await generateUniqueId(Company.tableName, "company_id")
         const json =  {
             company_id: companyId,
             name: this.name,
@@ -102,6 +103,17 @@ export default class Company{
         const query = `select company_id from company`;
         const [result] = await db.query(query);
         return result;
+    }
+
+    async toJSON(){
+        return {
+            name: this.name,
+            address: this.address,
+            gst: this.gst,
+            ownerId: await Users.getUserDetails(this.ownerId),
+            createdTime: new Date(this.createdTime).toLocaleString(),
+            createdBy: await Users.getUserDetails(this.createdBy)
+        }
     }
 
 }

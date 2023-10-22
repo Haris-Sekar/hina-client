@@ -7,6 +7,12 @@ export const config = {
     debug:false,
     database:"brzhw1vmdolp3u79q9p3"
 }
- 
 
-export default await mysql.createConnection(config);
+export const localConfig = {
+    host: "localhost",
+    user: "root",
+    password: "haris1400",
+    database: "pos"
+}
+
+export default await mysql.createConnection(localConfig);

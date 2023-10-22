@@ -1,4 +1,4 @@
-import {createInsertQuery, createUpdateQuery} from "../config/query.js";
+import {createInsertQuery, createUpdateQuery, generateUniqueId} from "../config/query.js";
 import db from "../config/db.js";
 import Users from "./Users.js";
 
@@ -18,8 +18,10 @@ export default class MainArea {
     }
 
 
-    serializeToSQLQuery(userId) {
+    async serializeToSQLQuery(userId) {
+        const mainAreaId = await generateUniqueId(MainArea.tableName, "main_area_id");
         const json = {
+            main_area_id: mainAreaId,
             name: this.name,
             created_by: userId,
             created_time: Date.now(),
@@ -76,7 +78,7 @@ export default class MainArea {
     }
 
     async addMainArea(userId) {
-        const query = createInsertQuery("main_area", this.serializeToSQLQuery(userId));
+        const query = createInsertQuery("main_area", await this.serializeToSQLQuery(userId));
 
         const [result] = await db.query(query);
 

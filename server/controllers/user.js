@@ -40,7 +40,7 @@ export const signup = async (req, res) => {
 
                 }
                 const accVerification = await mail.accountVerification(newUser);
-                if (accVerification?.code != 200) {
+                if (accVerification?.code !== 200) {
                     response = {
                         message: accVerification.message,
                         code: 500
@@ -158,6 +158,67 @@ export const accountVerify = async (req, res) => {
         await db.commit();
     } catch (error) {
         await db.rollback();
+        response = {
+            message: error.message,
+            code: 500
+        }
+        respCode = 500;
+
+    }
+    res.status(respCode).json(response);
+}
+
+export const resendMail = async(req, res) => {
+    let response, respCode;
+    resendMailTry: try{
+        const { email, mobile } = req.body;
+
+        if(!email && !mobile) {
+            response = {
+                message: "email or mobile is required",
+                code: 400
+            };
+            respCode = 400;
+            break resendMailTry;
+        }
+
+
+        const user = await Users.getUserDetail(email, mobile);
+
+        if(user === null) {
+            respCode = 400;
+            response = {
+                message: "No user found",
+                code: 400
+            }
+            break resendMailTry;
+        }
+
+        if(user.isVerified) {
+            respCode = 409;
+            response = {
+                message: "User already verified",
+                code: 409
+            }
+            break resendMailTry;
+        }
+
+
+        const accVerification = await mail.accountVerification(user);
+        if (accVerification?.code !== 200) {
+            response = {
+                message: accVerification.message,
+                code: 500
+            }
+            respCode = 500;
+            break resendMailTry;
+        }
+        response = {
+            message: "Mail sent successfully",
+            code: 200
+        }
+        respCode = 200;
+    } catch (error) {
         response = {
             message: error.message,
             code: 500

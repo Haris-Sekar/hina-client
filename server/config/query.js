@@ -1,3 +1,5 @@
+import db from "./db.js";
+
 export const createInsertQuery = (tableName, valueMap) => {
     let query = `INSERT INTO ${tableName} (`;
 
@@ -56,4 +58,22 @@ export const createUpdateQuery = (tableName, valueMap, condition) => {
 
 export const createDeleteQuery = (tableName, entityId, entityIdColumnName) => {
     return `DELETE FROM ${tableName} WHERE ${entityIdColumnName} = ${entityId}`;
+}
+
+
+export const generateUniqueId = async (tableName, idColumnName) => {
+    const existingIds = await getAllIds(tableName, idColumnName); // Implement this function to fetch existing company IDs from the database
+
+    let id;
+    do {
+        id = Math.floor(1000000 + Math.random() * 9000000); // Generate a random 7-digit number
+    } while (existingIds.includes(id)); // Check if the ID is unique
+
+    return id;
+}
+
+async function getAllIds(tableName, idColumnName) {
+    const query = `select ${idColumnName} from ${tableName}`;
+    const [result] = await db.query(query);
+    return result;
 }

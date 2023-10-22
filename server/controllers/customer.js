@@ -210,7 +210,7 @@ export const addMainArea = async (req, res) => {
             break addMainAreaTry;
         }
 
-        const mainArea = new MainArea(name);
+        const mainArea = new MainArea(name, req.companyId);
         const result = await mainArea.addMainArea(req.userId);
 
         if(result.affectedRows > 0 ){
@@ -244,7 +244,6 @@ export const getMainArea = async (req, res) => {
     let respCode, response;
 
     try{
-
         const {mainAreaId, index, range} = req.query;
 
         if(mainAreaId != null) {
