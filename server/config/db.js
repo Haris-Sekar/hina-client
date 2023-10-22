@@ -15,4 +15,4 @@ export const localConfig = {
     database: "pos"
 }
 
-export default await mysql.createConnection(localConfig);
+export default await mysql.createConnection(config);
