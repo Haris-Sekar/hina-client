@@ -43,8 +43,7 @@ export const authenticateUser = async (req, res, next) => {
 }
 export const authenticateCompany = async (req, res, next) => {
     try {
-        // console.log(req)
-        const companyId = getCompanyId(req.baseUrl)
+        const companyId = getCompanyId(req.baseUrl);
         if(await CompanyUserMapping.validateUserCompany(req.userId, companyId)){
             req.companyId = companyId;
             next();

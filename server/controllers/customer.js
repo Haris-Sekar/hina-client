@@ -9,7 +9,8 @@ export const addCustomer = async (req, res) => {
     addCustomerTry: try{
         await db.beginTransaction();
         const { firstName, lastName, phoneNumber, email, gstNumber, address1, address2, mainAreaId } = req.body;
-
+        const { companyId } = req.params;
+        
         const requiredFields = ['firstName', 'phoneNumber', 'mainAreaId', 'address1'];
         const missingFields = [];
 
@@ -28,7 +29,7 @@ export const addCustomer = async (req, res) => {
             break addCustomerTry;
         }
 
-        const customer = new Customer(firstName, lastName, phoneNumber, email, gstNumber, address1, address2, mainAreaId);
+        const customer = new Customer(firstName, lastName, phoneNumber, email, gstNumber, address1, address2, mainAreaId, companyId);
 
         const result = await customer.createCustomer(req.userId);
 
@@ -67,16 +68,22 @@ export const getCustomers = async (req, res) => {
 
     try{
 
-        const {customerId, index, range} = req.query;
+        const { customerId, index, range } = req.query;
+        const { companyId } = req.params;
 
         if(customerId != null) {
-            const customerDetails = await Customer.getCustomerDetails(customerId);
+            const customerDetails = await Customer.getCustomerDetails(companyId, customerId);
             respCode = 200;
             response = customerDetails;
         } else if(index && range) {
-            const customerDetails = await Customer.getCustomers(index, range);
+            const customerDetails = await Customer.getCustomers(companyId, index, range);
             respCode = 200;
-            response = customerDetails;
+            response = {
+                "index": index,
+                "range": range,
+                "resultCount": customerDetails.length,
+                "result": customerDetails
+            };
         } else {
             respCode = 403;
             response = {
@@ -96,12 +103,31 @@ export const getCustomers = async (req, res) => {
     res.status(respCode).json(response)
 }
 
+export const getCustomersCount = async (req, res) => {
+    let respCode, response;
+
+    try{
+        const { companyId } = req.params;
+        const countResult = await Customer.getCustomersCount(companyId);
+        respCode = 200;
+        response = { customerCount : countResult.count};
+    } catch (e) {
+        response = {
+            message: e.message,
+            code: 500
+        }
+        respCode = 500;
+    }
+    res.status(respCode).json(response);
+}
+
+
 export const updateCustomer = async (req, res) => {
     let respCode, response;
     updateCustomerTry: try {
         await db.beginTransaction();
         const { firstName, lastName, phoneNumber, email, gstNumber, address1, address2, mainAreaId } = req.body;
-        const {customerId} = req.params;
+        const { customerId, companyId } = req.params;
 
         let breakFlag = 0;
 
@@ -122,7 +148,7 @@ export const updateCustomer = async (req, res) => {
 
         if (breakFlag === 1) break updateCustomerTry;
 
-        const customer = new Customer(firstName, lastName, phoneNumber, email, gstNumber, address1, address2, mainAreaId);
+        const customer = new Customer(firstName, lastName, phoneNumber, email, gstNumber, address1, address2, mainAreaId, companyId);
 
         customer.customerId = customerId;
 
@@ -244,20 +270,22 @@ export const getMainArea = async (req, res) => {
     let respCode, response;
 
     try{
-        const {mainAreaId, index, range} = req.query;
+        const { mainAreaId, index, range } = req.query;
+        const { companyId } = req.params;
 
         if(mainAreaId != null) {
-            const customerDetails = await MainArea.getMainArea(mainAreaId)
+            const areaDetails = await MainArea.getMainArea(companyId, mainAreaId)
             respCode = 200;
-            response = customerDetails;
+            response = {
+                "index": index,
+                "range": range,
+                "resultCount": areaDetails.length,
+                "result": areaDetails
+            };;
         } else if(index && range) {
-            const customerDetails = await MainArea.getMainAreas(index - 1, range);
-
-            if(customerDetails.length > range) {
-
-            }
+            const areaDetails = await MainArea.getMainAreas(companyId, index , range);
             respCode = 200;
-            response = customerDetails;
+            response = areaDetails;
         } else {
             respCode = 403;
             response = {
@@ -273,7 +301,25 @@ export const getMainArea = async (req, res) => {
         }
         respCode = 500;
     }
-    res.status(respCode).json(response)
+    res.status(respCode).json(response);
+}
+
+export const getMainAreaCount = async (req, res) => {
+    let respCode, response;
+
+    try{
+        const { companyId } = req.params;
+        const countResult = await MainArea.getMainAreaCount(companyId)
+        respCode = 200;
+        response = { areaCount : countResult.count};
+    } catch (e) {
+        response = {
+            message: e.message,
+            code: 500
+        }
+        respCode = 500;
+    }
+    res.status(respCode).json(response);
 }
 
 export const updateMainArea = async (req, res) => {
