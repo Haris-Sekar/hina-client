@@ -60,6 +60,15 @@ export const createDeleteQuery = (tableName, entityId, entityIdColumnName) => {
     return `DELETE FROM ${tableName} WHERE ${entityIdColumnName} = ${entityId}`;
 }
 
+export const createCountQuery = (tableName, condition) => {
+    let query = `SELECT COUNT(*) as count FROM ${tableName}`;
+    if (condition) {
+        query += ` WHERE ${condition}`;
+    }
+    query += `;`;
+    return query;
+}
+
 
 export const generateUniqueId = async (tableName, idColumnName) => {
     const existingIds = await getAllIds(tableName, idColumnName); // Implement this function to fetch existing company IDs from the database

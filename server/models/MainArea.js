@@ -1,4 +1,4 @@
-import {createInsertQuery, createUpdateQuery, generateUniqueId} from "../config/query.js";
+import {createCountQuery, createInsertQuery, createUpdateQuery, generateUniqueId} from "../config/query.js";
 import db from "../config/db.js";
 import Users from "./Users.js";
 
@@ -94,24 +94,33 @@ export default class MainArea {
         return result;
     }
 
-    static async getMainAreas(index = 0, range = 1) {
-        const query = `select * from main_area limit ${index}, ${range}+1`;
-
+    static async getMainAreas(companyId, index = 0, range = 10) {
+        const query = `select * from main_area where company_id= ${companyId} limit ${index}, ${range}`;
         const [result] = await db.query(query);
+        
+        let listOfMainArea = [];
+        
+        result.forEach((mainArea) => {
+            listOfMainArea.push(MainArea.deserializeFromJson(mainArea));
+        });
 
-        if (result.length === 1) {
-            return MainArea.deserializeFromJson(result[0]);
-        } else if (result.length > 1) {
-            let listOfMainArea = [];
-            result.forEach(mainArea => {
-                listOfMainArea.push(MainArea.deserializeFromJson(mainArea));
-            })
-            return listOfMainArea;
-        }
+        await Promise.all(listOfMainArea).then((result) => {
+            listOfMainArea=result;
+        });
+
+        return listOfMainArea;
     }
 
-    static async getMainArea(mainAreaId) {
-        const query = `select * from main_area where main_area_id = ${mainAreaId} limit 0,1`;
+    static async getMainAreaCount(companyId) {
+        const query = createCountQuery("main_area", `company_id= ${companyId}`);
+        
+        const [result] = await db.query(query);
+        
+        return result[0];
+    }
+
+    static async getMainArea(companyId, mainAreaId) {
+        const query = `select * from main_area where main_area_id = ${mainAreaId} and company_id= ${companyId} limit 0,1`;
         const [result] = await db.query(query);
 
         if(result.length === 1) {

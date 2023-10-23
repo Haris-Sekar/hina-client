@@ -1,5 +1,5 @@
 import db from "../config/db.js";
-import {createInsertQuery, createUpdateQuery, generateUniqueId} from "../config/query.js";
+import {createCountQuery, createInsertQuery, createUpdateQuery, generateUniqueId} from "../config/query.js";
 import customer from "../routers/customer.js";
 import Users from "./Users.js";
 import MainArea from "./MainArea.js";
@@ -102,13 +102,12 @@ export default class Customer {
     if (json.address2 !== null && json.address2 !== undefined) {
       customer.address2 = json.address2;
     }
-
-    if (json.main_area_id !== null && json.main_area_id !== undefined) {
-       const mainArea = await MainArea.getMainArea(json.main_area_id);
-      customer.mainArea = { name: mainArea.name, mainAreaId: json.main_area_id }
-    }
-    if(json.company_id !== null && json.company_id !== undefined) {
-      customer.companyId = json.company_id;
+    
+    if (json.main_area_id !== null && json.main_area_id !== undefined &&
+      json.company_id !== null && json.company_id !== undefined) {
+        customer.companyId = json.company_id;
+        const mainArea = await MainArea.getMainArea(json.company_id, json.main_area_id);
+        customer.mainArea = { name: mainArea.name, mainAreaId: json.main_area_id }
     }
 
     let userDetails;
@@ -134,23 +133,29 @@ export default class Customer {
     return customer;
   }
 
+  static async getCustomersCount(companyId) {
+    const query = createCountQuery("customers", `company_id= ${companyId}`);
+        
+    const [result] = await db.query(query);
+    
+    return result[0];
+  }
 
-  static async getCustomers(index = 0, range = 1) {
-    const query = `select * from customers limit ${index}, ${range}`;
-
+  static async getCustomers(companyId, index = 0, range = 10) {
+    const query = `select * from customers where company_id= ${companyId} limit ${index}, ${range}`;
     const [result] = await db.query(query);
 
-    if (result.length === 1) {
-      return await Customer.deserializeFromJson(result[0]);
-    } else if (result.length > 1) {
-      let listOfCustomer = [];
+    let listOfCustomer = [];
 
-      for(const i in result) {
-        listOfCustomer.push(await Customer.deserializeFromJson(result[i]));
-      }
+    result.forEach((customer)=>{
+      listOfCustomer.push(Customer.deserializeFromJson(customer));
+    });
 
-      return listOfCustomer;
-    }
+    await Promise.all(listOfCustomer).then((result) => {
+      listOfCustomer=result;
+    });
+
+    return listOfCustomer;
   }
 
   async createCustomer(userId) {
@@ -197,8 +202,8 @@ export default class Customer {
     return json;
   }
 
-  static async getCustomerDetails(customerId) {
-    const query = `select * from customers where customer_id=${customerId} limit 0,1;`;
+  static async getCustomerDetails(companyId, customerId) {
+    const query = `select * from customers where customer_id=${customerId} and company_id= ${companyId} limit 0,1;`;
     const [result] = await db.query(query);
     if (result.length === 1) {
       return await Customer.deserializeFromJson(result[0]);
