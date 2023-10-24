@@ -10,10 +10,12 @@ import {
     getMainAreaCount
 } from "../controllers/customer.js";
 import {authenticateCompany, authenticateUser} from "../middleware/authenticate.js";
+import validation from "../middleware/validation/validation.js";
+import * as validators from "../middleware/validation/validators.js";
 
 const router = express.Router({ mergeParams: true });
 
-router.post('/', authenticateUser,authenticateCompany, addCustomer);
+router.post('/', authenticateUser,authenticateCompany,validation(validators.addCustomer), addCustomer);
 router.get("/customerCount", authenticateUser, authenticateCompany, getCustomersCount);
 router.get("/", authenticateUser,authenticateCompany, getCustomers);
 router.patch("/:customerId", authenticateUser,authenticateCompany, updateCustomer);
