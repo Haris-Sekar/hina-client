@@ -7,11 +7,13 @@ import { Estimates } from "./Estimates/Estimates";
 import Invoice from "./Invoice/Invoice";
 import Auth from "./Auth/Auth";
 import Home from "./Home/Home";
+import Onboard from "./Onboard/Onboard";
+import EmailVerify from "./EmailVerify";
 
 const Pages = () => {
   return (
     <Routes>
-      <Route path="/" element={<PageLayout />}>
+      <Route element={<PageLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/customers" element={<Customers />} />
         <Route path="/products" element={<Products />} />
@@ -19,7 +21,9 @@ const Pages = () => {
         <Route path="/invoice" element={<Invoice />} />
       </Route>
       <Route path="/auth" element={<Auth />} />
-      <Route path="/home" element={<Home />} />
+      <Route path="/onboard" element={<Onboard />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/verify/:token" element={<EmailVerify />} />
     </Routes>
   );
 };
