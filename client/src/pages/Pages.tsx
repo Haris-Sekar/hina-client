@@ -8,7 +8,7 @@ import Invoice from "./Invoice/Invoice";
 import Auth from "./Auth/Auth";
 import Home from "./Home/Home";
 import Onboard from "./Onboard/Onboard";
-import EmailVerify from "./EmailVerify";
+import VerifyEmail from "./VerifyEmail/VerifyEmail";
 
 const Pages = () => {
   return (
@@ -23,7 +23,8 @@ const Pages = () => {
       <Route path="/auth" element={<Auth />} />
       <Route path="/onboard" element={<Onboard />} />
       <Route path="/" element={<Home />} />
-      <Route path="/verify/:token" element={<EmailVerify />} />
+      <Route path="/verify" element={<VerifyEmail />} />
+      <Route path="/verify/:token" element={<VerifyEmail success />} />
     </Routes>
   );
 };
