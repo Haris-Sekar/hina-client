@@ -38,11 +38,11 @@ export default class ItemGroup{
     }
 
     async serializeToSQLQuery(userId, isUpdate) {
-        const sizeId = !isUpdate ? await generateUniqueId(Size.tableName, "size_id") : this.sizeId;
+        const groupId = !isUpdate ? await generateUniqueId(ItemGroup.tableName, "group_id") : this.groupId;
         const currentMillis = Date.now();
         const json = {
-            size_id: sizeId,
-            size: this.size,
+            group_id: groupId,
+            name: this.name,
             created_by: !isUpdate ? userId : this.createdTime,
             updated_by: userId,
             created_time: !isUpdate ? currentMillis: this.createdTime,
@@ -57,14 +57,14 @@ export default class ItemGroup{
         return json;
     }
 
-    async addSize(userId) {
-        const query = createInsertQuery(Size.tableName, await this.serializeToSQLQuery(userId, false));
+    async addGroup(userId) {
+        const query = createInsertQuery(ItemGroup.tableName, await this.serializeToSQLQuery(userId, false));
         const [result] = await db.query(query);
         return result;
     }
 
-    async updateSize(userId) {
-        const query = createUpdateQuery(Size.tableName, await this.serializeToSQLQuery(userId, true),`size_id=${this.sizeId}`);
+    async updateGroup(userId) {
+        const query = createUpdateQuery(ItemGroup.tableName, await this.serializeToSQLQuery(userId, true),`group_id=${this.groupId}`);
         const [result] = await db.query(query);
         return result;
     }

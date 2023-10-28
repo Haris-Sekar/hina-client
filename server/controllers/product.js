@@ -1,6 +1,7 @@
 import db from "../config/db.js";
 import {INTERNAL_SERVER_ERR} from "../static/message.js";
 import Size from "../models/Size.js";
+import ItemGroup from "../models/ItemGroup.js";
 
 export const createProduct = async (req, res) => {
     let respCode, response;
@@ -131,7 +132,7 @@ export const updateSize = async (req, res) => {
 
 export const createItemGroup = async (req, res) => {
     let respCode, response;
-    addSizeTry: try{
+    createItemGroupTry: try{
         await db.beginTransaction()
         const { name } = req.body;
 
@@ -139,23 +140,23 @@ export const createItemGroup = async (req, res) => {
             respCode = 409;
             response = {
                 message: "field validation error, bellow fields are required",
-                fields: ["size"]
+                fields: ["name"]
             }
             await db.rollback();
-            break addSizeTry;
+            break createItemGroupTry;
         }
 
-        const sizeObj = new Size(size);
+        const groupObj = new ItemGroup(name);
 
-        sizeObj.companyId = req.companyId;
+        groupObj.companyId = req.companyId;
 
-        const result = await sizeObj.addSize(req.userId);
+        const result = await groupObj.addGroup(req.userId);
 
         if(result.affectedRows > 0) {
             await db.commit();
             respCode = 201;
             response = {
-                message: "size added successfully",
+                message: "Item Group added successfully",
                 code: 201,
                 sizeId: result.insertId
             };
@@ -173,7 +174,7 @@ export const createItemGroup = async (req, res) => {
             respCode = 409;
             response = {
                 code: 409,
-                message: "the given size is already added"
+                message: "the given Item Group is already added"
             }
         } else {
             respCode = 500;
@@ -189,32 +190,32 @@ export const createItemGroup = async (req, res) => {
 
 export const updateItemGroup = async (req, res) => {
     let respCode, response;
-    updateSizeTry: try{
+    updateItemGroupTry: try{
         await db.beginTransaction();
-        const {size} = req.body;
-        const {sizeId} = req.params;
-        if( !size) {
+        const {name} = req.body;
+        const {groupId} = req.params;
+        if( !name) {
             await db.rollback();
             respCode = 409;
             response = {
                 message: "field validation error, these fields should be required",
-                fields: [ !size ? "size" : "" ],
+                fields: [ !name ? "name" : "" ],
                 code: 409
             }
-            break updateSizeTry;
+            break updateItemGroupTry;
         }
 
-        const sizeObj = new Size();
-        sizeObj.size = size;
-        sizeObj.sizeId = sizeId;
-        sizeObj.companyId = req.companyId;
+        const groupObj = new ItemGroup(name);
+        groupObj.name = name;
+        groupObj.groupId = groupId;
+        groupObj.companyId = req.companyId;
 
-        const result = await sizeObj.updateSize(req.userId);
+        const result = await groupObj.updateGroup(req.userId);
         if(result.affectedRows > 0) {
             await db.commit();
             respCode = 200;
             response = {
-                message: "size updated successfully",
+                message: "Item Group updated successfully",
                 code: 200
             };
         } else {

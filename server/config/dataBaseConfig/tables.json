@@ -293,7 +293,8 @@
       }, {
         "name": "name",
         "dataType":"VARCHAR",
-        "isNotNull": true
+        "isNotNull": true,
+        "isUnique": true
       }, {
         "name": "created_by",
         "dataType": "INT",

@@ -1,7 +1,5 @@
 import jwt from "jsonwebtoken";
 import Users from "../models/Users.js";
-import Singleton from "../classes/Context.js";
-import Company from "../models/Company.js";
 import CompanyUserMapping from "../models/CompanyUserMapping.js";
 
 export const authenticateUser = async (req, res, next) => {
