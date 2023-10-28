@@ -187,7 +187,7 @@ export const createItemGroup = async (req, res) => {
     res.status(respCode).json(response);
 }
 
-export const updateSize = async (req, res) => {
+export const updateItemGroup = async (req, res) => {
     let respCode, response;
     updateSizeTry: try{
         await db.beginTransaction();
