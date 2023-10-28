@@ -27,11 +27,13 @@ await createTable();
 import user from "./routers/user.js";
 import customer from "./routers/customer.js";
 import company from "./routers/company.js";
+import product from "./routers/product.js";
 
 app.use("/api/v1/user",user);
 app.use("/api/v1/company", company)
 
 app.use("/api/v1/company/:companyId/customer", customer);
+app.use("/api/v1/company/:companyId/products", product);
 
 const port = process.env.PORT; 
 

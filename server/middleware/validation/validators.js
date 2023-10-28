@@ -1,4 +1,4 @@
-import {object, string} from "yup";
+import {number, object, string} from "yup";
 
 export const signup = object({
     name: string().required(),
@@ -30,4 +30,4 @@ export const addCustomer = object({
     address1:string().required(),
     address2:string().required(),
     mainAreaId:string().required().length(7),
-})
+});

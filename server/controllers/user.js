@@ -84,7 +84,7 @@ export const signup = async (req, res) => {
 
 export const login = async (req,res) => {
     let response, respCode;
-    try{
+    loginTry: try{
         const email = req.body.email;
         const password = req.body.password
 
@@ -100,6 +100,7 @@ export const login = async (req,res) => {
                 code: 500
             };
             respCode = 500;
+            break loginTry;
         }
 
         if(userObj.name === undefined) {

@@ -177,7 +177,8 @@ export default class Customer {
 
 
   async serializeToSQLQuery(userId, isUpdate) {
-    const customerId = await generateUniqueId(Customer.tableName, "customer_id");
+    const customerId = !isUpdate ? await generateUniqueId(Customer.tableName, "customer_id") : this.customerId;
+    const currentMillis = Date.now();
     const json = {
       customer_id: customerId,
       first_name: this.firstName,
@@ -189,9 +190,9 @@ export default class Customer {
       address2: this.address2,
       main_area_id: this.mainAreaId,
       created_by: !isUpdate ? userId: undefined,
-      created_time:!isUpdate ? Date.now(): undefined,
+      created_time:!isUpdate ? currentMillis: undefined,
       updated_by: userId,
-      updated_time: Date.now(),
+      updated_time: currentMillis,
       company_id: this.companyId
     };
     for (const key in json) {
@@ -212,7 +213,7 @@ export default class Customer {
   }
 
   async updateCustomer(userId) {
-    const query = createUpdateQuery("customers", this.serializeToSQLQuery(userId, true) , `customer_id = ${this.customerId}`);
+    const query = createUpdateQuery("customers", await this.serializeToSQLQuery(userId, true) , `customer_id = ${this.customerId}`);
     const [result] = await db.query(query);
     return result;
   }

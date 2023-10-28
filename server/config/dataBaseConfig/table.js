@@ -10,7 +10,7 @@ export const createTableQuery = (tableName, columns) => {
     columns.forEach((column, index) => {
         let columnDefinition = `${column.name} ${column.dataType}`;
 
-        if (['INT', 'BOOLEAN', 'BIGINT'].includes(column.dataType)) {
+        if (['INT', 'BOOLEAN', 'BIGINT', 'FLOAT'].includes(column.dataType)) {
             columnDefinition += ` ${column.isNotNull ? 'NOT NULL' : ''} ${column.isAutoIncrement ? 'AUTO_INCREMENT' : ''}`;
         } else {
             columnDefinition += `(${column.length}) ${column.isNotNull ? 'NOT NULL' : ''} ${column.isAutoIncrement ? 'AUTO_INCREMENT' : ''}`;

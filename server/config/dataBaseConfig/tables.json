@@ -281,6 +281,274 @@
         "onDelete": "DEL_CASCADE"
       }
     ]
+  },
+  {
+    "tableName": "item_group",
+    "columns": [
+      {
+        "name": "group_id",
+        "dataType": "INT",
+        "isPrimaryKey": true,
+        "isAutoIncrement": true
+      }, {
+        "name": "name",
+        "dataType":"VARCHAR",
+        "isNotNull": true
+      }, {
+        "name": "created_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "created_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      },
+      {
+        "name": "updated_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "updated_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      },
+      {
+        "name": "company_id",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "company",
+        "foreignKeyRefColumn": "company_id",
+        "onDelete": "DEL_CASCADE"
+      }
+    ]
+  },
+  {
+    "tableName": "products",
+    "columns": [
+      {
+        "name": "item_id",
+        "dataType": "INT",
+        "isPrimaryKey": true,
+        "isAutoIncrement": true
+      }, {
+        "name": "item_name",
+        "dataType": "VARCHAR",
+        "isNotNull": true
+      }, {
+        "name": "hsn_code",
+        "dataType":"INT"
+      }, {
+        "name":"item_group_id",
+        "isNotNull": true,
+        "dataType": "INT",
+        "isForeignKey": true,
+        "foreignKeyRefTable": "item_group",
+        "foreignKeyRefColumn": "group_id",
+        "onDelete": "DEL_CASCADE"
+      }, {
+        "name": "created_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "created_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      },
+      {
+        "name": "updated_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "updated_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      },
+      {
+        "name": "company_id",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "company",
+        "foreignKeyRefColumn": "company_id",
+        "onDelete": "DEL_CASCADE"
+      }
+    ]
+  }, {
+    "tableName": "size",
+    "columns": [
+      {
+        "name": "size_id",
+        "dataType": "INT",
+        "isPrimaryKey": true,
+        "isAutoIncrement": true
+      }, {
+        "name": "size",
+        "dataType":"VARCHAR",
+        "isNotNull": true,
+        "isUnique": true
+      }, {
+        "name": "created_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "created_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      },
+      {
+        "name": "updated_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "updated_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      },
+      {
+        "name": "company_id",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "company",
+        "foreignKeyRefColumn": "company_id",
+        "onDelete": "DEL_CASCADE"
+      }
+    ]
+  },{
+    "tableName": "rate_version",
+    "columns": [
+      {
+        "name": "version_id",
+        "dataType": "INT",
+        "isPrimaryKey": true,
+        "isAutoIncrement": true
+      }, {
+        "name": "is_default",
+        "dataType":"BOOLEAN",
+        "isNotNull": true
+      }, {
+        "name": "created_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "created_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      },
+      {
+        "name": "updated_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "updated_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      },
+      {
+        "name": "company_id",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "company",
+        "foreignKeyRefColumn": "company_id",
+        "onDelete": "DEL_CASCADE"
+      }
+    ]
+  },{
+    "tableName": "rate",
+    "columns": [
+      {
+        "name": "size_id",
+        "dataType": "INT",
+        "isPrimaryKey": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "size",
+        "foreignKeyRefColumn": "size_id",
+        "onDelete": "DEL_CASCADE"
+      }, {
+        "name": "item_id", 
+        "dataType": "INT",
+        "isPrimaryKey": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "products",
+        "foreignKeyRefColumn": "item_id",
+        "onDelete": "DEL_CASCADE"
+      }, {
+        "name": "rate_version_id", 
+        "dataType": "INT",
+        "isPrimaryKey": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "rate_version",
+        "foreignKeyRefColumn": "version_id",
+        "onDelete": "DEL_CASCADE"
+      }, {
+        "name": "cost_price",
+        "dataType":"FLOAT",
+        "isNotNull": true
+      }, {
+        "name": "selling_price",
+        "dataType":"FLOAT",
+        "isNotNull": true
+      }, {
+        "name": "created_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "created_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      },
+      {
+        "name": "updated_by",
+        "dataType": "INT",
+        "isNotNull": true,
+        "isForeignKey": true,
+        "foreignKeyRefTable": "users",
+        "foreignKeyRefColumn": "user_id" 
+      },
+      {
+        "name": "updated_time",
+        "dataType": "BIGINT",
+        "isNotNull": true
+      }
+    ]
   }
 
 ]

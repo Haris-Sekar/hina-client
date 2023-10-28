@@ -1,24 +1,24 @@
 import {createInsertQuery, createUpdateQuery, generateUniqueId} from "../config/query.js";
 import db from "../config/db.js";
 
-export default class Size{
-    sizeId;
-    size;
+export default class ItemGroup{
+    groupId;
+    name;
     createdBy;
     createdTime;
     updatedBy;
     updatedTime;
     companyId;
-    static tableName = "size";
+    static tableName = "item_group";
 
-    constructor(size) {
-        this.size = size;
+    constructor(name) {
+        this.name = name;
     }
 
     toJSON() {
         return {
-            sizeId: this.sizeId,
-            size: this.size,
+            groupId: this.groupId,
+            name: this.name,
             createdBy: this.createdBy,
             createdTime: new Date(this.createdTime).toLocaleString(),
             updatedBy: this.updatedBy,
@@ -28,13 +28,13 @@ export default class Size{
     }
 
     static async deserializeFromJSON(json) {
-        const size = new Size(json.size);
-        size.sizeId = json.size_id;
-        size.createdBy = json.created_by;
-        size.createdTime = json.created_time;
-        size.updatedBy = json.updated_by;
-        size.updatedTime = json.updated_time;
-        size.companyId = json.company_id;
+        const itemGroup = new ItemGroup(json.name);
+        itemGroup.groupId = json.group_id;
+        itemGroup.createdBy = json.created_by;
+        itemGroup.createdTime = json.created_time;
+        itemGroup.updatedBy = json.updated_by;
+        itemGroup.updatedTime = json.updated_time;
+        itemGroup.companyId = json.company_id;
     }
 
     async serializeToSQLQuery(userId, isUpdate) {
