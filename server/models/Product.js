@@ -13,6 +13,12 @@ export default class Product {
     companyId;
     static tableName = "products";
 
+    constructor(itemName, hsnCode, itemGroupId) {
+        this.itemName = itemName;
+        this.hsnCode = hsnCode;
+        this.itemGroupId = itemGroupId;
+    }
+
     toJSON() {}
 
     async serializeToSQLQuery(userId, isUpdate) {
@@ -23,8 +29,8 @@ export default class Product {
             item_name: this.itemName,
             hsn_code: this.hsnCode,
             item_group_id: this.itemGroupId,
-            created_by: userId,
-            createdTime: currentMillis,
+            created_by: isUpdate ? this.createdBy : userId,
+            created_time: isUpdate ? this.createdTime : currentMillis,
             updated_by: userId,
             updated_time: currentMillis,
             company_id: this.companyId
