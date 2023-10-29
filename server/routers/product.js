@@ -4,7 +4,7 @@ import {
     createProduct,
     createSize, updateSize, getSize, deleteSize,
     createItemGroup, updateItemGroup, getItemGroup, deleteItemGroup,
-    createRateVersion, updateRateVersion 
+    createRateVersion, updateRateVersion, getRateVersion, deleteRateVersion
 } from "../controllers/product.js";
 
 const router = express.Router({ mergeParams: true });
@@ -24,5 +24,7 @@ router.delete("/itemGroup/:groupId", authenticateUser, authenticateCompany, dele
 
 router.post("/rateVersion", authenticateUser, authenticateCompany, createRateVersion);
 router.patch("/rateVersion/:versionId", authenticateUser, authenticateCompany, updateRateVersion);
+router.get("/rateVersion", authenticateUser, authenticateCompany, getRateVersion);
+router.delete("/rateVersion/:versionId", authenticateUser, authenticateCompany, deleteRateVersion);
 
 export default router;

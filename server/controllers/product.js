@@ -565,3 +565,83 @@ export const updateRateVersion = async (req, res) => {
     }
     res.status(respCode).json(response)
 }
+
+export const getRateVersion = async (req, res) => {
+    let respCode, response;
+
+    try{
+        const { versionId } = req.query;
+        const { companyId } = req.params;
+
+        if(versionId != null) {
+            const versionDetails = await RateVersion.getVersion(companyId, versionId);
+            if(versionDetails==null){
+                respCode = 404;
+                response = {
+                    message: "No rate version with that ID is available",
+                }
+            } else {
+                respCode = 200;
+                response = versionDetails;
+            }
+        } else {
+            const versionDetails = await RateVersion.getVersions(companyId);
+            respCode = 200;
+            response = {
+                "companyId": companyId,
+                "resultCount": versionDetails.length,
+                "result": versionDetails
+            };
+        } 
+    } catch (e) {
+        response = {
+            message: e.message,
+            code: 500
+        }
+        respCode = 500;
+    }
+    res.status(respCode).json(response);
+}
+
+export const deleteRateVersion = async (req, res) => {
+    let respCode, response;
+    deleteRateTry: try{
+        await db.beginTransaction();
+        const { versionId } = req.params;
+
+        if(!versionId) {
+            respCode = 403;
+            response = {
+                message: "Field validation error",
+                fields: "versionId should be provided"
+            }
+            break deleteRateTry;
+        }
+
+        const versionObj = new RateVersion();
+        const result = await versionObj.deleteVersion(versionId);
+
+        if(result.affectedRows > 0) {
+            await db.commit();
+            respCode = 204;
+            response = {};
+        } else {
+            await db.commit();
+            respCode = 404;
+            response = {
+                message: "No rate version with that ID is available",
+                code: 404
+            };
+        }
+
+    } catch(e) {
+        await db.rollback();
+        response = {
+            message: e.message,
+            code: 500
+        }
+        respCode = 500;
+    }
+
+    res.status(respCode).json(response)
+}
