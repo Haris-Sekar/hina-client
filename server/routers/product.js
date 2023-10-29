@@ -3,8 +3,8 @@ import {authenticateCompany, authenticateUser} from "../middleware/authenticate.
 import {
     createProduct,
     createSize, updateSize,
-    createItemGroup, updateItemGroup,
-    createRateVersion, updateRateVersion
+    createItemGroup, updateItemGroup, getItemGroup, deleteItemGroup,
+    createRateVersion, updateRateVersion 
 } from "../controllers/product.js";
 
 const router = express.Router({ mergeParams: true });
@@ -17,6 +17,8 @@ router.patch("/size/:sizeId", authenticateUser, authenticateCompany, updateSize)
 
 router.post("/itemGroup", authenticateUser, authenticateCompany, createItemGroup);
 router.patch("/itemGroup/:groupId", authenticateUser, authenticateCompany, updateItemGroup);
+router.get("/itemGroup", authenticateUser, authenticateCompany, getItemGroup);
+router.delete("/itemGroup/:groupId", authenticateUser, authenticateCompany, deleteItemGroup);
 
 router.post("/rateVersion", authenticateUser, authenticateCompany, createRateVersion);
 router.patch("/rateVersion/:versionId", authenticateUser, authenticateCompany, updateRateVersion);

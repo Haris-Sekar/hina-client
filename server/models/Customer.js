@@ -116,11 +116,14 @@ export default class Customer {
       userDetails = await Users.getUserDetails(json.created_by);
       customer.updatedBy = userDetails;
       customer.createdBy = userDetails;
-    } else if(json.created_by !== null && json.created_by !== undefined) {
-      customer.createdBy = await Users.getUserDetails(json.created_by);
-    } else if(json.updated_by !== null && json.updated_by !== undefined) {
-      customer.updatedBy = await Users.getUserDetails(json.updated_by);
-    }
+    } else {
+      if(json.created_by !== null && json.created_by !== undefined) {
+        customer.createdBy = await Users.getUserDetails(json.created_by);
+      } 
+      if(json.updated_by !== null && json.updated_by !== undefined) {
+        customer.updatedBy = await Users.getUserDetails(json.updated_by);
+      }
+    } 
 
     if(json.created_time !== null && json.created_time !== undefined) {
       customer.createdTime = json.created_time;

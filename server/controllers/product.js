@@ -228,7 +228,7 @@ export const createItemGroup = async (req, res) => {
             response = {
                 message: "Item Group added successfully",
                 code: 201,
-                sizeId: result.insertId
+                itemGroupId: result.insertId
             };
         } else {
             respCode = 500;
@@ -304,6 +304,80 @@ export const updateItemGroup = async (req, res) => {
             message: INTERNAL_SERVER_ERR
         }
     }
+    res.status(respCode).json(response)
+}
+
+export const getItemGroup = async (req, res) => {
+    let respCode, response;
+
+    try{
+        const { itemGroupId } = req.query;
+        const { companyId } = req.params;
+
+        if(itemGroupId != null) {
+            const itemGroupDetails = await ItemGroup.getItemGroup(companyId, itemGroupId)
+            respCode = 200;
+            response = itemGroupDetails;
+        } else {
+            const itemGroupDetails = await ItemGroup.getItemGroups(companyId);
+            respCode = 200;
+            response = {
+                "companyId": companyId,
+                "resultCount": itemGroupDetails.length,
+                "result": itemGroupDetails
+            };
+        } 
+    } catch (e) {
+        response = {
+            message: e.message,
+            code: 500
+        }
+        respCode = 500;
+    }
+    res.status(respCode).json(response);
+}
+
+
+export const deleteItemGroup = async (req, res) => {
+    let respCode, response;
+    deleteItemGroupTry: try{
+        await db.beginTransaction();
+        const { groupId } = req.params;
+
+        if(!groupId) {
+            respCode = 403;
+            response = {
+                message: "Field validation error",
+                fields: "groupId should be provided"
+            }
+            break deleteItemGroupTry;
+        }
+
+        const groupObj = new ItemGroup();
+        const result = await groupObj.deleteItemGroup(groupId);
+
+        if(result.affectedRows > 0) {
+            await db.commit();
+            respCode = 204;
+            response = {};
+        } else {
+            await db.commit();
+            respCode = 404;
+            response = {
+                message: "No Item group with that ID is available",
+                code: 404
+            };
+        }
+
+    } catch(e) {
+        await db.rollback();
+        response = {
+            message: e.message,
+            code: 500
+        }
+        respCode = 500;
+    }
+
     res.status(respCode).json(response)
 }
 
