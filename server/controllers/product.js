@@ -91,7 +91,6 @@ export const createProduct = async (req, res) => {
     res.status(respCode).json(response)
 }
 
-
 export const createSize = async (req, res) => {
     let respCode, response;
     addSizeTry: try{
@@ -199,6 +198,85 @@ export const updateSize = async (req, res) => {
     res.status(respCode).json(response)
 }
 
+export const getSize = async (req, res) => {
+    let respCode, response;
+
+    try{
+        const { sizeId } = req.query;
+        const { companyId } = req.params;
+
+        if(sizeId != null) {
+            const sizeDetails = await Size.getSize(companyId, sizeId);
+            if(sizeDetails==null){
+                respCode = 404;
+                response = {
+                    message: "No size with that ID is available",
+                }
+            } else {
+                respCode = 200;
+                response = sizeDetails;
+            }
+        } else {
+            const sizeDetails = await Size.getSizes(companyId);
+            respCode = 200;
+            response = {
+                "companyId": companyId,
+                "resultCount": sizeDetails.length,
+                "result": sizeDetails
+            };
+        } 
+    } catch (e) {
+        response = {
+            message: e.message,
+            code: 500
+        }
+        respCode = 500;
+    }
+    res.status(respCode).json(response);
+}
+
+export const deleteSize = async (req, res) => {
+    let respCode, response;
+    deleteSizeTry: try{
+        await db.beginTransaction();
+        const { sizeId } = req.params;
+
+        if(!sizeId) {
+            respCode = 403;
+            response = {
+                message: "Field validation error",
+                fields: "sizeId should be provided"
+            }
+            break deleteSizeTry;
+        }
+
+        const sizeObj = new Size();
+        const result = await sizeObj.deleteSize(sizeId);
+
+        if(result.affectedRows > 0) {
+            await db.commit();
+            respCode = 204;
+            response = {};
+        } else {
+            await db.commit();
+            respCode = 404;
+            response = {
+                message: "No size with that ID is available",
+                code: 404
+            };
+        }
+
+    } catch(e) {
+        await db.rollback();
+        response = {
+            message: e.message,
+            code: 500
+        }
+        respCode = 500;
+    }
+
+    res.status(respCode).json(response)
+}
 
 export const createItemGroup = async (req, res) => {
     let respCode, response;
@@ -315,9 +393,16 @@ export const getItemGroup = async (req, res) => {
         const { companyId } = req.params;
 
         if(itemGroupId != null) {
-            const itemGroupDetails = await ItemGroup.getItemGroup(companyId, itemGroupId)
-            respCode = 200;
-            response = itemGroupDetails;
+            const itemGroupDetails = await ItemGroup.getItemGroup(companyId, itemGroupId);
+            if(itemGroupDetails==null){
+                respCode = 404;
+                response = {
+                    message: "No item group with that ID is available",
+                }
+            } else {
+                respCode = 200;
+                response = itemGroupDetails;
+            }
         } else {
             const itemGroupDetails = await ItemGroup.getItemGroups(companyId);
             respCode = 200;
@@ -336,7 +421,6 @@ export const getItemGroup = async (req, res) => {
     }
     res.status(respCode).json(response);
 }
-
 
 export const deleteItemGroup = async (req, res) => {
     let respCode, response;
@@ -380,7 +464,6 @@ export const deleteItemGroup = async (req, res) => {
 
     res.status(respCode).json(response)
 }
-
 
 export const createRateVersion = async (req, res) => {
     let respCode, response;
