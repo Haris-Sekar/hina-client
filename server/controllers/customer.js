@@ -276,16 +276,16 @@ export const getMainArea = async (req, res) => {
         if(mainAreaId != null) {
             const areaDetails = await MainArea.getMainArea(companyId, mainAreaId)
             respCode = 200;
+            response = areaDetails;
+        } else if(index && range) {
+            const areaDetails = await MainArea.getMainAreas(companyId, index , range);
+            respCode = 200;
             response = {
                 "index": index,
                 "range": range,
                 "resultCount": areaDetails.length,
                 "result": areaDetails
-            };;
-        } else if(index && range) {
-            const areaDetails = await MainArea.getMainAreas(companyId, index , range);
-            respCode = 200;
-            response = areaDetails;
+            };
         } else {
             respCode = 403;
             response = {
