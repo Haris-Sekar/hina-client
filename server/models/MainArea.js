@@ -51,11 +51,14 @@ export default class MainArea {
             userDetails = await Users.getUserDetails(json.created_by);
             mainArea.updatedBy = userDetails;
             mainArea.createdBy = userDetails;
-        } else if(json.created_by !== null && json.created_by !== undefined) {
-            mainArea.createdBy = await Users.getUserDetails(json.created_by);
-        } else if(json.updated_by !== null && json.updated_by !== undefined) {
-            mainArea.updatedBy = await Users.getUserDetails(json.updated_by);
-        }
+        } else {
+            if(json.created_by !== null && json.created_by !== undefined) {
+                mainArea.createdBy = await Users.getUserDetails(json.created_by);
+            }
+            if(json.updated_by !== null && json.updated_by !== undefined) {
+                mainArea.updatedBy = await Users.getUserDetails(json.updated_by);
+            }
+        } 
 
         if(json.created_time !== null && json.created_time !== undefined) {
             mainArea.createdTime = json.created_time;
