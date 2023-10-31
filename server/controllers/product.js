@@ -4,7 +4,7 @@ import Size from "../models/Size.js";
 import ItemGroup from "../models/ItemGroup.js";
 import RateVersion from "../models/RateVersion.js";
 import Rate from "../models/Rate.js";
-import Product from "../models/Product.js";
+import Product from "../models/Product.js"
 import {createUpdateQuery} from "../config/query.js";
 
 export const createProduct = async (req, res) => {
