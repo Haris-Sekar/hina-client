@@ -1,7 +1,7 @@
 import express from "express";
 import {authenticateCompany, authenticateUser} from "../middleware/authenticate.js";
 import {
-    createProduct,
+    createProduct, updateProduct,
     createSize, updateSize,
     createItemGroup, updateItemGroup,
     createRateVersion, updateRateVersion
@@ -10,7 +10,8 @@ import {
 const router = express.Router({ mergeParams: true });
 
 
-router.post("/", authenticateUser, authenticateCompany,  createProduct)
+router.post("/", authenticateUser, authenticateCompany,  createProduct);
+router.patch("/:itemId", authenticateUser, authenticateCompany, updateProduct)
 
 router.post("/size", authenticateUser, authenticateCompany, createSize);
 router.patch("/size/:sizeId", authenticateUser, authenticateCompany, updateSize);
@@ -20,5 +21,7 @@ router.patch("/itemGroup/:groupId", authenticateUser, authenticateCompany, updat
 
 router.post("/rateVersion", authenticateUser, authenticateCompany, createRateVersion);
 router.patch("/rateVersion/:versionId", authenticateUser, authenticateCompany, updateRateVersion);
+router.post("/rateVersion/rates", authenticateUser, authenticateCompany);
+
 
 export default router;

@@ -5,13 +5,14 @@ import ItemGroup from "../models/ItemGroup.js";
 import RateVersion from "../models/RateVersion.js";
 import Rate from "../models/Rate.js";
 import Product from "../models/Product.js";
+import {createUpdateQuery} from "../config/query.js";
 
 export const createProduct = async (req, res) => {
     let respCode, response;
     createProductTry: try{
         await db.beginTransaction();
 
-        let {itemName, itemGroupId, hsn, rateObject} = req.body;
+        let {itemName, itemGroupId, hsn, rateObject} = req.body
 
         let missingFields = [!itemName ? "itemName" : "", !itemGroupId ? "itemGroupId" : "", !rateObject ? "rateObject" : ""];
         missingFields =  missingFields.filter(function(element) {
@@ -33,7 +34,7 @@ export const createProduct = async (req, res) => {
         if(!rateObject.rates || !rateObject.versionId) {
             respCode = 409;
             response = {
-                message: "field validation error, rateObject should have versionId & rates",
+                message: "field validation error, rateObject should have versionId, costPrice and sellingPrice",
                 fields: [rateObject]
             }
             await db.rollback();
@@ -71,14 +72,107 @@ export const createProduct = async (req, res) => {
         await db.commit();
     } catch (e) {
         await db.rollback();
-        if(e.code === "ER_DUP_ENTRY") {
-            if(e.sql.includes("rate")) {
+        switch (e.code) {
+            case "ER_NO_REFERENCED_ROW_2":
+                respCode = 404;
+                let fieldName;
+                if(e.message.includes("item_group_id")) {
+                    fieldName = "itemGroupId"
+                } else if(e.message.includes("size_id")) {
+                    fieldName = "sizeId (rateObject)"
+                } else if(e.message.includes("rate_version_id")) {
+                    fieldName = "versionId (rateObject)"
+                }
                 response = {
-                    code: 409,
-                    message: "the rate for this size is already exisits for this version"
+                    code: 404,
+                    message: `The given ${fieldName} is not available`
+                }
+                break;
+            case "ER_DUP_ENTRY":
+                if(e.sql.includes("rate")) {
+                    response = {
+                        code: 409,
+                        message: "the rate for this size is already exists for this version"
+                    }
+                }
+                respCode = 409;
+                break;
+            default:
+                respCode = 500;
+                response = {
+                    code: 500,
+                    message: INTERNAL_SERVER_ERR
+                }
+                break;
+        }
+    }
+    res.status(respCode).json(response)
+}
+
+
+export const updateProduct = async (req, res) => {
+    let respCode, response;
+
+    updateProductTry: try{
+        await db.beginTransaction();
+
+        const {name, itemGroupId, hsn} = req.body;
+        let {rateObject} = req.body;
+        const { itemId } = req.params;
+
+        if(!name && !itemGroupId && !hsn && !rateObject) {
+            respCode = 409;
+            response = {
+                code: 409,
+                message: "field validation error any one of the following field is required",
+                fields: ["name", "itemGroupId", "hsn", "rateObject"]
+            }
+            break updateProductTry;
+        }
+        if(rateObject) {
+            rateObject = JSON.parse(rateObject);
+            if(!rateObject.rates || !rateObject.versionId) {
+                respCode = 409;
+                response = {
+                    message: "field validation error, rateObject should have versionId, costPrice and sellingPrice ",
+                    fields: [rateObject]
+                }
+                await db.rollback();
+                break updateProductTry;
+            }
+        }
+
+        const productObj = new Product(name, hsn, itemGroupId);
+        productObj.itemId = itemId;
+
+        const result = await productObj.updateProduct(req.userId);
+
+        if(result.affectedRows > 0) {
+            if(rateObject) {
+                const parsedRateObj = Rate.getParsedRateObject(rateObject.rates, itemId, rateObject.versionId);
+
+                const rateResult = await Rate.updateRateObject(parsedRateObj, req.userId);
+                if(rateResult.length === parsedRateObj.length) {
+                    respCode = 200;
+                    response = {
+                        message: "Product updated successfully",
+                        code: 200
+                    }
+                } else {
+                    respCode = 200;
+                    response = {
+                        message: "Product updated successfully, but some rates are not updated, contact support",
+                        code: 200
+                    }
+                }
+            } else {
+                respCode = 200;
+                response = {
+                    message: "Product updated successfully",
+                    code: 200
                 }
             }
-            respCode = 409;
+
 
         } else {
             respCode = 500;
@@ -87,9 +181,19 @@ export const createProduct = async (req, res) => {
                 message: INTERNAL_SERVER_ERR
             }
         }
+        await db.commit();
+    } catch(e) {
+        await db.rollback();
+        respCode = 500;
+        response = {
+            code: 500,
+            message: INTERNAL_SERVER_ERR
+        }
     }
-    res.status(respCode).json(response)
+    res.status(respCode).json(response);
 }
+
+
 
 
 export const createSize = async (req, res) => {
@@ -314,7 +418,7 @@ export const createRateVersion = async (req, res) => {
         await db.beginTransaction()
         const { isDefault } = req.body;
 
-        if(!isDefault) {
+        if(!isDefault && !(isDefault === "true" || isDefault === "false")) {
             respCode = 409;
             response = {
                 message: "field validation error, bellow fields are required",
@@ -322,6 +426,11 @@ export const createRateVersion = async (req, res) => {
             }
             await db.rollback();
             break createRateVersionTry;
+        }
+
+        if(isDefault === "true") {
+            const updateQuery = createUpdateQuery(RateVersion.tableName, {is_default: false}, `company_id=${req.companyId}`);
+            await db.query(updateQuery);
         }
 
         const rateVersionObj = new RateVersion();
@@ -406,5 +515,25 @@ export const updateRateVersion = async (req, res) => {
             message: INTERNAL_SERVER_ERR
         }
     }
+    res.status(respCode).json(response)
+}
+
+export const addRateToVersion = async (req, res) => {
+    let respCode, response;
+    addRateToVersionTry: try{
+
+        const {rateObject} = req.body;
+
+        const parsedRateObj = Rate.getParsedRateObject(rateObject.rates, rateObject)
+
+
+    } catch(e) {
+        respCode = 500;
+        response = {
+            code: 500,
+            message: INTERNAL_SERVER_ERR
+        }
+    }
+
     res.status(respCode).json(response)
 }

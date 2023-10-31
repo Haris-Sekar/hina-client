@@ -25,7 +25,7 @@ export default class Product {
         const itemId = isUpdate ? this.itemId : await generateUniqueId(Product.tableName, "item_id");
         const currentMillis = Date.now();
         const json = {
-            item_id: itemId,
+            item_id: !isUpdate ? itemId : undefined,
             item_name: this.itemName,
             hsn_code: this.hsnCode,
             item_group_id: this.itemGroupId,
@@ -51,7 +51,7 @@ export default class Product {
     }
 
     async updateProduct(userId){
-        const query = createUpdateQuery(Product.tableName, await this.serializeToSQLQuery(userId, false), `item_id = ${this.itemId}`);
+        const query = createUpdateQuery(Product.tableName, await this.serializeToSQLQuery(userId, true), `item_id = ${this.itemId}`);
         const [result] = await db.query(query);
         return result;
     }

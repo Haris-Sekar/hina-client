@@ -1,4 +1,4 @@
-import {createInsertQuery} from "../config/query.js";
+import {createInsertQuery, createUpdateQuery} from "../config/query.js";
 import db from "../config/db.js";
 
 export default class Rate {
@@ -44,11 +44,30 @@ export default class Rate {
         return resultInsertId;
     }
 
+    static async updateRateObject(listOfRateObject, userId) {
+        let resultList = [];
+        for(const rate of listOfRateObject) {
+            const result = await rate.updateRate(userId);
+            if(result.affectedRows > 0) {
+                resultList.push(result.affectedRows)
+            }
+        }
+        return resultList;
+    }
+
     async pushRate (userId) {
-        const query = createInsertQuery(Rate.tableName, this.serializeToSQLQuery(userId));
+        const query = createInsertQuery(Rate.tableName, this.serializeToSQLQuery(userId, false));
         const [result] = await db.query(query);
         return result;
     }
+
+    async updateRate(userId) {
+        const query = createUpdateQuery(Rate.tableName, this.serializeToSQLQuery(userId, true));
+        const [result] = await db.query(query);
+        return result;
+    }
+
+
 
     serializeToSQLQuery(userId, isUpdate) {
         const currentMillis = Date.now();
