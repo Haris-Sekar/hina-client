@@ -1,6 +1,5 @@
 import {createInsertQuery} from "../config/query.js";
 import db from "../config/db.js";
-import {ER_TOO_MANY_USER_CONNECTIONS} from "mysql/lib/protocol/constants/errors.js";
 
 export default class CompanyUserMapping {
     userId

@@ -338,7 +338,11 @@
       {
         "name": "item_id",
         "dataType": "INT",
-        "isPrimaryKey": true,
+        "isPrimaryKey": true
+      }, {
+        "name": "item_code",
+        "dataType": "INT",
+        "isUnique": true,
         "isAutoIncrement": true
       }, {
         "name": "item_name",
@@ -551,5 +555,4 @@
       }
     ]
   }
-
 ]

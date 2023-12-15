@@ -47,7 +47,7 @@ export const createProduct = async (req, res) => {
 
         const result = await productObject.createProduct(req.userId);
         if(result.affectedRows > 0) {
-            const parsedRateObject = Rate.getParsedRateObject(rateObject.rates, result.insertId, rateObject.versionId);
+            const parsedRateObject = Rate.getParsedRateObject(rateObject.rates, productObject.itemId, rateObject.versionId);
             const rateResult = await Rate.pushRateObject(parsedRateObject, req.userId);
             if(rateResult.length === rateObject.rates.length) {
                 respCode = 201;
@@ -730,7 +730,7 @@ export const deleteRateVersion = async (req, res) => {
         const versionObj = new RateVersion();
         const result = await versionObj.deleteVersion(versionId);
 
-        if(result.affectedRows > 0) {
+        if(result.affectedRows > 0) {z
             await db.commit();
             respCode = 204;
             response = {};

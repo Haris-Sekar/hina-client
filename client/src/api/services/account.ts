@@ -20,7 +20,8 @@ async function verifyEmail(token: string) {
 
 async function login(data: ILogin) {
     API.post("user/login", data).then((res) => {
-        localStorage.setItem("token", res.data.jwt_token)
+        localStorage.setItem("token", res.data.jwt_token);
+        
     });
 }
 

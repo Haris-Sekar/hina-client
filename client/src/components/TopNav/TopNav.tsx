@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Avatar, InputBase } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search';
-import './TopNav.css';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 const TopNav = () => {

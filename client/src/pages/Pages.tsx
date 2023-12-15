@@ -8,9 +8,9 @@ import Invoice from "./Invoice/Invoice";
 import Auth from "./Auth/Auth";
 import Home from "./Home/Home";
 import Onboard from "./Onboard/Onboard";
-import VerifyEmail from "./VerifyEmail/VerifyEmail";
+import VerifyEmail from "./VerifyEmail/VerifyEmail"; 
 
-const Pages = () => {
+const Pages = () => { 
   return (
     <Routes>
       <Route element={<PageLayout />}>
