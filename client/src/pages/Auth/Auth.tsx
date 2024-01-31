@@ -1,12 +1,13 @@
 import { Controller, useForm } from "react-hook-form";
 import { IAuthLogin } from "../../Types/User";
+import LoadingButton from "@mui/lab/LoadingButton";
+
 import { Box } from "@mui/system";
 import {
 	Grid,
 	Paper,
 	TextField,
 	Typography,
-	Button,
 	InputAdornment,
 	IconButton,
 } from "@mui/material";
@@ -14,18 +15,19 @@ import "./Auth.css";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Logo from "../../components/Logo";
-import React from "react";
+import React, { useState } from "react";
 import { login } from "../../api/services/auth";
 const Auth = () => {
 	const {
 		control,
 		handleSubmit,
 		setError,
-		reset,
 		formState: { errors },
 	} = useForm<IAuthLogin>();
+	const [isLoading, setIsLoading] = useState(false);
 
 	async function onSubmit(e: IAuthLogin) {
+		setIsLoading(true);
 		if (e.password.length < 6) {
 			setError("password", {
 				type: "minLength",
@@ -43,6 +45,7 @@ const Auth = () => {
 			});
 		}
 		const { data } = await login(e);
+		setIsLoading(false);
 		console.log(data);
 	}
 
@@ -129,7 +132,7 @@ const Auth = () => {
 									error={Boolean(errors.password)}
 									helperText={errors.password?.message}
 									autoComplete="given-name"
-									type={!showPassword ? "text" : "password"}
+									type={showPassword ? "text" : "password"}
 									InputProps={{
 										endAdornment: (
 											<InputAdornment position="end">
@@ -138,7 +141,7 @@ const Auth = () => {
 													onClick={handleClickShowPassword}
 													edge="end"
 												>
-													{showPassword ? <VisibilityOff /> : <Visibility />}
+													{!showPassword ? <VisibilityOff /> : <Visibility />}
 												</IconButton>
 											</InputAdornment>
 										),
@@ -155,14 +158,15 @@ const Auth = () => {
 					>
 						Forgot Password
 					</Typography>
-					<Button
+					<LoadingButton
 						type="submit"
 						fullWidth
 						variant="contained"
 						sx={{ mt: 3, mb: 2 }}
+						loading={isLoading}
 					>
 						{"Sign In"}
-					</Button>
+					</LoadingButton>
 				</Box>
 			</Paper>
 		</Box>
