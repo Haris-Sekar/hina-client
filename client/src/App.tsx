@@ -1,12 +1,13 @@
-import Pages from "./pages/Pages";
 import { BrowserRouter as Router } from "react-router-dom";
 
+import AppRoutes from "./Pages/AppRoutes";
+
 function App() {
-  return (
-    <Router>
-      <Pages />
-    </Router>
-  );
+	return (
+		<Router>
+			<AppRoutes />
+		</Router>
+	);
 }
 
 export default App;

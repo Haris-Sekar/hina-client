@@ -140,7 +140,8 @@ export const login = async (req,res) => {
                     }
                     response = {
                         message: "login success",
-                        companies: parsedCompanies,
+                        userDetails: userObj.getUserJSON(),
+                        companies: parsedCompanies[0],
                         code: 200,
                         jwt_token: token
                     }
@@ -248,4 +249,11 @@ export const resendMail = async(req, res) => {
 
     }
     res.status(respCode).json(response);
+}
+
+export const verifyToken = async (req, res) => {
+    res.status(200).json({
+        code: 200,
+        message: 'valid token'
+    })
 }

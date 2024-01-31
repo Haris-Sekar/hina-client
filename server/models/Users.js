@@ -157,4 +157,13 @@ export default class Users {
   }
 
 
+  getUserJSON() {
+    return {
+      userId: this.userId,
+      email: this.email,
+      name: this.name,
+      mobile: this.mobile
+    }
+  }
+
 }
