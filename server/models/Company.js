@@ -110,7 +110,7 @@ export default class Company{
             name: this.name,
             address: this.address,
             gst: this.gst,
-            ownerId: await Users.getUserDetails(this.ownerId),
+            ownerDetails: await Users.getUserDetails(this.ownerId),
             createdTime: new Date(this.createdTime).toLocaleString(),
             createdBy: await Users.getUserDetails(this.createdBy)
         }

@@ -16,7 +16,7 @@ export const authenticateUser = async (req, res, next) => {
     } else {
         const parsedToken = token.split(" ")[1];
         try {
-            const authJson = jwt.decode(parsedToken, process.env.PRIVATEKEY);
+            const authJson = jwt.verify(parsedToken, process.env.PRIVATEKEY);
             const user = Users.getUserPojo(authJson);
             const userDetails = await user.getUserDetails();
 

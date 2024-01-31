@@ -8,18 +8,26 @@ export const createCompany = async (req, res) => {
     
     createCompanyTry: try{
         await db.beginTransaction()
-        const {name, gst, address} = req.body;
+        const {companyName, gstNumber, address} = req.body;
 
-        if(!name || !gst || !address) {
-            respCode = 400;
+        if(!companyName || !gstNumber || !address) {
+            respCode = 403;
             response = {
-                fields: ["name", "gst", "address"],
+                fields: ["companyName", "gstNumber", "address"],
                 message: "These fields are required"
             }
             break createCompanyTry;
         }
 
-        const company = new Company(name, gst, address);
+        if(gstNumber?.length < 15) {
+            respCode = 403;
+            response = {
+                fields: ["gstNumber"],
+                message: "Gst Number should be 15 digits"
+            }
+        }
+
+        const company = new Company(companyName, gstNumber, address);
         const result = await company.createCompany(req.userId);
 
         if(result.affectedRows > 0) {
@@ -70,7 +78,8 @@ export const getCompanyDetails = async(req, res) => {
         }
 
         response = {
-            companies: parsedCompanies
+            code: 200,
+            companies: parsedCompanies[0]
         }
         respCode = 200;
 
