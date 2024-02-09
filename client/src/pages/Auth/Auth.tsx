@@ -1,5 +1,5 @@
 import { Controller, useForm } from "react-hook-form";
-import { IAuthLogin } from "../../Types/User";
+import { IAuthLogin, User } from "../../Types/User";
 import LoadingButton from "@mui/lab/LoadingButton";
 
 import { Box } from "@mui/system";
@@ -15,8 +15,20 @@ import "./Auth.css";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Logo from "../../components/Logo";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { login } from "../../api/services/auth";
+import { useAppDispatch } from "../../store/store";
+import {
+	populateCompanyDetails,
+	populateCurrentUserDetails,
+} from "../../store/Reducers/UserReducers";
+import { Company } from "../../Types/Company";
+import {
+	companyDetailsConst,
+	token,
+	userDetailsConst,
+} from "../../Constants/CommonConstants";
+import { useNavigate } from "react-router-dom";
 const Auth = () => {
 	const {
 		control,
@@ -25,6 +37,16 @@ const Auth = () => {
 		formState: { errors },
 	} = useForm<IAuthLogin>();
 	const [isLoading, setIsLoading] = useState(false);
+
+	const dispatch = useAppDispatch();
+
+	const navigate = useNavigate();
+	const jwtToken = localStorage.getItem(token);
+	useEffect(() => {
+		if (jwtToken) {
+			navigate("/app");
+		}
+	}, [navigate]);
 
 	async function onSubmit(e: IAuthLogin) {
 		setIsLoading(true);
@@ -44,9 +66,19 @@ const Auth = () => {
 				message: "Enter an valid email address",
 			});
 		}
-		const { data } = await login(e);
-		setIsLoading(false);
-		console.log(data);
+		try {
+			const { data } = await login(e);
+			const userDetails: User = data.userDetails as User;
+			userDetails.loggedOnTime = Date.now();
+			dispatch(populateCurrentUserDetails(userDetails));
+			dispatch(populateCompanyDetails(data.companies as Company));
+			localStorage.setItem(token, data.jwt_token);
+			localStorage.setItem(userDetailsConst, JSON.stringify(userDetails));
+			localStorage.setItem(companyDetailsConst, JSON.stringify(data.companies));
+			setIsLoading(false);
+		} catch (error) {
+			setIsLoading(false);
+		}
 	}
 
 	function onError() {}

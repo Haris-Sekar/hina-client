@@ -2,8 +2,7 @@ import jwt from "jsonwebtoken";
 import Users from "../models/Users.js";
 import CompanyUserMapping from "../models/CompanyUserMapping.js";
 
-export const authenticateUser = async (req, res, next) => {
-
+export const authenticateUser = async (req, res, next) => { 
     const token = req.headers.authorization;
 
     if(!token) {

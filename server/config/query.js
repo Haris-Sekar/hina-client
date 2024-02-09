@@ -56,8 +56,8 @@ export const createUpdateQuery = (tableName, valueMap, condition) => {
     return query;
 };
 
-export const createDeleteQuery = (tableName, entityId, entityIdColumnName) => {
-    return `DELETE FROM ${tableName} WHERE ${entityIdColumnName} = ${entityId}`;
+export const createDeleteQuery = (tableName, entityIds, entityIdColumnName) => {
+    return `DELETE FROM ${tableName} WHERE ${entityIdColumnName} in (${entityIds})`;
 }
 
 export const createCountQuery = (tableName, condition) => {

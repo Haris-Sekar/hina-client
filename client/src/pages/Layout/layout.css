@@ -1,0 +1,11 @@
+.pageLayoutContainer {
+    display: flex;
+}
+
+.rhsContainer {
+    width: 100%;
+}
+
+.main {
+    /* height: 95%; */
+}

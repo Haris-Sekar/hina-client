@@ -6,6 +6,7 @@ export const config = {
 	password: "GqVJ7Jh79O5xpMzafZcZ",
 	debug: false,
 	database: "brzhw1vmdolp3u79q9p3",
+	connectionLimit: 10,
 };
 
 export const localConfig = {
@@ -15,4 +16,4 @@ export const localConfig = {
 	database: "pos",
 };
 
-export default await mysql.createConnection(config);
+export default await mysql.createPool({ ...config }).getConnection();

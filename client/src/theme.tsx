@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 
 const theme = createTheme({
 	palette: {
@@ -8,6 +8,9 @@ const theme = createTheme({
 		},
 		primary: {
 			main: "#5e35b1",
+		},
+		info: {
+			main: "#ffffff",
 		},
 	},
 	typography: {

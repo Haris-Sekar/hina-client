@@ -1,136 +1,143 @@
-import {createCountQuery, createInsertQuery, createUpdateQuery, generateUniqueId} from "../config/query.js";
+import {
+	createCountQuery,
+	createInsertQuery,
+	createUpdateQuery,
+	generateUniqueId,
+} from "../config/query.js";
 import db from "../config/db.js";
 import Users from "./Users.js";
 
 export default class MainArea {
-    mainAreaId;
-    name;
-    createdBy;
-    createdTime;
-    updatedBy;
-    updatedTime;
-    companyId;
-    static tableName = "main_area";
+	mainAreaId;
+	name;
+	createdBy;
+	createdTime;
+	updatedBy;
+	updatedTime;
+	companyId;
+	static tableName = "main_area";
 
-    constructor(name, companyId) {
-        this.name = name;
-        this.companyId = companyId;
-    }
+	constructor(name, companyId) {
+		this.name = name;
+		this.companyId = companyId;
+	}
 
+	async serializeToSQLQuery(userId) {
+		const mainAreaId = await generateUniqueId(
+			MainArea.tableName,
+			"main_area_id"
+		);
+		const json = {
+			main_area_id: mainAreaId,
+			name: this.name,
+			created_by: userId,
+			created_time: Date.now(),
+			updated_by: userId,
+			updated_time: Date.now(),
+			company_id: this.companyId,
+		};
+		for (const key in json) {
+			if (json[key] === undefined) {
+				delete json[key];
+			}
+		}
+		return json;
+	}
 
-    async serializeToSQLQuery(userId) {
-        const mainAreaId = await generateUniqueId(MainArea.tableName, "main_area_id");
-        const json = {
-            main_area_id: mainAreaId,
-            name: this.name,
-            created_by: userId,
-            created_time: Date.now(),
-            updated_by: userId,
-            updated_time: Date.now(),
-            company_id: this.companyId
-        };
-        for (const key in json) {
-            if (json[key] === undefined) {
-                delete json[key];
-            }
-        }
-        return json;
-    }
+	static async deserializeFromJson(json) {
+		const mainArea = new MainArea();
 
-    static async deserializeFromJson(json) {
+		if (json.name !== null && json.name !== undefined) {
+			mainArea.name = json.name;
+		}
 
-        const mainArea = new MainArea();
+		let userDetails;
 
-        if(json.name !== null && json.name !== undefined) {
-            mainArea.name = json.name;
-        }
+		if (json.created_by === json.updated_by) {
+			userDetails = await Users.getUserDetails(json.created_by);
+			mainArea.updatedBy = userDetails;
+			mainArea.createdBy = userDetails;
+		} else {
+			if (json.created_by !== null && json.created_by !== undefined) {
+				mainArea.createdBy = await Users.getUserDetails(json.created_by);
+			}
+			if (json.updated_by !== null && json.updated_by !== undefined) {
+				mainArea.updatedBy = await Users.getUserDetails(json.updated_by);
+			}
+		}
 
-        let userDetails;
+		if (json.created_time !== null && json.created_time !== undefined) {
+			mainArea.createdTime = json.created_time;
+		}
 
-        if(json.created_by === json.updated_by) {
-            userDetails = await Users.getUserDetails(json.created_by);
-            mainArea.updatedBy = userDetails;
-            mainArea.createdBy = userDetails;
-        } else {
-            if(json.created_by !== null && json.created_by !== undefined) {
-                mainArea.createdBy = await Users.getUserDetails(json.created_by);
-            }
-            if(json.updated_by !== null && json.updated_by !== undefined) {
-                mainArea.updatedBy = await Users.getUserDetails(json.updated_by);
-            }
-        } 
+		if (json.updated_time !== null && json.updated_time !== undefined) {
+			mainArea.updatedTime = json.updated_time;
+		}
 
-        if(json.created_time !== null && json.created_time !== undefined) {
-            mainArea.createdTime = json.created_time;
-        }
+		if (json.main_area_id !== null && json.main_area_id !== undefined) {
+			mainArea.mainAreaId = json.main_area_id;
+		}
 
-        if(json.updated_time !== null && json.updated_time !== undefined) {
-            mainArea.updatedTime = json.updated_time;
-        }
+		if (json.company_id !== null && json.company_id !== undefined) {
+			mainArea.companyId = json.company_id;
+		}
 
-        if(json.main_area_id !== null && json.main_area_id !== undefined) {
-            mainArea.mainAreaId = json.main_area_id;
-        }
+		return mainArea;
+	}
 
-        if(json.company_id !== null && json.company_id !== undefined) {
-            mainArea.companyId = json.company_id;
-        }
+	async addMainArea(userId) {
+		const query = createInsertQuery(
+			"main_area",
+			await this.serializeToSQLQuery(userId)
+		);
 
-        return mainArea;
+		const [result] = await db.query(query);
 
-    }
+		return result;
+	}
 
-    async addMainArea(userId) {
-        const query = createInsertQuery("main_area", await this.serializeToSQLQuery(userId));
+	static async updateMainArea(updateObj, condition) {
+		const query = createUpdateQuery("main_area", updateObj, condition);
 
-        const [result] = await db.query(query);
+		const [result] = await db.query(query);
 
-        return result;
+		return result;
+	}
 
-    }
+	static async getMainAreas(companyId, index, range) {
+		const query = `select * from main_area where company_id= ${companyId} order by created_time ${
+			index && range ? `limit ${index}, ${range}` : ""
+		}`;
+		const [result] = await db.query(query);
 
-    static async updateMainArea(updateObj, condition) {
-        const query = createUpdateQuery("main_area", updateObj, condition);
+		let listOfMainArea = [];
 
-        const [result] = await db.query(query);
+		result.forEach((mainArea) => {
+			listOfMainArea.push(MainArea.deserializeFromJson(mainArea));
+		});
 
-        return result;
-    }
+		await Promise.all(listOfMainArea).then((result) => {
+			listOfMainArea = result;
+		});
 
-    static async getMainAreas(companyId, index = 0, range = 10) {
-        const query = `select * from main_area where company_id= ${companyId} limit ${index}, ${range}`;
-        const [result] = await db.query(query);
-        
-        let listOfMainArea = [];
-        
-        result.forEach((mainArea) => {
-            listOfMainArea.push(MainArea.deserializeFromJson(mainArea));
-        });
+		return listOfMainArea;
+	}
 
-        await Promise.all(listOfMainArea).then((result) => {
-            listOfMainArea=result;
-        });
+	static async getMainAreaCount(companyId) {
+		const query = createCountQuery("main_area", `company_id= ${companyId}`);
 
-        return listOfMainArea;
-    }
+		const [result] = await db.query(query);
 
-    static async getMainAreaCount(companyId) {
-        const query = createCountQuery("main_area", `company_id= ${companyId}`);
-        
-        const [result] = await db.query(query);
-        
-        return result[0];
-    }
+		return result[0];
+	}
 
-    static async getMainArea(companyId, mainAreaId) {
-        const query = `select * from main_area where main_area_id = ${mainAreaId} and company_id= ${companyId} limit 0,1`;
-        const [result] = await db.query(query);
+	static async getMainArea(companyId, mainAreaId) {
+		const query = `select * from main_area where main_area_id = ${mainAreaId} and company_id= ${companyId} limit 0,1`;
+		const [result] = await db.query(query);
 
-        if(result.length === 1) {
-            return MainArea.deserializeFromJson(result[0])
-        }
-        return null;
-    }
-
-
+		if (result.length === 1) {
+			return MainArea.deserializeFromJson(result[0]);
+		}
+		return null;
+	}
 }

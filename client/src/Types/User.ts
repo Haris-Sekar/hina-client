@@ -5,10 +5,11 @@ interface IAuthLogin {
 }
 
 interface User {
+    userId: number;
     name: string;
     email: string;
-    role: string;
     phone: number;
+    loggedOnTime: number;
 }
 
 export type { IAuthLogin, User };
