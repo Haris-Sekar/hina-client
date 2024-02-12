@@ -23,7 +23,7 @@ const EditMainArea = () => {
 
 	const id = params.id as unknown as number;
 
-	const { loading, mainAreas } = useAppSelector((state) => state.customer);
+	const { mainAreas } = useAppSelector((state) => state.customer);
 
 	const dispatch = useAppDispatch();
 
@@ -55,11 +55,11 @@ const EditMainArea = () => {
 		setIsLoading(true);
 		e.mainAreaId = id;
 		updateMainArea(e)
-			.then((data) => {
+			.then((_data) => {
 				setIsLoading(false);
 				navigate("/app/sales/mainArea");
 			})
-			.catch((e) => {
+			.catch((_e) => {
 				setIsLoading(false);
 			});
 	}

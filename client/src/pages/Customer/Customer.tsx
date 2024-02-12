@@ -6,7 +6,6 @@ import {
 	emptyCustomer,
 	fetchCustomers,
 	fetchCustomersCount,
-	setCustomerLoading,
 } from "../../store/Reducers/CustomerReducers";
 import { customerRowData } from "../../Types/Customer";
 import { useNavigate } from "react-router-dom";

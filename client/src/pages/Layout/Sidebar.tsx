@@ -13,12 +13,10 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import useWindowSize from "../../components/UseWindowSize";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 import {
 	Avatar,
 	Card,
-	CardHeader,
 	Tooltip,
 	Typography,
 	Zoom,
@@ -26,7 +24,6 @@ import {
 import { useAppSelector } from "../../store/store";
 import { sidebarItems } from "../../Constants/MenuItems";
 import { Link } from "react-router-dom";
-import { red } from "@mui/material/colors";
 const drawerWidth = 240;
 
 const openedMixin = (theme: Theme): CSSObject => ({

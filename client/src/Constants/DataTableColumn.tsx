@@ -1,4 +1,4 @@
-import { GridColDef, GridColumnHeaderParams } from "@mui/x-data-grid";
+import { GridColDef } from "@mui/x-data-grid";
 import { customerRowData, mainAreaRowData } from "../Types/Customer";
 
 function getHeader(name: string) {

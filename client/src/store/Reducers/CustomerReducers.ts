@@ -89,7 +89,7 @@ export const CustomerReducer = createSlice({
     name: "customer",
     initialState,
     reducers: {
-        emptyCustomer: (state, action: PayloadAction<void>) => {
+        emptyCustomer: (state) => {
             state.customers = []
         },
         setCustomerLoading: (state, action: PayloadAction<boolean>) => {

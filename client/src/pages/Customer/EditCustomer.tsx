@@ -13,13 +13,12 @@ import { Controller, useForm } from "react-hook-form";
 import { Customer } from "../../Types/Customer";
 import CustomTooltip from "../../components/Tooltip";
 import LoadingButton from "@mui/lab/LoadingButton";
-import React, { useEffect, useState } from "react";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { useEffect, useState } from "react";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { updateCustomer } from "../../api/services/customer";
 import { useAppDispatch, useAppSelector } from "../../store/store";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import ModeEditOutlinedIcon from '@mui/icons-material/ModeEditOutlined';
+import { useNavigate, useParams } from "react-router-dom";
+import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
 import {
 	fetchCustomers,
 	fetchMainArea,
@@ -30,9 +29,7 @@ const EditCustomer = () => {
 
 	const id = params.id as unknown as number;
 
-	const { customers, loading, mainAreas } = useAppSelector(
-		(state) => state.customer
-	);
+	const { customers, mainAreas } = useAppSelector((state) => state.customer);
 
 	const dispatch = useAppDispatch();
 
@@ -44,10 +41,6 @@ const EditCustomer = () => {
 			dispatch(fetchMainArea({}));
 		}
 	}, [dispatch]);
-
-	useEffect(() => {
-		setPageLoading(loading);
-	}, [loading]);
 
 	const [values, setValues] = useState<Customer>();
 
@@ -63,30 +56,20 @@ const EditCustomer = () => {
 
 	const navigate = useNavigate();
 
-	function useQuery() {
-		const { search } = useLocation();
-
-		return React.useMemo(() => new URLSearchParams(search), [search]);
-	}
-
 	function getCustomerById(id: number): Customer | undefined {
 		return customers.find((customer) => customer.customerId === Number(id));
 	}
 
-	const param = useQuery();
-
 	function onSubmit(e: Customer) {
 		setIsLoading(true);
 		e.customerId = id;
-		updateCustomer(e).then((data) => {
+		updateCustomer(e).then((_data) => {
 			setIsLoading(false);
 			navigate("/app/sales/customer");
 		});
 	}
 
 	const [isLoading, setIsLoading] = useState(false);
-
-	const [pageLoading, setPageLoading] = useState(false);
 
 	function onError() {}
 
