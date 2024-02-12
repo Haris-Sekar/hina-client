@@ -28,3 +28,11 @@ interface IField {
     tooltip?: string;
     helperText?: string;
 }
+
+export interface IDialogBox {
+    id: string;
+    title: string;
+    description: React.ReactElement;
+    failureBtnText: string;
+    successBtnText: string;
+}

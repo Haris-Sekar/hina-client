@@ -300,9 +300,9 @@ export const deleteCustomers = async (req, res) => {
 	let respCode, response;
 	deleteCustomerTry: try {
 		await db.beginTransaction();
-		const { customerIds } = req.body;
+		const { ids } = req.query;
 
-		if (!customerIds && customerIds.length === 0) {
+		if (!ids && ids.length === 0) {
 			respCode = 403;
 			response = {
 				message: "Field validation error",
@@ -310,11 +310,7 @@ export const deleteCustomers = async (req, res) => {
 			};
 			break deleteCustomerTry;
 		}
-		const query = createDeleteQuery(
-			Customer.tableName,
-			customerIds,
-			"customer_id"
-		);
+		const query = createDeleteQuery(Customer.tableName, ids, "customer_id");
 
 		const [result] = await db.query(query);
 
@@ -511,6 +507,48 @@ export const deleteMainArea = async (req, res) => {
 			mainAreaId,
 			"main_area_id"
 		);
+
+		const [result] = await db.query(query);
+
+		if (result.affectedRows > 0) {
+			await db.commit();
+			respCode = 204;
+			response = {};
+		} else {
+			await db.commit();
+			respCode = 404;
+			response = {
+				message: "No Main Area with that ID is available",
+				code: 404,
+			};
+		}
+	} catch (e) {
+		await db.rollback();
+		response = {
+			message: e.message,
+			code: 500,
+		};
+		respCode = 500;
+	}
+
+	res.status(respCode).json(response);
+};
+
+export const deleteMainAreas = async (req, res) => {
+	let respCode, response;
+	deleteMainAreaTry: try {
+		await db.beginTransaction();
+		const { ids } = req.query;
+
+		if (!ids && ids.length > 0) {
+			respCode = 403;
+			response = {
+				message: "Field validation error",
+				fields: "ids should be provided",
+			};
+			break deleteMainAreaTry;
+		}
+		const query = createDeleteQuery(MainArea.tableName, ids, "main_area_id");
 
 		const [result] = await db.query(query);
 

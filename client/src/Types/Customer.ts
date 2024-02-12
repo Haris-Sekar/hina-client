@@ -34,6 +34,7 @@ interface customerRowData {
     phoneNumber: number;
     email: string;
     gst: string;
+    mainArea: string;
 }
 
 interface mainAreaRowData {

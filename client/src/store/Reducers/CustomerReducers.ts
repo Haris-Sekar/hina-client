@@ -48,11 +48,12 @@ export const fetchCustomers = createAsyncThunk<Customer[], { page?: number, rang
     }
 )
 
-export const fetchCustomersCount = createAsyncThunk<number, number, { rejectValue: string }>(
+export const fetchCustomersCount = createAsyncThunk<number, void, { rejectValue: string }>(
     "customer/fetchCustomersCount",
     async (_, thunkApi) => {
         try {
-            const { data } = await API.get(`/company/${_}/customer/count`)
+            const companyId = (JSON.parse(localStorage.getItem(companyDetailsConst) as string) as Company).companyId
+            const { data } = await API.get(`/company/${companyId}/customer/count`)
             return data.count;
         } catch (error: any) {
             return thunkApi.rejectWithValue(error?.message);
@@ -60,7 +61,7 @@ export const fetchCustomersCount = createAsyncThunk<number, number, { rejectValu
     }
 )
 
-export const fetchMainArea = createAsyncThunk<MainArea[], void, { rejectValue: string }>
+export const fetchMainArea = createAsyncThunk<MainArea[], { mainAreaId?: number }, { rejectValue: string }>
     ("customer/fetchMainArea", async (_, thunkApi) => {
         try {
             const companyId = (JSON.parse(localStorage.getItem(companyDetailsConst) as string) as Company).companyId
@@ -88,6 +89,12 @@ export const CustomerReducer = createSlice({
     name: "customer",
     initialState,
     reducers: {
+        emptyCustomer: (state, action: PayloadAction<void>) => {
+            state.customers = []
+        },
+        setCustomerLoading: (state, action: PayloadAction<boolean>) => {
+            state.loading = action.payload
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -138,4 +145,6 @@ export const CustomerReducer = createSlice({
 })
 
 
-export default CustomerReducer.reducer; 
+export default CustomerReducer.reducer;
+
+export const { emptyCustomer, setCustomerLoading } = CustomerReducer.actions;

@@ -11,37 +11,35 @@ import { Controller, useForm } from "react-hook-form";
 import { MainArea } from "../../Types/Customer";
 import CustomTooltip from "../../components/Tooltip";
 import LoadingButton from "@mui/lab/LoadingButton";
-import React, { useState } from "react";
+import { useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { addMainArea } from "../../api/services/customer";
-import { useAppDispatch } from "../../store/store";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const AddMainArea = () => {
 	const {
 		control,
 		handleSubmit,
+		reset,
 		formState: { errors },
 	} = useForm<MainArea>();
 
 	const navigate = useNavigate();
 
-	function useQuery() {
-		const { search } = useLocation();
-
-		return React.useMemo(() => new URLSearchParams(search), [search]);
-	}
-
-	const param = useQuery();
-
-	function onSubmit(e: MainArea) {
+	function onSubmit(e: MainArea, event: any) {
 		setIsLoading(true);
 		addMainArea(e)
 			.then((data) => {
 				console.log(data);
 				setIsLoading(false);
-				param.get("from") === "detail" && navigate("/app/sales/mainArea");
+				if (event.nativeEvent.submitter.id !== "saveAndNew") {
+					navigate("/app/sales/mainArea");
+				} else {
+					reset({
+						name: "",
+					});
+				}
 			})
 			.catch(() => {
 				setIsLoading(false);
@@ -116,14 +114,26 @@ const AddMainArea = () => {
 						sx={{ mt: 3, mb: 2, width: "fit-content" }}
 						loading={isLoading}
 						startIcon={<AddCircleIcon />}
+						id="saveAndClose"
 					>
-						Save
+						Save And Close
+					</LoadingButton>
+					<LoadingButton
+						type="submit"
+						variant="outlined"
+						sx={{ mt: 3, mb: 2, width: "fit-content" }}
+						loading={isLoading}
+						startIcon={<AddCircleIcon />}
+						id="saveAndNew"
+					>
+						Save And New
 					</LoadingButton>
 
 					<Button
 						variant="contained"
 						color="error"
 						sx={{ mt: 3, mb: 2, width: "fit-content" }}
+						onClick={() => navigate("/app/sales/mainArea")}
 						endIcon={<CancelIcon />}
 					>
 						Cancel

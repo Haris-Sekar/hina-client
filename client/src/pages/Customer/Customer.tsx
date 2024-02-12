@@ -3,30 +3,33 @@ import { createCustomerRow, customer } from "../../Constants/DataTableColumn";
 import ModulePage from "../../components/ModulePage/ModulePage";
 import { useAppDispatch, useAppSelector } from "../../store/store";
 import {
+	emptyCustomer,
 	fetchCustomers,
 	fetchCustomersCount,
+	setCustomerLoading,
 } from "../../store/Reducers/CustomerReducers";
 import { customerRowData } from "../../Types/Customer";
 import { useNavigate } from "react-router-dom";
+import { deleteCustomer } from "../../api/services/customer";
 
 const Customer = () => {
 	const { customers, loading, customerCount } = useAppSelector(
 		(state) => state.customer
 	);
-	const companyDetails = useAppSelector((state) => state.user.companyDetails);
 	let rows: customerRowData[] = [];
 
 	const dispatch = useAppDispatch();
-	const companyId = companyDetails?.companyId as number;
 
 	useEffect(() => {
-		if (typeof companyId === "number") {
-			dispatch(fetchCustomersCount(companyId));
-			if (customerCount > 0) {
-				onPaginationModelChange({ page: 0, pageSize: 10 });
-			}
+		dispatch(emptyCustomer());
+		dispatch(fetchCustomersCount());
+	}, [dispatch]);
+
+	useEffect(() => {
+		if (customerCount > 0) {
+			onPaginationModelChange({ page: 0, pageSize: 10 });
 		}
-	}, [dispatch, customerCount]);
+	}, [customerCount]);
 
 	function onPaginationModelChange(e: any) {
 		dispatch(
@@ -44,9 +47,11 @@ const Customer = () => {
 					customer.customerId,
 					customer.companyName,
 					customer.firstName,
+					customer.lastName,
 					customer.phoneNumber,
 					customer.email,
-					customer.gstNumber
+					customer.gstNumber,
+					customer.mainArea.name
 				)
 			);
 		});
@@ -59,10 +64,15 @@ const Customer = () => {
 	}
 
 	function editCallback(e: number[]) {
-		navigate(`/app/sales/customer/${e[0]}/edit`);
+		navigate(`/app/sales/customer/${e[0]}/edit?from=detail`);
 	}
 
-	function deleteCallBack() {}
+	function deleteCallBack(e: number[]) {
+		deleteCustomer(e).then(() => {
+			dispatch(emptyCustomer());
+			dispatch(fetchCustomersCount());
+		});
+	}
 
 	return (
 		<>

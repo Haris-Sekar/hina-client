@@ -11,6 +11,7 @@ import {
 	getCustomersCount,
 	getMainAreaCount,
 	deleteCustomers,
+	deleteMainAreas,
 } from "../controllers/customer.js";
 import {
 	authenticateCompany,
@@ -35,6 +36,12 @@ router.patch(
 	authenticateUser,
 	authenticateCompany,
 	updateCustomer
+);
+router.delete(
+	"/mainArea/",
+	authenticateUser,
+	authenticateCompany,
+	deleteMainAreas
 );
 router.delete(
 	"/:customerId",

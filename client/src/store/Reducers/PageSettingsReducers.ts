@@ -3,7 +3,7 @@ import { PageSettings } from "../../Types/PageSettings";
 
 
 const initialState: PageSettings = {
-    isDarkTheme: false
+    isDarkTheme: false,
 }
 
 export const PageSettingsReducer = createSlice({

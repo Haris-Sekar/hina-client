@@ -41,6 +41,13 @@ const customer: GridColDef[] = [
 		flex: 1,
 		renderHeader: () => getHeader("GST Number"),
 	},
+	{
+		field: "mainArea",
+		headerName: "Main Area",
+		width: 200,
+		flex: 1,
+		renderHeader: () => getHeader("Main Area"),
+	},
 ];
 
 const mainArea: GridColDef[] = [
@@ -56,12 +63,22 @@ const mainArea: GridColDef[] = [
 const createCustomerRow = (
 	id: number,
 	companyName: string,
-	name: string,
+	firstName: string,
+	lastName: string,
 	phoneNumber: number,
 	email: string,
-	gst: string
+	gst: string,
+	mainArea: string
 ): customerRowData => {
-	return { id, companyName, name, phoneNumber, email, gst };
+	return {
+		id,
+		companyName,
+		name: firstName + " " + (lastName ? lastName : ""),
+		phoneNumber,
+		email,
+		gst,
+		mainArea
+	};
 };
 
 const createMainAreaRow = (id: number, name: string): mainAreaRowData => {

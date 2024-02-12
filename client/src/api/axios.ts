@@ -31,5 +31,6 @@ API.interceptors.response.use(
     (err) => {
         return Promise.reject(err.response.data)
     }
-)
+);
+
 export { API };

@@ -14,6 +14,7 @@ import AddCustomer from "./Customer/AddCustomer";
 import MainArea from "./MainArea/MainArea";
 import AddMainArea from "./MainArea/AddMainArea";
 import EditCustomer from "./Customer/EditCustomer";
+import EditMainArea from "./MainArea/EditMainArea";
 
 const AppRoutes = () => {
 	const { companyDetails, currentUserDetails } = useAppSelector(
@@ -61,6 +62,10 @@ const AppRoutes = () => {
 						/>
 						<Route path="/app/sales/mainArea" element={<MainArea />} />
 						<Route path="/app/sales/mainArea/add" element={<AddMainArea />} />
+						<Route
+							path="/app/sales/mainArea/:id/edit"
+							element={<EditMainArea />}
+						/>
 						<Route path="/app/*" />
 					</Route>
 				)}

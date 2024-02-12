@@ -6,6 +6,7 @@ import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined
 import ListView from "./ListView";
 import { GridColDef } from "@mui/x-data-grid";
 import { useState } from "react";
+import LoadingButton from "@mui/lab/LoadingButton";
 interface IModulePage {
 	moduleName: string;
 	rows: any;
@@ -17,6 +18,7 @@ interface IModulePage {
 	addCallBack: Function;
 	editCallBack: Function;
 	deleteCallBack: Function;
+	deleteBtnLoading?: boolean;
 }
 
 const ModulePage = ({
@@ -30,6 +32,7 @@ const ModulePage = ({
 	deleteCallBack,
 	addCallBack,
 	isServerPagination,
+	deleteBtnLoading,
 }: IModulePage) => {
 	const [selectedIds, setSelectedIds] = useState<number[]>([]);
 	function onRowSelect(ids: number[]) {
@@ -46,19 +49,20 @@ const ModulePage = ({
 								<Button
 									startIcon={<ModeEditOutlineOutlinedIcon />}
 									variant="contained"
-									onClick={(e) => editCallBack(selectedIds)}
+									onClick={(_e) => editCallBack(selectedIds)}
 								>
 									Edit {moduleName}
 								</Button>
 							)}
-							<Button
+							<LoadingButton
 								variant="contained"
 								color="error"
 								endIcon={<DeleteForeverOutlinedIcon />}
-								onClick={(e) => deleteCallBack(selectedIds)}
+								onClick={(_e) => deleteCallBack(selectedIds)}
+								loading={deleteBtnLoading}
 							>
 								Delete {moduleName}
-							</Button>
+							</LoadingButton>
 						</ButtonGroup>
 					)}
 				</div>

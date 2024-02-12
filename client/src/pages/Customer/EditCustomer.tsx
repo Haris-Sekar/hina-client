@@ -16,35 +16,44 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import React, { useEffect, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { addCustomer } from "../../api/services/customer";
+import { updateCustomer } from "../../api/services/customer";
 import { useAppDispatch, useAppSelector } from "../../store/store";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import ModeEditOutlinedIcon from '@mui/icons-material/ModeEditOutlined';
 import {
 	fetchCustomers,
 	fetchMainArea,
 } from "../../store/Reducers/CustomerReducers";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const EditCustomer = () => {
 	const params = useParams();
 
 	const id = params.id as unknown as number;
-	console.log(id);
+
+	const { customers, loading, mainAreas } = useAppSelector(
+		(state) => state.customer
+	);
 
 	const dispatch = useAppDispatch();
-	let temp = useAppSelector((state) => state.customer.customers);
-	let values = temp.find((customer) => customer.customerId === (id as number));
+
 	useEffect(() => {
-		if (!values) {
+		if (!customers || (customers.length === 0 && id)) {
 			dispatch(fetchCustomers({ customerId: id }));
-			values = temp.find((customer) => customer.customerId === (id as number));
+		}
+		if (!mainAreas || (mainAreas.length === 0 && id)) {
+			dispatch(fetchMainArea({}));
 		}
 	}, [dispatch]);
 
 	useEffect(() => {
-		console.log(values);
-	}, [values]);
+		setPageLoading(loading);
+	}, [loading]);
 
-	console.log(values);
+	const [values, setValues] = useState<Customer>();
+
+	useEffect(() => {
+		setValues(getCustomerById(id));
+	});
 
 	const {
 		control,
@@ -60,26 +69,26 @@ const EditCustomer = () => {
 		return React.useMemo(() => new URLSearchParams(search), [search]);
 	}
 
+	function getCustomerById(id: number): Customer | undefined {
+		return customers.find((customer) => customer.customerId === Number(id));
+	}
+
 	const param = useQuery();
 
 	function onSubmit(e: Customer) {
 		setIsLoading(true);
-		addCustomer(e).then((data) => {
-			console.log(data);
+		e.customerId = id;
+		updateCustomer(e).then((data) => {
 			setIsLoading(false);
-			param.get("from") === "detail" && navigate("/app/sales/customer");
+			navigate("/app/sales/customer");
 		});
 	}
 
 	const [isLoading, setIsLoading] = useState(false);
 
+	const [pageLoading, setPageLoading] = useState(false);
+
 	function onError() {}
-
-	useEffect(() => {
-		dispatch(fetchMainArea());
-	}, []);
-
-	const { mainAreas } = useAppSelector((state) => state.customer);
 
 	return (
 		<Paper
@@ -89,11 +98,12 @@ const EditCustomer = () => {
 				margin: "auto",
 				mt: 10,
 				borderRadius: 10,
+				minHeight: 300,
 			}}
 		>
 			<Typography variant="h1">Edit Customer</Typography>
 			<Divider />
-			{temp && values && (
+			{values && (
 				<Box
 					component="form"
 					noValidate
@@ -359,6 +369,10 @@ const EditCustomer = () => {
 										id: values.mainArea.mainAreaId,
 										label: values.mainArea.name,
 									}}
+									value={{
+										id: values.mainArea.mainAreaId,
+										label: values.mainArea.name,
+									}}
 									renderInput={(params) => (
 										<TextField
 											{...params}
@@ -366,6 +380,10 @@ const EditCustomer = () => {
 											error={Boolean(errors.mainAreaId)}
 											label="Main Area"
 											required
+											value={{
+												id: values.mainArea.mainAreaId,
+												label: values.mainArea.name,
+											}}
 										/>
 									)}
 								/>
@@ -378,7 +396,7 @@ const EditCustomer = () => {
 							variant="contained"
 							sx={{ mt: 3, mb: 2, width: "fit-content" }}
 							loading={isLoading}
-							startIcon={<AddCircleIcon />}
+							startIcon={<ModeEditOutlinedIcon />}
 						>
 							Update
 						</LoadingButton>
@@ -388,7 +406,7 @@ const EditCustomer = () => {
 							color="error"
 							sx={{ mt: 3, mb: 2, width: "fit-content" }}
 							endIcon={<CancelIcon />}
-							onClick={() => navigate("/app/customer")}
+							onClick={() => navigate("/app/sales/customer")}
 						>
 							Cancel
 						</Button>
