@@ -114,6 +114,9 @@ export const CustomerReducer = createSlice({
             })
             .addCase(fetchCustomersCount.fulfilled, (state, action) => {
                 state.customerCount = action.payload;
+                if (action.payload === 0) {
+                    state.loading = false
+                }
             })
             .addCase(fetchCustomersCount.rejected, (state, action) => {
                 state.loading = false;

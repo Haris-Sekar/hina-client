@@ -6,6 +6,7 @@ import { useAppSelector } from "../../store/store";
 const PageLayout = () => {
 	const customerLoading = useAppSelector((state) => state.customer.loading);
 	const userLoading = useAppSelector((state) => state.user.loading);
+	const inventoryLoading = useAppSelector((state) => state.inventory.loading);
 
 	return (
 		<div className="pageLayoutContainer">
@@ -13,7 +14,9 @@ const PageLayout = () => {
 			<div className="rhsContainer">
 				{/* <Navbar /> */}
 				<div className="main">
-					{(customerLoading || userLoading) && <LinearProgress />}
+					{(customerLoading || userLoading || inventoryLoading) && (
+						<LinearProgress />
+					)}
 					<Outlet />
 				</div>
 			</div>

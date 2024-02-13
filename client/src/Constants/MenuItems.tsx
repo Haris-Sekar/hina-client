@@ -8,6 +8,8 @@ import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
 import SpeedOutlinedIcon from "@mui/icons-material/SpeedOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import DomainAddIcon from "@mui/icons-material/DomainAdd";
+import StraightenOutlinedIcon from "@mui/icons-material/StraightenOutlined";
+import WorkspacesOutlinedIcon from "@mui/icons-material/WorkspacesOutlined";
 const sidebarItems = [
 	{
 		items: [
@@ -21,7 +23,18 @@ const sidebarItems = [
 				icon: <Inventory2OutlinedIcon color="primary" />,
 				text: "Inventory",
 				to: "/app/inventory",
-				subItems: [],
+				subItems: [
+					{
+						icon: <WorkspacesOutlinedIcon color="primary" />,
+						text: "Item Group",
+						to: "/app/itemgroup",
+					},
+					{
+						icon: <StraightenOutlinedIcon color="primary" />,
+						text: "Size",
+						to: "/app/size",
+					},
+				],
 			},
 		],
 	},

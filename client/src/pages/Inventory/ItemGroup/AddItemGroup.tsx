@@ -8,37 +8,34 @@ import {
 	Typography,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
-import { MainArea } from "../../Types/Customer";
-import CustomTooltip from "../../components/Tooltip";
+import CustomTooltip from "../../../components/Tooltip";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { addMainArea } from "../../api/services/customer";
 import { useNavigate } from "react-router-dom";
+import { ItemGroup } from "../../../Types/Inventory";
+import { addItemGroup } from "../../../api/services/inventory";
 
-const AddMainArea = () => {
+const AddItemGroup = () => {
 	const {
 		control,
 		handleSubmit,
 		reset,
 		formState: { errors },
-	} = useForm<MainArea>();
+	} = useForm<ItemGroup>();
 
 	const navigate = useNavigate();
 
-	function onSubmit(e: MainArea, event: any) {
+	function onSubmit(e: ItemGroup, event: any) {
 		setIsLoading(true);
-		addMainArea(e)
-			.then((data) => {
-				console.log(data);
+		addItemGroup(e)
+			.then((_data) => {
 				setIsLoading(false);
 				if (event.nativeEvent.submitter.id !== "saveAndNew") {
-					navigate("/app/sales/mainArea");
+					navigate("/app/itemgroup");
 				} else {
-					reset({
-						name: "",
-					});
+					reset();
 				}
 			})
 			.catch(() => {
@@ -60,7 +57,7 @@ const AddMainArea = () => {
 				borderRadius: 10,
 			}}
 		>
-			<Typography variant="h1">New Main Area</Typography>
+			<Typography variant="h1">New Item Group</Typography>
 			<Divider />
 			<Box
 				component="form"
@@ -85,8 +82,8 @@ const AddMainArea = () => {
 					}}
 				>
 					<Typography variant="subtitle1" sx={{ width: "20%" }}>
-						Main Area Name *
-						<CustomTooltip text="This is used to group and identiy customer based on their locality" />
+						Group Name *
+						<CustomTooltip text="This is used to group and identiy Items" />
 					</Typography>
 					<Controller
 						name="name"
@@ -99,7 +96,7 @@ const AddMainArea = () => {
 							<TextField
 								{...field}
 								sx={{ width: "80%" }}
-								label="Main Area Name"
+								label="Group Name"
 								error={Boolean(errors.name)}
 								helperText={errors.name?.message}
 								required
@@ -133,7 +130,7 @@ const AddMainArea = () => {
 						variant="contained"
 						color="error"
 						sx={{ mt: 3, mb: 2, width: "fit-content" }}
-						onClick={() => navigate("/app/sales/mainArea")}
+						onClick={() => navigate("/app/itemgroup")}
 						endIcon={<CancelIcon />}
 					>
 						Cancel
@@ -143,4 +140,4 @@ const AddMainArea = () => {
 		</Paper>
 	);
 };
-export default AddMainArea;
+export default AddItemGroup;

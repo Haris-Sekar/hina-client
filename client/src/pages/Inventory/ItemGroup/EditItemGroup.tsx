@@ -1,63 +1,66 @@
 import {
 	Box,
 	Button,
-	Divider,
 	Grid,
+	Divider,
 	Paper,
 	TextField,
 	Typography,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
-import { MainArea } from "../../Types/Customer";
+import { MainArea } from "../../../Types/Customer";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect, useState } from "react";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { updateMainArea } from "../../api/services/customer";
-import { useAppDispatch, useAppSelector } from "../../store/store";
+import { updateMainArea } from "../../../api/services/customer";
+import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { useNavigate, useParams } from "react-router-dom";
 import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
-import { fetchMainArea } from "../../store/Reducers/CustomerReducers";
+import { fetchMainArea } from "../../../store/Reducers/CustomerReducers";
+import { fetchItemGroup } from "../../../store/Reducers/InventoryReducerts";
+import { ItemGroup } from "../../../Types/Inventory";
+import { updateItemGroup } from "../../../api/services/inventory";
 
-const EditMainArea = () => {
+const EditItemGroup = () => {
 	const params = useParams();
 
 	const id = params.id as unknown as number;
 
-	const { mainAreas } = useAppSelector((state) => state.customer);
+	const { itemGroup } = useAppSelector((state) => state.inventory);
 
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
-		if (!mainAreas || (mainAreas.length === 0 && id)) {
-			dispatch(fetchMainArea({ mainAreaId: id }));
+		if (!itemGroup || (itemGroup.length === 0 && id)) {
+			dispatch(fetchItemGroup({ itemGroupId: id }));
 		}
 	}, [dispatch]);
 
-	const [values, setValues] = useState<MainArea>();
+	const [values, setValues] = useState<ItemGroup>();
 
 	useEffect(() => {
-		setValues(getMainAreaById(id));
+		setValues(getItemGroupById(id));
 	});
 
 	const {
 		control,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<MainArea>();
+	} = useForm<ItemGroup>();
 
 	const navigate = useNavigate();
 
-	function getMainAreaById(id: number): MainArea | undefined {
-		return mainAreas.find((mainArea) => mainArea.mainAreaId === Number(id));
+	function getItemGroupById(id: number): ItemGroup | undefined {
+		return itemGroup.find((group) => group.groupId === Number(id));
 	}
 
-	function onSubmit(e: MainArea) {
+	function onSubmit(e: ItemGroup) {
 		setIsLoading(true);
-		e.mainAreaId = id;
-		updateMainArea(e)
+		e.groupId = id;
+		updateItemGroup(e)
 			.then((_data) => {
 				setIsLoading(false);
-				navigate("/app/sales/mainArea");
+				navigate("/app/itemgroup");
 			})
 			.catch((_e) => {
 				setIsLoading(false);
@@ -79,7 +82,7 @@ const EditMainArea = () => {
 				minHeight: 300,
 			}}
 		>
-			<Typography variant="h1">Edit Customer</Typography>
+			<Typography variant="h1">Edit Item Group</Typography>
 			<Divider />
 			{values && (
 				<Box
@@ -105,21 +108,21 @@ const EditMainArea = () => {
 						}}
 					>
 						<Typography variant="subtitle1" sx={{ width: "20%" }}>
-							Customer Name *
+							Group name *
 						</Typography>
 						<Controller
 							name="name"
 							control={control}
 							defaultValue={values.name}
 							rules={{
-								required: "Name is required",
+								required: "Group Name is required",
 							}}
 							render={({ field }) => (
 								<TextField
 									{...field}
 									sx={{ width: "80%" }}
-									label="Name"
 									error={Boolean(errors.name)}
+									label="Group Name"
 									helperText={errors.name?.message}
 									required
 								/>
@@ -142,7 +145,7 @@ const EditMainArea = () => {
 							color="error"
 							sx={{ mt: 3, mb: 2, width: "fit-content" }}
 							endIcon={<CancelIcon />}
-							onClick={() => navigate("/app/sales/mainArea")}
+							onClick={() => navigate("/app/itemgroup")}
 						>
 							Cancel
 						</Button>
@@ -152,4 +155,4 @@ const EditMainArea = () => {
 		</Paper>
 	);
 };
-export default EditMainArea;
+export default EditItemGroup;

@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import { createMainAreaRow, mainArea } from "../../Constants/DataTableColumn";
-import ModulePage from "../../components/ModulePage/ModulePage";
-import { useAppDispatch, useAppSelector } from "../../store/store";
-import { fetchMainArea } from "../../store/Reducers/CustomerReducers";
-import { mainAreaRowData } from "../../Types/Customer";
+import {
+	createMainAreaRow,
+	mainArea,
+} from "../../../Constants/DataTableColumn";
+import ModulePage from "../../../components/ModulePage/ModulePage";
+import { useAppDispatch, useAppSelector } from "../../../store/store";
+import { fetchMainArea } from "../../../store/Reducers/CustomerReducers";
+import { mainAreaRowData } from "../../../Types/Customer";
 import { useNavigate } from "react-router-dom";
-import { deleteMainAreas } from "../../api/services/customer";
-import DialogBox from "../../components/DialogBox";
-import { IDialogBox } from "../../Types/Form";
+import { deleteMainAreas } from "../../../api/services/customer";
+import DialogBox from "../../../components/DialogBox";
+import { IDialogBox } from "../../../Types/Form";
 import { Typography } from "@mui/material";
 
 const MainArea = () => {

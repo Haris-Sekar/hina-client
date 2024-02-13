@@ -19,6 +19,7 @@ interface IModulePage {
 	editCallBack: Function;
 	deleteCallBack: Function;
 	deleteBtnLoading?: boolean;
+	rowOnClick?: Function;
 }
 
 const ModulePage = ({
@@ -33,6 +34,7 @@ const ModulePage = ({
 	addCallBack,
 	isServerPagination,
 	deleteBtnLoading,
+	rowOnClick,
 }: IModulePage) => {
 	const [selectedIds, setSelectedIds] = useState<number[]>([]);
 	function onRowSelect(ids: number[]) {
@@ -76,7 +78,11 @@ const ModulePage = ({
 				</Button>
 			</Box>
 
-			<Paper sx={{ width: "100%", borderRadius: "25px" }}>
+			<Paper
+				sx={{
+					borderRadius: "25px",
+				}}
+			>
 				<ListView
 					rows={rows}
 					columns={columns}
@@ -85,6 +91,7 @@ const ModulePage = ({
 					rowCount={rowCount}
 					onRowSelect={onRowSelect}
 					isServerPagination={isServerPagination}
+					rowOnClick={rowOnClick}
 				/>
 			</Paper>
 		</div>

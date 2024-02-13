@@ -11,10 +11,16 @@ import {
 	populateCurrentUserDetails,
 } from "../store/Reducers/UserReducers";
 import AddCustomer from "./Customer/AddCustomer";
-import MainArea from "./MainArea/MainArea";
-import AddMainArea from "./MainArea/AddMainArea";
+import MainArea from "./Customer/MainArea/MainArea";
+import AddMainArea from "./Customer/MainArea/AddMainArea";
 import EditCustomer from "./Customer/EditCustomer";
-import EditMainArea from "./MainArea/EditMainArea";
+import EditMainArea from "./Customer/MainArea/EditMainArea";
+import ItemGroup from "./Inventory/ItemGroup/ItemGroup";
+import AddItemGroup from "./Inventory/ItemGroup/AddItemGroup";
+import EditItemGroup from "./Inventory/ItemGroup/EditItemGroup";
+import Size from "./Inventory/Size/Size";
+import AddSize from "./Inventory/Size/AddSize";
+import EditSize from "./Inventory/Size/EditSize";
 
 const AppRoutes = () => {
 	const { companyDetails, currentUserDetails } = useAppSelector(
@@ -66,6 +72,12 @@ const AppRoutes = () => {
 							path="/app/sales/mainArea/:id/edit"
 							element={<EditMainArea />}
 						/>
+						<Route path="/app/itemgroup" element={<ItemGroup />} />
+						<Route path="/app/itemgroup/add" element={<AddItemGroup />} />
+						<Route path="/app/itemgroup/:id/edit" element={<EditItemGroup />} />
+						<Route path="/app/size" element={<Size />} />
+						<Route path="/app/size/add" element={<AddSize />} />
+						<Route path="/app/size/:id/edit" element={<EditSize />} />
 						<Route path="/app/*" />
 					</Route>
 				)}

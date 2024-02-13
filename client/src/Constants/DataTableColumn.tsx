@@ -1,5 +1,6 @@
 import { GridColDef } from "@mui/x-data-grid";
 import { customerRowData, mainAreaRowData } from "../Types/Customer";
+import { ItemGroupRowData, SizeRowData } from "../Types/Inventory";
 
 function getHeader(name: string) {
 	return <strong style={{ fontSize: 16 }}>{name}</strong>;
@@ -77,7 +78,7 @@ const createCustomerRow = (
 		phoneNumber,
 		email,
 		gst,
-		mainArea
+		mainArea,
 	};
 };
 
@@ -85,4 +86,40 @@ const createMainAreaRow = (id: number, name: string): mainAreaRowData => {
 	return { id, name };
 };
 
-export { customer, createCustomerRow, mainArea, createMainAreaRow };
+const itemGroup: GridColDef[] = [
+	{
+		field: "name",
+		headerName: "Group Name",
+		minWidth: 200,
+		flex: 1,
+		renderHeader: () => getHeader("Group Name"),
+	},
+];
+
+const createItemGroupRow = (id: number, name: string): ItemGroupRowData => {
+	return { id, name };
+};
+
+const size: GridColDef[] = [
+	{
+		field: "size",
+		headerName: "Size",
+		minWidth: 200,
+		flex: 1,
+		renderHeader: () => getHeader("Size"),
+	},
+];
+
+const createSizeRow = (id: number, size: string): SizeRowData => {
+	return { id, size };
+};
+export {
+	customer,
+	createCustomerRow,
+	mainArea,
+	createMainAreaRow,
+	itemGroup,
+	createItemGroupRow,
+	size,
+	createSizeRow,
+};

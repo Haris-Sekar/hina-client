@@ -1,3 +1,4 @@
+import { LinearProgress } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 export default function ListView({
@@ -8,6 +9,7 @@ export default function ListView({
 	onPaginationModelChange,
 	rowCount,
 	onRowSelect,
+	rowOnClick,
 }: {
 	rows: any;
 	columns: GridColDef[];
@@ -16,6 +18,7 @@ export default function ListView({
 	onPaginationModelChange?: Function;
 	rowCount?: number;
 	onRowSelect: Function;
+	rowOnClick?: Function;
 }) {
 	return (
 		<div>
@@ -36,6 +39,9 @@ export default function ListView({
 				pageSizeOptions={[10, 20]}
 				checkboxSelection
 				disableRowSelectionOnClick
+				slots={{
+					loadingOverlay: LinearProgress,
+				}}
 				loading={isLoading}
 				sx={{
 					"&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
@@ -51,6 +57,8 @@ export default function ListView({
 				onRowSelectionModelChange={(e) => onRowSelect(e)}
 				style={{ borderRadius: "25px", padding: "2%" }}
 				autoHeight
+				//@ts-ignore
+				onRowClick={(e) => rowOnClick(e)}
 			/>
 		</div>
 	);

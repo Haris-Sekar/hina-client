@@ -3,12 +3,14 @@ import { UserReducer } from "./Reducers/UserReducers";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import PageSettingsReducer from "./Reducers/PageSettingsReducers";
 import { CustomerReducer } from "./Reducers/CustomerReducers";
+import { InventoryReducer } from "./Reducers/InventoryReducerts";
 
 export const store = configureStore({
     reducer: {
         user: UserReducer.reducer,
         pageSettings: PageSettingsReducer,
-        customer: CustomerReducer.reducer
+        customer: CustomerReducer.reducer,
+        inventory: InventoryReducer.reducer
     }
 });
 

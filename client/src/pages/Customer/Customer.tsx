@@ -73,6 +73,8 @@ const Customer = () => {
 		});
 	}
 
+	function rowOnClick(_e: any) {}
+
 	return (
 		<>
 			<ModulePage
@@ -86,6 +88,7 @@ const Customer = () => {
 				isServerPagination={true}
 				editCallBack={editCallback}
 				deleteCallBack={deleteCallBack}
+				rowOnClick={rowOnClick}
 			/>
 		</>
 	);
