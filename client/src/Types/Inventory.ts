@@ -30,6 +30,18 @@ interface SizeRowData {
     size: string;
 }
 
+interface Item {
+    itemId: number;
+    itemName: number;
+    hsnCode: number;
+    itemGroupId: ;
+    createdBy: User;
+    createdTime: number;
+    updatedBy: User;
+    updatedTime: number;
+    companyId: number;
+}
+
 
 
 export type { ItemGroup, ItemGroupRowData, Size, SizeRowData }

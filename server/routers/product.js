@@ -5,17 +5,18 @@ import {
 } from "../middleware/authenticate.js";
 import {
 	createProduct,
+	getProduct,
 	updateProduct,
 	createSize,
 	updateSize,
 	getSize,
 	deleteSize,
-    deleteSizes,
+	deleteSizes,
 	createItemGroup,
 	updateItemGroup,
 	getItemGroup,
 	deleteItemGroup,
-    deleteItemGroups,
+	deleteItemGroups,
 	createRateVersion,
 	updateRateVersion,
 	getRateVersion,
@@ -25,6 +26,7 @@ import {
 const router = express.Router({ mergeParams: true });
 
 router.post("/", authenticateUser, authenticateCompany, createProduct);
+router.get("/", authenticateUser, authenticateCompany, getProduct);
 router.patch("/:itemId", authenticateUser, authenticateCompany, updateProduct);
 
 router.post("/size", authenticateUser, authenticateCompany, createSize);
@@ -41,12 +43,7 @@ router.delete(
 	authenticateCompany,
 	deleteSize
 );
-router.delete(
-	"/size/",
-	authenticateUser,
-	authenticateCompany,
-	deleteSizes
-);
+router.delete("/size/", authenticateUser, authenticateCompany, deleteSizes);
 
 router.post(
 	"/itemGroup",

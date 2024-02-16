@@ -121,6 +121,45 @@ export const createProduct = async (req, res) => {
 	res.status(respCode).json(response);
 };
 
+export const getProduct = async (req, res) => {
+	let respCode, response;
+	try {
+		const { itemId, index, range } = req.query;
+		const { companyId } = req.params;
+
+		if (itemId != null) {
+			const itemDetails = await Product.getProduct(itemId);
+			if (itemDetails == null) {
+				respCode = 404;
+				response = {
+					message: "No size with that ID is available",
+				};
+			} else {
+				respCode = 200;
+				response = itemDetails;
+			}
+		} else {
+			const items = await Product.getProducts(companyId, index, range);
+			if (items.length > 0) {
+				respCode = 200;
+				response = {
+					result,
+				};
+			} else {
+				respCode = 204;
+				response = {};
+			}
+		}
+	} catch (e) {
+		respCode = 500;
+		response = {
+			code: 500,
+			message: INTERNAL_SERVER_ERR,
+		};
+	}
+	res.status(respCode).json(response);
+};
+
 export const updateProduct = async (req, res) => {
 	let respCode, response;
 
