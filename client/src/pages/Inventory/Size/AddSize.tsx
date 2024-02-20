@@ -81,7 +81,7 @@ const AddSize = () => {
 					}}
 				>
 					<Typography variant="subtitle1" sx={{ width: "20%" }}>
-						Size *s
+						Size *
 					</Typography>
 					<Controller
 						name="size"

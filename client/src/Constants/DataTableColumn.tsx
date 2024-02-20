@@ -1,6 +1,6 @@
 import { GridColDef } from "@mui/x-data-grid";
 import { customerRowData, mainAreaRowData } from "../Types/Customer";
-import { ItemGroupRowData, SizeRowData } from "../Types/Inventory";
+import {ItemGroupRowData, ItemRowData, RateVersionRowData, SizeRowData} from "../Types/Inventory";
 
 function getHeader(name: string) {
 	return <strong style={{ fontSize: 16 }}>{name}</strong>;
@@ -110,10 +110,60 @@ const size: GridColDef[] = [
 	},
 ];
 
+const rateVersion: GridColDef[] = [
+	{
+		field: "name",
+		headerName: "Name",
+		minWidth: 200,
+		flex: 1,
+		renderHeader: () => getHeader("Name")
+	}, {
+		field: "isDefault",
+		headerName: "Is Default",
+		minWidth: 200,
+		flex: 1,
+		renderHeader: () => getHeader("Is Default")
+	}
+]
+
 const createSizeRow = (id: number, size: string): SizeRowData => {
 	return { id, size };
 };
+const createRateVersionRow = (id: number, name: string, isDefault: boolean): RateVersionRowData => {
+
+	return {
+		id, name, isDefault
+	}
+}
+
+const Items: GridColDef[] = [
+	{
+		field: "itemName",
+		headerName: "Item Name",
+		minWidth: 200,
+		flex: 1,
+		renderHeader: () => getHeader("Item Name")
+	},
+	{
+		field: "hsnCode",
+		headerName: "HSN Code",
+		flex: 1,
+		renderHeader: () => getHeader("HSN Code")
+	},
+	{
+		field: "itemGroup",
+		headerName: "Item Group",
+		renderHeader: () => getHeader("Item Group"),
+		flex: 1
+	}
+]
+
+const createItemRow = (id: number, itemName: string, hsnCode: number, itemGroup: string): ItemRowData => {
+	return {id, itemName, hsnCode, itemGroup}
+}
 export {
+	Items,
+	createItemRow,
 	customer,
 	createCustomerRow,
 	mainArea,
@@ -122,4 +172,7 @@ export {
 	createItemGroupRow,
 	size,
 	createSizeRow,
+	rateVersion,
+	createRateVersionRow,
 };
+

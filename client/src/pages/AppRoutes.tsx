@@ -21,6 +21,11 @@ import EditItemGroup from "./Inventory/ItemGroup/EditItemGroup";
 import Size from "./Inventory/Size/Size";
 import AddSize from "./Inventory/Size/AddSize";
 import EditSize from "./Inventory/Size/EditSize";
+import RateVersion from "./Inventory/RateVersion/RateVersion.tsx";
+import AddRateVersion from "./Inventory/RateVersion/AddRateVersion.tsx";
+import EditRateVersion from "./Inventory/RateVersion/EditRateVersion.tsx";
+import Items from "./Inventory/Items/Items.tsx";
+import AddItem from "./Inventory/Items/AddItem.tsx";
 
 const AppRoutes = () => {
 	const { companyDetails, currentUserDetails } = useAppSelector(
@@ -78,6 +83,18 @@ const AppRoutes = () => {
 						<Route path="/app/size" element={<Size />} />
 						<Route path="/app/size/add" element={<AddSize />} />
 						<Route path="/app/size/:id/edit" element={<EditSize />} />
+						<Route path="/app/rateversion" element={<RateVersion />} />
+						<Route path="/app/rateversion/add" element={<AddRateVersion />} />
+						<Route
+							path="/app/rateversion/:id/edit"
+							element={<EditRateVersion />}
+						/>
+						<Route path="/app/items" element={<Items />} />
+						<Route path="/app/items/add" element={<AddItem />} />
+						<Route
+							path="/app/rateversion/:id/edit"
+							element={<EditRateVersion />}
+						/>
 						<Route path="/app/*" />
 					</Route>
 				)}

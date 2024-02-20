@@ -21,6 +21,7 @@ import {
 	updateRateVersion,
 	getRateVersion,
 	deleteRateVersion,
+	deleteRateVersions
 } from "../controllers/product.js";
 
 const router = express.Router({ mergeParams: true });
@@ -94,6 +95,12 @@ router.delete(
 	authenticateUser,
 	authenticateCompany,
 	deleteRateVersion
+);
+router.delete(
+	"/rateVersion/",
+	authenticateUser,
+	authenticateCompany,
+	deleteRateVersions
 );
 router.post("/rateVersion/rates", authenticateUser, authenticateCompany);
 

@@ -1,39 +1,42 @@
 import { useEffect, useState } from "react";
-import { createRateVersionRow, rateVersion as DRateVersion } from "../../../Constants/DataTableColumn";
+import {
+	createItemRow,
+	Items as DItem,
+} from "../../../Constants/DataTableColumn";
 import ModulePage from "../../../components/ModulePage/ModulePage";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { useNavigate } from "react-router-dom";
 import DialogBox from "../../../components/DialogBox";
 import { IDialogBox } from "../../../Types/Form";
 import { Typography } from "@mui/material";
-import {fetchRateVersion} from "../../../store/Reducers/InventoryReducerts";
-import { RateVersionRowData} from "../../../Types/Inventory";
-import {  deleteRateVersion} from "../../../api/services/inventory";
+import {fetchItem} from "../../../store/Reducers/InventoryReducerts";
+import {ItemRowData} from "../../../Types/Inventory";
+import { deleteItemGroup } from "../../../api/services/inventory";
 
-const RateVersion = () => {
-	const { rateVersion, loading } = useAppSelector((state) => state.inventory);
-	const rows: RateVersionRowData[] = [];
+const Items = () => {
+	const { items , loading } = useAppSelector((state) => state.inventory);
+	const rows: ItemRowData[] = [];
 
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
-		dispatch(fetchRateVersion({}));
+		dispatch(fetchItem({}));
 	}, [dispatch]);
 
-	if (rateVersion && rateVersion.length > 0) {
-		rateVersion.map((group) => {
-			rows.push(createRateVersionRow(group.versionId, group.name, group.isDefault));
+	if (items && items.length > 0) {
+		items.map((group) => {
+			rows.push(createItemRow(group.itemId, group.itemName, group.hsnCode, group.itemGroupId.name));
 		});
 	}
 
 	const navigate = useNavigate();
 
-	function addRateVersion() {
-		navigate("/app/rateVersion/add?from=detail");
+	function addItem() {
+		navigate("/app/items/add?from=detail");
 	}
 
 	function editCallback(e: number[]) {
-		navigate(`/app/rateVersion/${e[0]}/edit?from=detail`);
+		navigate(`/app/items/${e[0]}/edit?from=detail`);
 	}
 
 	const [deleteBtnLoading, setDeleteBtnLoading] = useState(false);
@@ -49,10 +52,10 @@ const RateVersion = () => {
 
 	function deleteCallBack(e: number[]) {
 		setDeleteDialogDetails({
-			title: "Confirm Delete these item groups",
+			title: "Confirm Delete these items",
 			description: (
 				<Typography>
-					Once these rate versions are deleted it can not be restored
+					Once these items are deleted it can not be restored
 				</Typography>
 			),
 			failureBtnText: "Cancel",
@@ -66,9 +69,9 @@ const RateVersion = () => {
 		setDeleteDialogOpen(false);
 		const ids = JSON.parse(e) as number[];
 		setDeleteBtnLoading(true);
-		deleteRateVersion(ids)
+		deleteItemGroup(ids)
 			.then(() => {
-				dispatch(fetchRateVersion({}));
+				dispatch(fetchItem({}));
 				setDeleteBtnLoading(false);
 			})
 			.catch(() => setDeleteBtnLoading(false));
@@ -85,11 +88,11 @@ const RateVersion = () => {
 				/>
 			)}
 			<ModulePage
-				moduleName="Rate Version"
+				moduleName="Item"
 				rows={rows}
-				columns={DRateVersion}
+				columns={DItem}
 				isLoading={loading}
-				addCallBack={addRateVersion}
+				addCallBack={addItem}
 				editCallBack={editCallback}
 				deleteCallBack={deleteCallBack}
 				isServerPagination={false}
@@ -99,4 +102,4 @@ const RateVersion = () => {
 	);
 };
 
-export default RateVersion;
+export default Items;

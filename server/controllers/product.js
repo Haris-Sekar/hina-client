@@ -709,19 +709,19 @@ export const createRateVersion = async (req, res) => {
 	let respCode, response;
 	createRateVersionTry: try {
 		await db.beginTransaction();
-		const { isDefault } = req.body;
+		const { isDefault, name } = req.body;
 
-		if (!isDefault && !(isDefault === "true" || isDefault === "false")) {
+		if (!isDefault && !(isDefault === "true" || isDefault === "false") && !name) {
 			respCode = 409;
 			response = {
 				message: "field validation error, bellow fields are required",
-				fields: ["isDefault"],
+				fields: ["isDefault", "name"],
 			};
 			await db.rollback();
 			break createRateVersionTry;
 		}
 
-		if (isDefault === "true") {
+		if (isDefault === true) {
 			const updateQuery = createUpdateQuery(
 				RateVersion.tableName,
 				{ is_default: false },
@@ -732,7 +732,7 @@ export const createRateVersion = async (req, res) => {
 
 		const rateVersionObj = new RateVersion();
 		rateVersionObj.isDefault = isDefault;
-
+		rateVersionObj.name = name;
 		rateVersionObj.companyId = req.companyId;
 
 		const result = await rateVersionObj.addVersion(req.userId);
@@ -768,9 +768,9 @@ export const updateRateVersion = async (req, res) => {
 	let respCode, response;
 	updateRateVersionTry: try {
 		await db.beginTransaction();
-		const { isDefault } = req.body;
+		const { isDefault, name } = req.body;
 		const { versionId } = req.params;
-		if (!isDefault) {
+		if (isDefault === undefined || isDefault === null) {
 			await db.rollback();
 			respCode = 409;
 			response = {
@@ -784,6 +784,7 @@ export const updateRateVersion = async (req, res) => {
 		const rateVersionObj = new RateVersion();
 		rateVersionObj.isDefault = isDefault;
 		rateVersionObj.versionId = versionId;
+		rateVersionObj.name = name;
 		rateVersionObj.companyId = req.companyId;
 
 		const result = await rateVersionObj.updateVersion(req.userId);
@@ -877,6 +878,49 @@ export const deleteRateVersion = async (req, res) => {
 			respCode = 404;
 			response = {
 				message: "No rate version with that ID is available",
+				code: 404,
+			};
+		}
+	} catch (e) {
+		await db.rollback();
+		response = {
+			message: e.message,
+			code: 500,
+		};
+		respCode = 500;
+	}
+
+	res.status(respCode).json(response);
+};
+
+export const deleteRateVersions = async (req, res) => {
+	let respCode, response;
+	deleteRateVersionsTry: try {
+		await db.beginTransaction();
+		const { ids } = req.query;
+
+		if (!ids) {
+			respCode = 403;
+			response = {
+				message: "Field validation error",
+				fields: "ids should be provided",
+			};
+			break deleteRateVersionsTry;
+		}
+
+		const query = createDeleteQuery(RateVersion.tableName, ids, "version_id");
+
+		const [result] = await db.query(query);
+
+		if (result.affectedRows > 0) {
+			await db.commit();
+			respCode = 204;
+			response = {};
+		} else {
+			await db.commit();
+			respCode = 404;
+			response = {
+				message: "No rate version is available",
 				code: 404,
 			};
 		}

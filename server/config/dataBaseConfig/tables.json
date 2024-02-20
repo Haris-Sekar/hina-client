@@ -470,6 +470,11 @@
 				"isAutoIncrement": true
 			},
 			{
+				"name": "name",
+				"dataType": "VARCHAR",
+				"isNotNull": true
+			},
+			{
 				"name": "is_default",
 				"dataType": "BOOLEAN",
 				"isNotNull": true

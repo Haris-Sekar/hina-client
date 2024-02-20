@@ -4,6 +4,7 @@ import Users from "./Users.js";
 
 export default class RateVersion{
     versionId;
+    name;
     isDefault;
     createdBy;
     createdTime;
@@ -15,6 +16,7 @@ export default class RateVersion{
     toJSON() {
         return {
             versionId: this.versionId,
+            name: this.name,
             isDefault: this.isDefault,
             createdBy: this.createdBy,
             createdTime: new Date(this.createdTime).toLocaleString(),
@@ -29,6 +31,9 @@ export default class RateVersion{
 
         if(json.version_id !== null && json.version_id !== undefined){
             rateVersion.versionId = json.version_id;
+        }
+        if(json.name !== null && json.name !== undefined){
+            rateVersion.name = json.name;
         }
 
         if(json.is_default !== null && json.is_default !== undefined){
@@ -71,7 +76,8 @@ export default class RateVersion{
         const currentMillis = Date.now();
         const json = {
             version_id: versionId,
-            is_default: this.isDefault === "true" ? 1 : 0,
+            name: this.name,
+            is_default: this.isDefault === true ? 1 : 0,
             created_by: !isUpdate ? userId : this.createdTime,
             updated_by: userId,
             created_time: !isUpdate ? currentMillis: this.createdTime,
@@ -99,16 +105,17 @@ export default class RateVersion{
     }
 
     static async getVersions(companyId) {
-        const query = `select * from rate_version where company_id= ${companyId}`;
+        const query = `select * from rate_version where company_id= ${companyId} order by is_default desc`;
         const [result] = await db.query(query);
         
         let listOfVersions = [];
         
         result.forEach((version) => {
-            listOfVersions.push({
-                versionId:version.version_id,
-                isDefault:version.is_default
-            });
+            listOfVersions.push(RateVersion.deserializeFromJSON(version));
+        });
+
+        await Promise.all(listOfVersions).then((result) => {
+            listOfVersions = result;
         });
 
         return listOfVersions;

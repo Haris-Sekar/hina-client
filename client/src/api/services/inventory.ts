@@ -1,8 +1,8 @@
 import toast from "react-hot-toast";
-import { API } from "../axios";
+import { API, apiAbortController } from "../axios";
 import { companyDetailsConst } from "../../Constants/CommonConstants";
 import { Company } from "../../Types/Company";
-import { ItemGroup, Size } from "../../Types/Inventory";
+import { Item, ItemGroup, RateVersion, Size } from "../../Types/Inventory";
 
 const companyId = (JSON.parse(localStorage.getItem(companyDetailsConst) as string) as Company)?.companyId
 async function addItemGroup(itemGroupData: ItemGroup) {
@@ -56,4 +56,55 @@ async function deleteSize(ids: number[]) {
     })
 }
 
-export { addItemGroup, deleteItemGroup, updateItemGroup, addSize, updateSize, deleteSize };
+async function addRateVersion(versionData: RateVersion) {
+    return toast.promise(API.post(`/company/${companyId}/products/rateVersion`, versionData), {
+        loading: "Adding rate version",
+        success: "Rate version Added Successfully",
+        error: (err: any) => err.message
+    })
+}
+
+async function updateRateVersion(versionData: RateVersion) {
+    return toast.promise(API.patch(`/company/${companyId}/products/rateVersion/${versionData.versionId}`, versionData), {
+        loading: "Updating rate version",
+        success: "Rate version Updated Successfully",
+        error: (err: any) => err.message
+    })
+}
+
+async function deleteRateVersion(ids: number[]) {
+    return toast.promise(API.delete(`/company/${companyId}/products/rateVersion/`, { params: { ids: ids } }), {
+        loading: "Deleting rate version" + (ids.length > 1 ? '\'s' : ""),
+        success: "Rate version" + (ids.length > 1 ? '\'s ' : " ") + "Deleted Successfully",
+        error: (err: any) => err.message
+    })
+}
+
+async function addItem(itemData: Item) {
+
+    return toast.promise(API.post(`/company/${companyId}/products`, itemData), {
+        loading: "Adding Item",
+        success: "Item Added Successfully",
+        error: (err: any) => err.message
+    })
+}
+
+async function updateItem(itemData: Item) {
+    return toast.promise(API.patch(`/company/${companyId}/products/${itemData.itemId}`, itemData), {
+        loading: "Updating Item",
+        success: "Item Updated Successfully",
+        error: (err: any) => err.message
+    })
+}
+
+async function deleteItem(ids: number[]) {
+    return toast.promise(API.delete(`/company/${companyId}/products/`, { params: { ids: ids } }), {
+        loading: "Deleting Item" + (ids.length > 1 ? 's' : ""),
+        success: "Item" + (ids.length > 1 ? 's ' : " ") + "Deleted Successfully",
+        error: (err: any) => err.message
+    })
+}
+
+
+
+export { addItemGroup, deleteItemGroup, updateItemGroup, addSize, updateSize, deleteSize, addRateVersion, updateRateVersion, deleteRateVersion, addItem, deleteItem, updateItem };

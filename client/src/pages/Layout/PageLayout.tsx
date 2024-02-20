@@ -8,6 +8,7 @@ const PageLayout = () => {
 	const userLoading = useAppSelector((state) => state.user.loading);
 	const inventoryLoading = useAppSelector((state) => state.inventory.loading);
 
+
 	return (
 		<div className="pageLayoutContainer">
 			<Sidebar />

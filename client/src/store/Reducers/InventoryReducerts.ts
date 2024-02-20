@@ -3,13 +3,15 @@ import { API } from "../../api/axios";
 import APIError from "../../Types/APIError";
 import { companyDetailsConst } from "../../Constants/CommonConstants";
 import { Company } from "../../Types/Company";
-import { ItemGroup, Size } from "../../Types/Inventory";
+import {Item, ItemGroup, RateVersion, Size} from "../../Types/Inventory";
 
 
 
 interface inventoryState {
     itemGroup: ItemGroup[];
     size: Size[];
+    rateVersion: RateVersion[];
+    items: Item[];
     loading: boolean;
     error: APIError;
 }
@@ -17,6 +19,8 @@ interface inventoryState {
 const initialState: inventoryState = {
     itemGroup: [],
     size: [],
+    rateVersion: [],
+    items: [],
     loading: false,
     error: {
         message: ""
@@ -43,6 +47,30 @@ export const fetchSize = createAsyncThunk<Size[], { sizeId?: number }, { rejectV
             return thunkApi.rejectWithValue(error?.message)
         }
     })
+
+export const fetchRateVersion = createAsyncThunk<RateVersion[], { versionId?: number }, { rejectValue: string }>
+("inventory/fetchRateVersion", async (_, thunkApi) => {
+    try {
+        const companyId = (JSON.parse(localStorage.getItem(companyDetailsConst) as string) as Company).companyId
+        const { data } = await API.get(`/company/${companyId}/products/rateVersion`);
+        return data.result;
+
+    } catch (error: any) {
+        return thunkApi.rejectWithValue(error?.message)
+    }
+});
+
+export const fetchItem = createAsyncThunk<Item[], {itemId?: number}, {rejectValue: string}>
+("inventory/fetchItem", async (_, thunkApi) => {
+    try {
+        const companyId = (JSON.parse(localStorage.getItem(companyDetailsConst) as string) as Company).companyId;
+        const {data} = await API.get(`/company/${companyId}/products`);
+        return data.result;
+    } catch(error: any) {
+        return thunkApi.rejectWithValue(error?.message);
+    }
+})
+
 
 
 export const InventoryReducer = createSlice({
@@ -74,11 +102,29 @@ export const InventoryReducer = createSlice({
                 state.loading = false;
                 state.error.message = action.error.message || 'something went wrong'
             })
+            .addCase(fetchRateVersion.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchRateVersion.fulfilled, (state, action) => {
+                state.rateVersion = action.payload;
+                state.loading = false;
+            })
+            .addCase(fetchRateVersion.rejected, (state, action) => {
+                state.loading = false;
+                state.error.message = action.error.message || 'something went wrong'
+            })
+            .addCase(fetchItem.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchItem.fulfilled, (state, action) => {
+                state.items = action.payload;
+                state.loading = false;
+            })
+            .addCase(fetchItem.rejected, (state, action) => {
+                state.loading = false;
+                state.error.message = action.error.message || 'something went wrong'
+            })
 
     }
 })
 
-
-export default InventoryReducer.reducer;
-
-export const { } = InventoryReducer.actions;

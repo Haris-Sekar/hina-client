@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import { Customer, MainArea } from "../../Types/Customer";
-import { API } from "../axios";
+import {API, apiAbortController} from "../axios";
 import { companyDetailsConst } from "../../Constants/CommonConstants";
 import { Company } from "../../Types/Company";
 

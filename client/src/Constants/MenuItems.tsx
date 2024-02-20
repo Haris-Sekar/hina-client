@@ -10,6 +10,8 @@ import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import DomainAddIcon from "@mui/icons-material/DomainAdd";
 import StraightenOutlinedIcon from "@mui/icons-material/StraightenOutlined";
 import WorkspacesOutlinedIcon from "@mui/icons-material/WorkspacesOutlined";
+import SchemaOutlinedIcon from "@mui/icons-material/SchemaOutlined";
+import ShoppingBasketOutlinedIcon from "@mui/icons-material/ShoppingBasketOutlined";
 const sidebarItems = [
 	{
 		items: [
@@ -25,6 +27,11 @@ const sidebarItems = [
 				to: "/app/inventory",
 				subItems: [
 					{
+						icon: <ShoppingBasketOutlinedIcon color="primary" />,
+						text: "Items",
+						to: "/app/items",
+					},
+					{
 						icon: <WorkspacesOutlinedIcon color="primary" />,
 						text: "Item Group",
 						to: "/app/itemgroup",
@@ -33,6 +40,11 @@ const sidebarItems = [
 						icon: <StraightenOutlinedIcon color="primary" />,
 						text: "Size",
 						to: "/app/size",
+					},
+					{
+						icon: <SchemaOutlinedIcon color="primary" />,
+						text: "Rate Version",
+						to: "/app/rateversion",
 					},
 				],
 			},

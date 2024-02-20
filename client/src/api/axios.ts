@@ -3,6 +3,8 @@ import * as consts from '../Constants/CommonConstants';
 
 const baseURL = import.meta.env.VITE_API_URL;
 
+export const apiAbortController: AbortController = new AbortController();
+
 const API = axios.create({
     baseURL: `${baseURL}/api/v1/`,
     headers: {
@@ -24,13 +26,13 @@ API.interceptors.request.use(
         return Promise.reject(err);
     }
 );
-API.interceptors.response.use(
-    async (res) => {
-        return res;
-    },
-    (err) => {
-        return Promise.reject(err.response.data)
-    }
-);
+// API.interceptors.response.use(
+//     async (res) => {
+//         return res;
+//     },
+//     (err) => {
+//         return Promise.reject(err.response.data)
+//     }
+// );
 
 export { API };

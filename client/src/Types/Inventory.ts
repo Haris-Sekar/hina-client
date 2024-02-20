@@ -30,18 +30,60 @@ interface SizeRowData {
     size: string;
 }
 
+interface RateVersion {
+    versionId: number;
+    name: string;
+    isDefault: boolean;
+    createdBy: User;
+    updatedBy: User;
+    createdTime: number;
+    updatedTime: number;
+    companyId: number;
+}
+
+interface RateVersionRowData {
+    id: number;
+    name: string;
+    isDefault: boolean;
+}
+
 interface Item {
     itemId: number;
-    itemName: number;
+    itemName: string;
     hsnCode: number;
-    itemGroupId: ;
+    itemGroupId: ItemGroup;
     createdBy: User;
     createdTime: number;
     updatedBy: User;
     updatedTime: number;
     companyId: number;
+    rateObject: RateObject;
+}
+
+interface RateObject {
+    versionId: number;
+    rates: Rate[]
+}
+
+interface Rate {
+    sizeId: number;
+    itemId?: number;
+    versionId: number;
+    costPrice: number;
+    sellingPrice: number;
+    createdBy?: User;
+    createdTime?: number;
+    updatedBy?: User;
+    updatedTime?: number;
+    uuid?: string;
+}
+
+interface ItemRowData {
+    id: number;
+    itemName: string;
+    hsnCode: number;
+    itemGroup: string;
 }
 
 
-
-export type { ItemGroup, ItemGroupRowData, Size, SizeRowData }
+export type { ItemGroup, ItemGroupRowData, Size, SizeRowData, Item, ItemRowData, RateVersion, RateVersionRowData, RateObject }
