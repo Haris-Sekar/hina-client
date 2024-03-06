@@ -33,15 +33,19 @@ const AddCustomer = () => {
 
 	function onSubmit(e: Customer, event: any) {
 		setIsLoading(true);
-		addCustomer(e).then((data) => {
-			console.log(data);
-			setIsLoading(false);
-			if (event.nativeEvent.submitter.id !== "saveAndNew") {
-				navigate("/app/sales/customer");
-			} else {
-				reset();
-			}
-		});
+		addCustomer(e)
+			.then((data) => {
+				console.log(data);
+				setIsLoading(false);
+				if (event.nativeEvent.submitter.id !== "saveAndNew") {
+					navigate("/app/sales/customer");
+				} else {
+					reset();
+				}
+			})
+			.catch((e) => {
+				setIsLoading(false);
+			});
 	}
 
 	const [isLoading, setIsLoading] = useState(false);

@@ -581,6 +581,14 @@
 				"name": "updated_time",
 				"dataType": "BIGINT",
 				"isNotNull": true
+			},{
+				"name": "company_id",
+				"dataType": "INT",
+				"isNotNull": true,
+				"isForeignKey": true,
+				"foreignKeyRefTable": "company",
+				"foreignKeyRefColumn": "company_id",
+				"onDelete": "DEL_CASCADE"
 			}
 		]
 	}

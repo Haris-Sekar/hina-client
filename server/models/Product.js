@@ -1,10 +1,12 @@
 import {
+	createCountQuery,
 	createInsertQuery,
 	createUpdateQuery,
 	generateUniqueId,
 } from "../config/query.js";
 import db from "../config/db.js";
 import Users from "./Users.js";
+import ItemGroup from "./ItemGroup.js";
 
 export default class Product {
 	itemId;
@@ -55,8 +57,10 @@ export default class Product {
 		product.companyId = result?.company_id;
 		product.createdBy = await Users.getUserDetails(result?.created_by);
 		product.updatedBy = await Users.getUserDetails(result?.updated_by);
+		product.itemGroupId = await ItemGroup.getItemGroup(result?.company_id, result?.item_group_id);
 		product.createdTime = result?.created_time;
 		product.updatedTime = result?.updated_time;
+		product.itemId = result?.item_id;
 		return product;
 	}
 
@@ -106,5 +110,12 @@ export default class Product {
 		);
 		const [result] = await db.query(query);
 		return result;
+	}
+	static async getProductCount(companyId) {
+		const query = createCountQuery(Product.tableName, `company_id= ${companyId}`);
+
+		const [result] = await db.query(query);
+
+		return result[0];
 	}
 }

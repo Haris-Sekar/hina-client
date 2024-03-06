@@ -3,7 +3,7 @@ import { API } from "../../api/axios";
 import APIError from "../../Types/APIError";
 import { companyDetailsConst } from "../../Constants/CommonConstants";
 import { Company } from "../../Types/Company";
-import {Item, ItemGroup, RateVersion, Size} from "../../Types/Inventory";
+import { Item, ItemGroup, RateVersion, Size } from "../../Types/Inventory";
 
 
 
@@ -12,6 +12,7 @@ interface inventoryState {
     size: Size[];
     rateVersion: RateVersion[];
     items: Item[];
+    itemCount: number;
     loading: boolean;
     error: APIError;
 }
@@ -21,6 +22,7 @@ const initialState: inventoryState = {
     size: [],
     rateVersion: [],
     items: [],
+    itemCount: 0,
     loading: false,
     error: {
         message: ""
@@ -49,27 +51,50 @@ export const fetchSize = createAsyncThunk<Size[], { sizeId?: number }, { rejectV
     })
 
 export const fetchRateVersion = createAsyncThunk<RateVersion[], { versionId?: number }, { rejectValue: string }>
-("inventory/fetchRateVersion", async (_, thunkApi) => {
-    try {
-        const companyId = (JSON.parse(localStorage.getItem(companyDetailsConst) as string) as Company).companyId
-        const { data } = await API.get(`/company/${companyId}/products/rateVersion`);
-        return data.result;
+    ("inventory/fetchRateVersion", async (_, thunkApi) => {
+        try {
+            const companyId = (JSON.parse(localStorage.getItem(companyDetailsConst) as string) as Company).companyId
+            const { data } = await API.get(`/company/${companyId}/products/rateVersion`);
+            return data.result;
 
-    } catch (error: any) {
-        return thunkApi.rejectWithValue(error?.message)
-    }
-});
+        } catch (error: any) {
+            return thunkApi.rejectWithValue(error?.message)
+        }
+    });
 
-export const fetchItem = createAsyncThunk<Item[], {itemId?: number}, {rejectValue: string}>
-("inventory/fetchItem", async (_, thunkApi) => {
-    try {
-        const companyId = (JSON.parse(localStorage.getItem(companyDetailsConst) as string) as Company).companyId;
-        const {data} = await API.get(`/company/${companyId}/products`);
-        return data.result;
-    } catch(error: any) {
-        return thunkApi.rejectWithValue(error?.message);
-    }
-})
+export const fetchItem = createAsyncThunk<Item[], { itemId?: number, page?: number, range?: number }, { rejectValue: string }>
+    ("inventory/fetchItem", async (_, thunkApi) => {
+        try {
+            const companyId = (JSON.parse(localStorage.getItem(companyDetailsConst) as string) as Company).companyId
+            console.log(_);
+
+            if (_.itemId && _.itemId.toString.length > 0) {
+                const { data } = await API.get(`/company/${companyId}/products?productId=${_.itemId}`)
+                return data.result;
+            } else {
+                if (_.page !== undefined && _.range !== undefined) {
+                    let index = (_.page * _.range);
+                    const { data } = await API.get(`/company/${companyId}/products?index=${index}&range=${_.range}`)
+                    return data.result;
+                }
+            }
+            const { data } = await API.get(`/company/${companyId}/products`);
+            return data.result;
+        } catch (error: any) {
+            return thunkApi.rejectWithValue(error?.message);
+        }
+    })
+
+export const fetchItemCount = createAsyncThunk<number, void, { rejectValue: string }>
+    ("inventory/fetchItemCount", async (_, thunkApi) => {
+        try {
+            const companyId = (JSON.parse(localStorage.getItem(companyDetailsConst) as string) as Company).companyId
+            const { data } = await API.get(`/company/${companyId}/products/count`);
+            return data.count;
+        } catch (error: any) {
+            return thunkApi.rejectWithValue(error?.message);
+        }
+    })
 
 
 
@@ -124,7 +149,18 @@ export const InventoryReducer = createSlice({
                 state.loading = false;
                 state.error.message = action.error.message || 'something went wrong'
             })
+            .addCase(fetchItemCount.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchItemCount.fulfilled, (state, action) => {
+                state.itemCount = action.payload;
+                state.loading = false;
+            })
+            .addCase(fetchItemCount.rejected, (state, action) => {
+                state.loading = false;
+                state.error.message = action.error.message || 'something went wrong'
+            })
 
     }
-})
+});
 

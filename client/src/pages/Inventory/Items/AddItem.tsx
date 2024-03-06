@@ -4,13 +4,14 @@ import {
 	Button,
 	Divider,
 	Grid,
+	InputAdornment,
 	Paper,
 	TextField,
 	Typography,
 } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +24,6 @@ import {
 	fetchSize,
 } from "../../../store/Reducers/InventoryReducerts";
 import { v4 as uuidv4 } from "uuid";
-
 const AddItem = () => {
 	const {
 		control,
@@ -36,6 +36,15 @@ const AddItem = () => {
 
 	function onSubmit(e: Item, event: any) {
 		setIsLoading(true);
+		console.log(rateObject);
+		const tempRateObject = rateObject;
+
+		tempRateObject.rates.forEach(
+			(rate) => (rate.versionId = rateObject.versionId)
+		);
+
+		console.log(tempRateObject);
+		e.rateObject = tempRateObject;
 		addItem(e)
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			.then((_data) => {
@@ -111,6 +120,8 @@ const AddItem = () => {
 	useEffect(() => {
 		console.log(rateObject);
 	}, [rateObject]);
+
+	const sizeRef = useRef(null);
 
 	return (
 		<Paper
@@ -206,11 +217,8 @@ const AddItem = () => {
 						Item Group *
 					</Typography>
 					<Controller
-						name="itemGroupId"
+						name="itemGroupId.groupId"
 						control={control}
-						rules={{
-							required: "Item Group is required",
-						}}
 						render={({ ...field }) => (
 							<Autocomplete
 								{...field}
@@ -221,16 +229,16 @@ const AddItem = () => {
 								})}
 								sx={{ width: "80%" }}
 								onChange={(_event, value) => {
-									control._formValues.mainAreaId = value?.id;
+									console.log(control._formValues);
+
+									control._formValues.itemGroupId = value?.id;
 									return value?.id;
 								}}
 								renderInput={(params) => (
 									<TextField
 										{...params}
 										helperText={errors.itemGroupId?.message}
-										error={Boolean(errors.itemGroupId)}
 										label="Item Group"
-										required
 									/>
 								)}
 							/>
@@ -301,6 +309,8 @@ const AddItem = () => {
 						key={rate.uuid}
 					>
 						<Autocomplete
+							ref={sizeRef}
+							autoFocus
 							disablePortal
 							id="combo-box-demo"
 							options={size.map((s) => {
@@ -317,12 +327,30 @@ const AddItem = () => {
 						/>
 						<TextField
 							sx={{ width: "27%" }}
+							type="number"
 							label="Cost Price"
+							InputProps={{
+								startAdornment: (
+									<InputAdornment position="start">₹</InputAdornment>
+								),
+								endAdornment: (
+									<InputAdornment position="end">/-</InputAdornment>
+								),
+							}}
 							onChange={(e) => (rate.costPrice = Number(e.currentTarget.value))}
 						/>
 						<TextField
 							sx={{ width: "27%" }}
 							label="Selling Price"
+							type="number"
+							InputProps={{
+								startAdornment: (
+									<InputAdornment position="start">₹</InputAdornment>
+								),
+								endAdornment: (
+									<InputAdornment position="end">/-</InputAdornment>
+								),
+							}}
 							onChange={(e) =>
 								(rate.sellingPrice = Number(e.currentTarget.value))
 							}

@@ -6,6 +6,7 @@ import RateVersion from "../models/RateVersion.js";
 import Rate from "../models/Rate.js";
 import Product from "../models/Product.js";
 import { createDeleteQuery, createUpdateQuery } from "../config/query.js";
+import Customer from "../models/Customer.js";
 
 export const createProduct = async (req, res) => {
 	let respCode, response;
@@ -32,8 +33,8 @@ export const createProduct = async (req, res) => {
 			await db.rollback();
 			break createProductTry;
 		}
-
-		rateObject = JSON.parse(rateObject);
+		rateObject =
+			typeof rateObject !== "object" ? JSON.parse(rateObject) : rateObject;
 
 		if (!rateObject.rates || !rateObject.versionId) {
 			respCode = 409;
@@ -51,14 +52,16 @@ export const createProduct = async (req, res) => {
 
 		const result = await productObject.createProduct(req.userId);
 		if (result.affectedRows > 0) {
+			console.log(result);
 			const parsedRateObject = Rate.getParsedRateObject(
 				rateObject.rates,
-				productObject.itemId,
+				result.insertId,
 				rateObject.versionId
 			);
 			const rateResult = await Rate.pushRateObject(
 				parsedRateObject,
-				req.userId
+				req.userId,
+				req.params.companyId
 			);
 			if (rateResult.length === rateObject.rates.length) {
 				respCode = 201;
@@ -117,6 +120,7 @@ export const createProduct = async (req, res) => {
 				};
 				break;
 		}
+		console.log(e);
 	}
 	res.status(respCode).json(response);
 };
@@ -126,15 +130,15 @@ export const getProduct = async (req, res) => {
 	try {
 		const { itemId, index, range } = req.query;
 		const { companyId } = req.params;
-
 		if (itemId != null) {
 			const itemDetails = await Product.getProduct(itemId);
 			if (itemDetails == null) {
 				respCode = 404;
 				response = {
-					message: "No size with that ID is available",
+					message: "No item with that ID is available",
 				};
 			} else {
+				const rateObject = Rate
 				respCode = 200;
 				response = itemDetails;
 			}
@@ -143,7 +147,7 @@ export const getProduct = async (req, res) => {
 			if (items.length > 0) {
 				respCode = 200;
 				response = {
-					result,
+					result: items,
 				};
 			} else {
 				respCode = 204;
@@ -151,6 +155,7 @@ export const getProduct = async (req, res) => {
 			}
 		}
 	} catch (e) {
+		console.log(e);
 		respCode = 500;
 		response = {
 			code: 500,
@@ -159,6 +164,24 @@ export const getProduct = async (req, res) => {
 	}
 	res.status(respCode).json(response);
 };
+
+export const getProductCount = async (req, res) => {
+	let respCode, response;
+
+	try {
+		const { companyId } = req.params;
+		const countResult = await Product.getProductCount(companyId);
+		respCode = 200;
+		response = { count: countResult.count };
+	} catch (e) {
+		response = {
+			message: e.message,
+			code: 500,
+		};
+		respCode = 500;
+	}
+	res.status(respCode).json(response);
+}
 
 export const updateProduct = async (req, res) => {
 	let respCode, response;
@@ -209,7 +232,8 @@ export const updateProduct = async (req, res) => {
 
 				const rateResult = await Rate.updateRateObject(
 					parsedRateObj,
-					req.userId
+					req.userId,
+					req.params.companyId
 				);
 				if (rateResult.length === parsedRateObj.length) {
 					respCode = 200;
@@ -711,7 +735,11 @@ export const createRateVersion = async (req, res) => {
 		await db.beginTransaction();
 		const { isDefault, name } = req.body;
 
-		if (!isDefault && !(isDefault === "true" || isDefault === "false") && !name) {
+		if (
+			!isDefault &&
+			!(isDefault === "true" || isDefault === "false") &&
+			!name
+		) {
 			respCode = 409;
 			response = {
 				message: "field validation error, bellow fields are required",

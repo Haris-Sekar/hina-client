@@ -1,7 +1,7 @@
 import { User } from "./User";
 
 interface ItemGroup {
-    groupId: number;
+    groupId?: number;
     name: string;
     createdBy: User;
     createdTime: number;

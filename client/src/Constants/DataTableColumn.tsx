@@ -1,6 +1,11 @@
 import { GridColDef } from "@mui/x-data-grid";
 import { customerRowData, mainAreaRowData } from "../Types/Customer";
-import {ItemGroupRowData, ItemRowData, RateVersionRowData, SizeRowData} from "../Types/Inventory";
+import {
+	ItemGroupRowData,
+	ItemRowData,
+	RateVersionRowData,
+	SizeRowData,
+} from "../Types/Inventory";
 
 function getHeader(name: string) {
 	return <strong style={{ fontSize: 16 }}>{name}</strong>;
@@ -116,25 +121,31 @@ const rateVersion: GridColDef[] = [
 		headerName: "Name",
 		minWidth: 200,
 		flex: 1,
-		renderHeader: () => getHeader("Name")
-	}, {
+		renderHeader: () => getHeader("Name"),
+	},
+	{
 		field: "isDefault",
 		headerName: "Is Default",
 		minWidth: 200,
 		flex: 1,
-		renderHeader: () => getHeader("Is Default")
-	}
-]
+		renderHeader: () => getHeader("Is Default"),
+	},
+];
 
 const createSizeRow = (id: number, size: string): SizeRowData => {
 	return { id, size };
 };
-const createRateVersionRow = (id: number, name: string, isDefault: boolean): RateVersionRowData => {
-
+const createRateVersionRow = (
+	id: number,
+	name: string,
+	isDefault: boolean
+): RateVersionRowData => {
 	return {
-		id, name, isDefault
-	}
-}
+		id,
+		name,
+		isDefault,
+	};
+};
 
 const Items: GridColDef[] = [
 	{
@@ -142,25 +153,31 @@ const Items: GridColDef[] = [
 		headerName: "Item Name",
 		minWidth: 200,
 		flex: 1,
-		renderHeader: () => getHeader("Item Name")
+		renderHeader: () => getHeader("Item Name"),
 	},
 	{
 		field: "hsnCode",
 		headerName: "HSN Code",
 		flex: 1,
-		renderHeader: () => getHeader("HSN Code")
+		renderHeader: () => getHeader("HSN Code"),
+		renderCell: (e) => (e.value > 0 ? e.value : "-"),
 	},
 	{
 		field: "itemGroup",
 		headerName: "Item Group",
 		renderHeader: () => getHeader("Item Group"),
-		flex: 1
-	}
-]
+		flex: 1,
+	},
+];
 
-const createItemRow = (id: number, itemName: string, hsnCode: number, itemGroup: string): ItemRowData => {
-	return {id, itemName, hsnCode, itemGroup}
-}
+const createItemRow = (
+	id: number,
+	itemName: string,
+	hsnCode: number,
+	itemGroup: string
+): ItemRowData => {
+	return { id, itemName, hsnCode, itemGroup };
+};
 export {
 	Items,
 	createItemRow,
@@ -175,4 +192,3 @@ export {
 	rateVersion,
 	createRateVersionRow,
 };
-

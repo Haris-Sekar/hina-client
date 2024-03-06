@@ -11,6 +11,7 @@ export default class Rate {
     createdTime;
     updatedBy;
     updatedTime;
+    companyId;
     static tableName = "rate"
     constructor (sizeId, costPrice, sellingPrice) {
         this.sizeId = sizeId;
@@ -33,10 +34,10 @@ export default class Rate {
         return listOfParsedRateObject;
     }
 
-    static async pushRateObject(listOfRateObject, userId) {
+    static async pushRateObject(listOfRateObject, userId, companyId) {
         let resultInsertId = [];
         for(const rate of listOfRateObject) {
-            const result = await rate.pushRate(userId)
+            const result = await rate.pushRate(userId, companyId)
             if(result.affectedRows > 0) {
                 resultInsertId.push(result.insertId);
             }
@@ -44,10 +45,10 @@ export default class Rate {
         return resultInsertId;
     }
 
-    static async updateRateObject(listOfRateObject, userId) {
+    static async updateRateObject(listOfRateObject, userId, companyId) {
         let resultList = [];
         for(const rate of listOfRateObject) {
-            const result = await rate.updateRate(userId);
+            const result = await rate.updateRate(userId, companyId);
             if(result.affectedRows > 0) {
                 resultList.push(result.affectedRows)
             }
@@ -55,21 +56,21 @@ export default class Rate {
         return resultList;
     }
 
-    async pushRate (userId) {
-        const query = createInsertQuery(Rate.tableName, this.serializeToSQLQuery(userId, false));
+    async pushRate (userId, companyId) {
+        const query = createInsertQuery(Rate.tableName, this.serializeToSQLQuery(userId,companyId, false));
         const [result] = await db.query(query);
         return result;
     }
 
-    async updateRate(userId) {
-        const query = createUpdateQuery(Rate.tableName, this.serializeToSQLQuery(userId, true));
+    async updateRate(userId, companyId) {
+        const query = createUpdateQuery(Rate.tableName, this.serializeToSQLQuery(userId, companyId, true));
         const [result] = await db.query(query);
         return result;
     }
 
 
 
-    serializeToSQLQuery(userId, isUpdate) {
+    serializeToSQLQuery(userId, companyId, isUpdate) {
         const currentMillis = Date.now();
         return {
             size_id: this.sizeId,
@@ -80,7 +81,8 @@ export default class Rate {
             created_by: isUpdate ? this.createdBy : userId,
             created_time: isUpdate ? this.createdTime : currentMillis,
             updated_by: userId,
-            updated_time: currentMillis
+            updated_time: currentMillis,
+            company_id: companyId
         };
     }
 }

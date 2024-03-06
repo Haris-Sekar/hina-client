@@ -8,25 +8,54 @@ import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { useNavigate } from "react-router-dom";
 import DialogBox from "../../../components/DialogBox";
 import { IDialogBox } from "../../../Types/Form";
-import { Typography } from "@mui/material";
-import {fetchItem} from "../../../store/Reducers/InventoryReducerts";
-import {ItemRowData} from "../../../Types/Inventory";
+import { Backdrop, Box, Fade, Modal, Typography } from "@mui/material";
+import {
+	fetchItem,
+	fetchItemCount,
+} from "../../../store/Reducers/InventoryReducerts";
+import { Item, ItemRowData } from "../../../Types/Inventory";
 import { deleteItemGroup } from "../../../api/services/inventory";
 
 const Items = () => {
-	const { items , loading } = useAppSelector((state) => state.inventory);
+	const { items, loading, itemCount } = useAppSelector(
+		(state) => state.inventory
+	);
 	const rows: ItemRowData[] = [];
 
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
-		dispatch(fetchItem({}));
+		dispatch(fetchItemCount());
 	}, [dispatch]);
+
+	useEffect(() => {
+		if (itemCount > 0) {
+			onPaginationModelChange({ page: 0, pageSize: 10 });
+		}
+	}, [itemCount]);
+
+	console.log(items);
 
 	if (items && items.length > 0) {
 		items.map((group) => {
-			rows.push(createItemRow(group.itemId, group.itemName, group.hsnCode, group.itemGroupId.name));
+			rows.push(
+				createItemRow(
+					group.itemId,
+					group.itemName,
+					group.hsnCode,
+					group.itemGroupId.name
+				)
+			);
 		});
+	}
+
+	function onPaginationModelChange(e: any) {
+		dispatch(
+			fetchItem({
+				page: e.page,
+				range: e.pageSize,
+			})
+		);
 	}
 
 	const navigate = useNavigate();
@@ -77,6 +106,26 @@ const Items = () => {
 			.catch(() => setDeleteBtnLoading(false));
 	}
 
+	const [open, setOpen] = useState(false);
+	const handleClose = () => setOpen(false);
+
+	const style = {
+		position: "absolute" as "absolute",
+		top: "50%",
+		left: "50%",
+		transform: "translate(-50%, -50%)",
+		width: 400,
+		bgcolor: "background.paper",
+		boxShadow: 24,
+		p: 4,
+	};
+
+	const [selectedItem, setSelectedItem] = useState<Item>();
+
+	const handleColumnSelect = (e) => {
+		console.log(e);
+	};
+
 	return (
 		<>
 			{deleteDialogOpen && (
@@ -95,9 +144,36 @@ const Items = () => {
 				addCallBack={addItem}
 				editCallBack={editCallback}
 				deleteCallBack={deleteCallBack}
-				isServerPagination={false}
+				isServerPagination={true}
 				deleteBtnLoading={deleteBtnLoading}
+				rowOnClick={handleColumnSelect}
+				onPaginationModelChange={onPaginationModelChange}
+				rowCount={itemCount}
 			/>
+			<Modal
+				aria-labelledby="spring-modal-title"
+				aria-describedby="spring-modal-description"
+				open={open}
+				onClose={handleClose}
+				closeAfterTransition
+				slots={{ backdrop: Backdrop }}
+				slotProps={{
+					backdrop: {
+						TransitionComponent: Fade,
+					},
+				}}
+			>
+				<Fade in={open}>
+					<Box sx={style}>
+						<Typography id="spring-modal-title" variant="h6" component="h2">
+							Text in a modal
+						</Typography>
+						<Typography id="spring-modal-description" sx={{ mt: 2 }}>
+							Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+						</Typography>
+					</Box>
+				</Fade>
+			</Modal>
 		</>
 	);
 };

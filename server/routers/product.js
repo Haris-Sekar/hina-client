@@ -21,13 +21,15 @@ import {
 	updateRateVersion,
 	getRateVersion,
 	deleteRateVersion,
-	deleteRateVersions
+	deleteRateVersions,
+	getProductCount
 } from "../controllers/product.js";
 
 const router = express.Router({ mergeParams: true });
 
 router.post("/", authenticateUser, authenticateCompany, createProduct);
 router.get("/", authenticateUser, authenticateCompany, getProduct);
+router.get("/count", authenticateUser, authenticateCompany, getProductCount);
 router.patch("/:itemId", authenticateUser, authenticateCompany, updateProduct);
 
 router.post("/size", authenticateUser, authenticateCompany, createSize);
