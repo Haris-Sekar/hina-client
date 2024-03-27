@@ -52,7 +52,7 @@ export default function ListView({
 				paginationMode={isServerPagination ? "server" : "client"}
 				onPaginationModelChange={(e) =>
 					//@ts-ignore
-					isServerPagination ? onPaginationModelChange(e) : console.log(e)
+					isServerPagination ? onPaginationModelChange(e) : null
 				}
 				onRowSelectionModelChange={(e) => onRowSelect(e)}
 				style={{ borderRadius: "25px", padding: "2%" }}

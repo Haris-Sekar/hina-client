@@ -35,7 +35,6 @@ const AddCustomer = () => {
 		setIsLoading(true);
 		addCustomer(e)
 			.then((data) => {
-				console.log(data);
 				setIsLoading(false);
 				if (event.nativeEvent.submitter.id !== "saveAndNew") {
 					navigate("/app/sales/customer");

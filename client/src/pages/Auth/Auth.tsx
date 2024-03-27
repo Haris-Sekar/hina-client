@@ -60,7 +60,6 @@ const Auth = () => {
 			return email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
 		};
 		if (!validateEmail(e.email)) {
-			console.log("asdf");
 			setError("email", {
 				type: "minLength",
 				message: "Enter an valid email address",

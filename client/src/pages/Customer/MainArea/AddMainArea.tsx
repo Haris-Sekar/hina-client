@@ -31,7 +31,6 @@ const AddMainArea = () => {
 		setIsLoading(true);
 		addMainArea(e)
 			.then((data) => {
-				console.log(data);
 				setIsLoading(false);
 				if (event.nativeEvent.submitter.id !== "saveAndNew") {
 					navigate("/app/sales/mainArea");

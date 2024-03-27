@@ -1,12 +1,11 @@
 import db from "../config/db.js";
-import { INTERNAL_SERVER_ERR } from "../static/message.js";
+import {INTERNAL_SERVER_ERR} from "../static/message.js";
 import Size from "../models/Size.js";
 import ItemGroup from "../models/ItemGroup.js";
 import RateVersion from "../models/RateVersion.js";
 import Rate from "../models/Rate.js";
 import Product from "../models/Product.js";
-import { createDeleteQuery, createUpdateQuery } from "../config/query.js";
-import Customer from "../models/Customer.js";
+import {createDeleteQuery, createUpdateQuery} from "../config/query.js";
 
 export const createProduct = async (req, res) => {
 	let respCode, response;
@@ -128,21 +127,31 @@ export const createProduct = async (req, res) => {
 export const getProduct = async (req, res) => {
 	let respCode, response;
 	try {
-		const { itemId, index, range } = req.query;
+		const { itemId, index, range, withRate } = req.query;
 		const { companyId } = req.params;
 		if (itemId != null) {
-			const itemDetails = await Product.getProduct(itemId);
+			// const itemDetails = await Product.getProduct(itemId);
+			const itemDetails = await Rate.fetchProductWithRate(companyId, itemId);
 			if (itemDetails == null) {
 				respCode = 404;
 				response = {
 					message: "No item with that ID is available",
 				};
 			} else {
-				const rateObject = Rate
+				const groupedByRateVersions =
+					parseItemRateObjectsByVersion(itemDetails);
+
 				respCode = 200;
-				response = itemDetails;
+				response = groupedByRateVersions;
 			}
-		} else {
+		} else if(withRate && withRate !== "undefined") {
+			const itemDetails = await Rate.fetchProductWithRate(companyId, -1, index ? index : 0, range ? range : 1000);
+			respCode = 200;
+			const groupedByRateVersion = parseItemRateByItemAndRateVersion(itemDetails);
+			response = {
+				result: groupedByRateVersion
+			}
+		}else {
 			const items = await Product.getProducts(companyId, index, range);
 			if (items.length > 0) {
 				respCode = 200;
@@ -181,7 +190,7 @@ export const getProductCount = async (req, res) => {
 		respCode = 500;
 	}
 	res.status(respCode).json(response);
-}
+};
 
 export const updateProduct = async (req, res) => {
 	let respCode, response;
@@ -265,6 +274,7 @@ export const updateProduct = async (req, res) => {
 		}
 		await db.commit();
 	} catch (e) {
+		console.log(e);
 		await db.rollback();
 		respCode = 500;
 		response = {
@@ -983,3 +993,114 @@ export const addRateToVersion = async (req, res) => {
 
 	res.status(respCode).json(response);
 };
+
+function parseItemRateObjectsByVersion(data) {
+ 	const itemDetails = {
+		itemId: data[0].itemId,
+		itemName: data[0].itemName,
+		hsnCode: data[0].hsnCode,
+		item_group: data[0].item_group,
+		createdBy: data[0].createdBy,
+		createdTime: data[0].createdTime,
+		updatedBy: data[0].updatedBy,
+		updatedTime: data[0].updatedTime,
+		companyId: data[0].companyId,
+	};
+
+	const rateVersionsMap = new Map();
+
+	data.forEach((item) => {
+		const rateVersionKey = item.versionId;
+
+		if (!rateVersionsMap.has(rateVersionKey)) {
+			rateVersionsMap.set(rateVersionKey, {
+				versionId: item.versionId,
+				rateVersionName: item.rateVersionName,
+				rateVersionIsDefault: item.rateVersionIsDefault,
+				rateVersionCreatedBy: item.rateVersionCreatedBy,
+				rateVersionCreatedTime: item.rateVersionCreatedTime,
+				rateVersionUpdatedBy: item.rateVersionUpdatedBy,
+				rateVersionUpdatedTime: item.rateVersionUpdatedTime,
+				rates: [],
+			});
+		}
+
+		rateVersionsMap.get(rateVersionKey).rates.push({
+			size: {
+				sizeId: item.sizeId,
+				sizeValue: item.size,
+			},
+			costPrice: item.costPrice,
+			sellingPrice: item.sellingPrice,
+			rateCreatedBy: item.rateCreatedBy,
+			rateCreatedTime: item.rateCreatedTime,
+			rateUpdatedBy: item.rateUpdatedBy,
+			rateUpdatedTime: item.rateUpdatedTime,
+		});
+	});
+
+	const rateVersions = Array.from(rateVersionsMap.values());
+
+	return { itemDetails, rateVersions };
+}
+
+const parseItemRateByItemAndRateVersion = (dataObject) => {
+	const items = {};
+
+	dataObject.forEach((item) => {
+		const itemDetails = items[item.itemId];
+	 let itemDets = itemDetails?.itemDetails;
+		if(!itemDets) {
+			itemDets = {
+				itemId: item.itemId,
+				itemName: item.itemName,
+				hsnCode: item.hsnCode,
+				item_group: item.item_group,
+				createdBy: item.createdBy,
+				createdTime: item.createdTime,
+				updatedBy: item.updatedBy,
+				updatedTime: item.updatedTime,
+				companyId: item.companyId,
+			}
+		}
+
+		let rateVersions = itemDetails?.rates;
+
+		if(!rateVersions) {
+			rateVersions = new Map();
+		} else {
+			rateVersions = new Map(Object.entries(rateVersions));
+		}
+
+		if(!rateVersions.has(String(item.versionId))) {
+			rateVersions.set(String(item.versionId), {
+				versionId: item.versionId,
+				rateVersionName: item.rateVersionName,
+				rateVersionIsDefault: item.rateVersionIsDefault,
+				rateVersionCreatedBy: item.rateVersionCreatedBy,
+				rateVersionCreatedTime: item.rateVersionCreatedTime,
+				rateVersionUpdatedBy: item.rateVersionUpdatedBy,
+				rateVersionUpdatedTime: item.rateVersionUpdatedTime,
+				rates: [],
+			});
+		}
+
+		rateVersions.get(String(item.versionId)).rates.push({
+			size: {
+				sizeId: item.sizeId,
+				sizeValue: item.size,
+			},
+			costPrice: item.costPrice,
+			sellingPrice: item.sellingPrice,
+			rateCreatedBy: item.rateCreatedBy,
+			rateCreatedTime: item.rateCreatedTime,
+			rateUpdatedBy: item.rateUpdatedBy,
+			rateUpdatedTime: item.rateUpdatedTime,
+		});
+		items[item.itemId] = {
+			itemDetails: itemDets,
+			rates: Object.fromEntries(rateVersions)
+		}
+	});
+	return Object.values(items);
+}

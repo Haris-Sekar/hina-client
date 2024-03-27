@@ -345,13 +345,13 @@
 			{
 				"name": "item_id",
 				"dataType": "INT",
-				"isPrimaryKey": true
+				"isPrimaryKey": true,
+				"isAutoIncrement": true
 			},
 			{
 				"name": "item_code",
 				"dataType": "INT",
-				"isUnique": true,
-				"isAutoIncrement": true
+				"isUnique": true
 			},
 			{
 				"name": "item_name",

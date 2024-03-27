@@ -26,7 +26,7 @@ export default class Product {
 		this.itemGroupId = itemGroupId;
 	}
 
-	async serializeToSQLQuery(userId, isUpdate) {
+	async serializeToSQLQuery(userId, isUpdate, itemCode) {
 		const itemId = isUpdate
 			? this.itemId
 			: await generateUniqueId(Product.tableName, "item_id");
@@ -41,6 +41,7 @@ export default class Product {
 			updated_by: userId,
 			updated_time: currentMillis,
 			company_id: this.companyId,
+			item_code: itemCode
 		};
 		for (const key in json) {
 			if (json[key] === undefined) delete json[key];
@@ -65,9 +66,11 @@ export default class Product {
 	}
 
 	async createProduct(userId) {
+		const prevItemCode = await db.query(`select item_code from ${Product.tableName} where company_id = ${this.companyId} order by created_time DESC`);
+
 		const query = createInsertQuery(
 			Product.tableName,
-			await this.serializeToSQLQuery(userId, false)
+			await this.serializeToSQLQuery(userId, false, prevItemCode[0][0].item_code + 1)
 		);
 
 		const [result] = await db.query(query);
@@ -95,7 +98,7 @@ export default class Product {
 	}
 
 	static async getProduct(itemId) {
-		const query = `select * from product where item_id=${itemId}`;
+		const query = `select * from products where item_id=${itemId}`;
 
 		const [result] = await db.query(query);
 

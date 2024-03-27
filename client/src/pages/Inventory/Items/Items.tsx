@@ -34,8 +34,6 @@ const Items = () => {
 		}
 	}, [itemCount]);
 
-	console.log(items);
-
 	if (items && items.length > 0) {
 		items.map((group) => {
 			rows.push(
@@ -122,8 +120,8 @@ const Items = () => {
 
 	const [selectedItem, setSelectedItem] = useState<Item>();
 
-	const handleColumnSelect = (e) => {
-		console.log(e);
+	const handleColumnSelect = (e: any) => {
+		navigate(`/app/items/${e.id}`);
 	};
 
 	return (
@@ -169,7 +167,8 @@ const Items = () => {
 							Text in a modal
 						</Typography>
 						<Typography id="spring-modal-description" sx={{ mt: 2 }}>
-							Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+							`` Duis mollis, est non commodo luctus, nisi erat porttitor
+							ligula.
 						</Typography>
 					</Box>
 				</Fade>

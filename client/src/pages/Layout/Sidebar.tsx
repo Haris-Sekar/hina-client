@@ -14,13 +14,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import useWindowSize from "../../components/UseWindowSize";
 
-import {
-	Avatar,
-	Card,
-	Tooltip,
-	Typography,
-	Zoom,
-} from "@mui/material";
+import { Avatar, Card, Tooltip, Typography, Zoom } from "@mui/material";
 import { useAppSelector } from "../../store/store";
 import { sidebarItems } from "../../Constants/MenuItems";
 import { Link } from "react-router-dom";
@@ -83,6 +77,8 @@ export default function Sidebar() {
 	const handleDrawerClose = () => {
 		setOpen(false);
 	};
+
+	let key = 0;
 
 	const companyDetails = useAppSelector((state) => state.user.companyDetails);
 	return (
@@ -166,8 +162,9 @@ export default function Sidebar() {
 							</>
 						)}
 						{menu.items.map((item) => (
-							<>
+							<Box key={key++}>
 								<Link
+									key={key++}
 									to={
 										menu.header?.commonTo
 											? menu.header?.commonTo + item.to
@@ -291,7 +288,7 @@ export default function Sidebar() {
 											</ListItem>
 										</Link>
 									))}
-							</>
+							</Box>
 						))}
 					</>
 				))}

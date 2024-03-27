@@ -15,6 +15,7 @@ interface inventoryState {
     itemCount: number;
     loading: boolean;
     error: APIError;
+    itemWithRates: [];
 }
 
 const initialState: inventoryState = {
@@ -24,6 +25,7 @@ const initialState: inventoryState = {
     items: [],
     itemCount: 0,
     loading: false,
+    itemWithRates: [],
     error: {
         message: ""
     }
@@ -62,20 +64,19 @@ export const fetchRateVersion = createAsyncThunk<RateVersion[], { versionId?: nu
         }
     });
 
-export const fetchItem = createAsyncThunk<Item[], { itemId?: number, page?: number, range?: number }, { rejectValue: string }>
+export const fetchItem = createAsyncThunk<{ data: Item[], isRate: boolean }, { itemId?: number, page?: number, range?: number, withRate?: boolean }, { rejectValue: string }>
     ("inventory/fetchItem", async (_, thunkApi) => {
         try {
             const companyId = (JSON.parse(localStorage.getItem(companyDetailsConst) as string) as Company).companyId
-            console.log(_);
 
-            if (_.itemId && _.itemId.toString.length > 0) {
-                const { data } = await API.get(`/company/${companyId}/products?productId=${_.itemId}`)
-                return data.result;
+            if (_.itemId && _.itemId.toString().length > 0) {
+                const { data } = await API.get(`/company/${companyId}/products?itemId=${_.itemId}`)
+                return data;
             } else {
                 if (_.page !== undefined && _.range !== undefined) {
                     let index = (_.page * _.range);
-                    const { data } = await API.get(`/company/${companyId}/products?index=${index}&range=${_.range}`)
-                    return data.result;
+                    const { data } = await API.get(`/company/${companyId}/products?index=${index}&range=${_.range}&withRate=${_.withRate}`)
+                    return { data: data.result, isRate: _.withRate };
                 }
             }
             const { data } = await API.get(`/company/${companyId}/products`);
@@ -142,7 +143,12 @@ export const InventoryReducer = createSlice({
                 state.loading = true;
             })
             .addCase(fetchItem.fulfilled, (state, action) => {
-                state.items = action.payload;
+                if (action.payload.isRate) {
+                    state.itemWithRates = action.payload.data;
+ 
+                } else {
+                    state.items = action.payload.data;
+                }
                 state.loading = false;
             })
             .addCase(fetchItem.rejected, (state, action) => {

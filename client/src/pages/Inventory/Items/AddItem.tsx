@@ -36,14 +36,12 @@ const AddItem = () => {
 
 	function onSubmit(e: Item, event: any) {
 		setIsLoading(true);
-		console.log(rateObject);
 		const tempRateObject = rateObject;
 
 		tempRateObject.rates.forEach(
 			(rate) => (rate.versionId = rateObject.versionId)
 		);
 
-		console.log(tempRateObject);
 		e.rateObject = tempRateObject;
 		addItem(e)
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -117,11 +115,11 @@ const AddItem = () => {
 
 	const [rateObject, setRateObject] = useState<RateObject>(initalRateObject);
 
-	useEffect(() => {
-		console.log(rateObject);
-	}, [rateObject]);
-
 	const sizeRef = useRef(null);
+	const defaultRateVersion = {
+		id: rateVersion?.find((e) => e.isDefault)?.versionId,
+		label: rateVersion?.find((e) => e.isDefault)?.name,
+	};
 
 	return (
 		<Paper
@@ -229,8 +227,6 @@ const AddItem = () => {
 								})}
 								sx={{ width: "80%" }}
 								onChange={(_event, value) => {
-									console.log(control._formValues);
-
 									control._formValues.itemGroupId = value?.id;
 									return value?.id;
 								}}
@@ -283,6 +279,7 @@ const AddItem = () => {
 									setRateObject(tempRateObject);
 									return value?.id;
 								}}
+								defaultValue={defaultRateVersion}
 								renderInput={(params) => (
 									<TextField
 										{...params}

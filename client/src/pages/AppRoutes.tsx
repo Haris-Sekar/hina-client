@@ -26,6 +26,8 @@ import AddRateVersion from "./Inventory/RateVersion/AddRateVersion.tsx";
 import EditRateVersion from "./Inventory/RateVersion/EditRateVersion.tsx";
 import Items from "./Inventory/Items/Items.tsx";
 import AddItem from "./Inventory/Items/AddItem.tsx";
+import Item from "./Inventory/Items/Item.tsx";
+import CreateInvoice from "./Invoice/CreateInvoice.tsx";
 
 const AppRoutes = () => {
 	const { companyDetails, currentUserDetails } = useAppSelector(
@@ -91,10 +93,12 @@ const AppRoutes = () => {
 						/>
 						<Route path="/app/items" element={<Items />} />
 						<Route path="/app/items/add" element={<AddItem />} />
+						<Route path="/app/items/:id" element={<Item />} />
 						<Route
 							path="/app/rateversion/:id/edit"
 							element={<EditRateVersion />}
 						/>
+						<Route path="/app/sales/invoice/add" element={<CreateInvoice />} />
 						<Route path="/app/*" />
 					</Route>
 				)}
