@@ -35,6 +35,8 @@ const AddItem = () => {
 	const navigate = useNavigate();
 
 	function onSubmit(e: Item, event: any) {
+		console.log(e);
+
 		setIsLoading(true);
 		const tempRateObject = rateObject;
 
@@ -116,10 +118,13 @@ const AddItem = () => {
 	const [rateObject, setRateObject] = useState<RateObject>(initalRateObject);
 
 	const sizeRef = useRef(null);
-	const defaultRateVersion = {
-		id: rateVersion?.find((e) => e.isDefault)?.versionId,
-		label: rateVersion?.find((e) => e.isDefault)?.name,
-	};
+	const defaultRateVersion =
+		rateVersion.length > 0
+			? {
+					id: rateVersion?.find((e) => e.isDefault)?.versionId,
+					label: rateVersion?.find((e) => e.isDefault)?.name,
+			  }
+			: null;
 
 	return (
 		<Paper
@@ -202,6 +207,69 @@ const AddItem = () => {
 						)}
 					/>
 				</Grid>
+				<Grid
+					item
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						width: "100%",
+					}}
+				>
+					<Typography variant="subtitle1" sx={{ width: "20%" }}>
+						Unit
+					</Typography>
+					<Controller
+						name="unit"
+						control={control}
+						render={({ field }) => (
+							<Autocomplete
+								{...field}
+								disablePortal
+								id="combo-box-demo"
+								options={["Box", "PCS", "CM", "INCH"]}
+								sx={{ width: "80%" }}
+								defaultValue="Box"
+								onChange={(_event, value) => {
+									control._formValues.unit = value;
+									console.log(control._formValues.unit);
+									return value;
+								}}
+								renderInput={(params) => (
+									<TextField
+										{...params}
+										helperText={errors.unit?.message}
+										label="Unit"
+									/>
+								)}
+							/>
+						)}
+					/>
+				</Grid>
+				<Grid
+					item
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						width: "100%",
+					}}
+				>
+					<Typography variant="subtitle1" sx={{ width: "20%" }}>
+						Pcs Per Unit
+					</Typography>
+					<Controller
+						name="pcsPerUnit"
+						control={control}
+						render={({ field }) => (
+							<TextField
+								{...field}
+								sx={{ width: "80%" }}
+								label="Pcs Per Unit"
+								error={Boolean(errors.pcsPerUnit)}
+								helperText={errors.pcsPerUnit?.message}
+							/>
+						)}
+					/>
+				</Grid>
 
 				<Grid
 					item
@@ -225,6 +293,7 @@ const AddItem = () => {
 								options={itemGroup.map((group) => {
 									return { id: group.groupId, label: group.name };
 								})}
+								isOptionEqualToValue={(option, value) => option == value}
 								sx={{ width: "80%" }}
 								onChange={(_event, value) => {
 									control._formValues.itemGroupId = value?.id;
@@ -257,41 +326,44 @@ const AddItem = () => {
 					<Typography variant="subtitle1" sx={{ width: "20%" }}>
 						Rate Version *
 					</Typography>
-					<Controller
-						name="rateObject.versionId"
-						control={control}
-						rules={{
-							required: "Rate Version is required",
-						}}
-						render={({ ...field }) => (
-							<Autocomplete
-								{...field}
-								disablePortal
-								id="combo-box-demo"
-								options={rateVersion.map((version) => {
-									return { id: version.versionId, label: version.name };
-								})}
-								sx={{ width: "80%" }}
-								onChange={(_event, value) => {
-									control._formValues.rateObject.versionId = value?.id;
-									let tempRateObject: RateObject = rateObject;
-									tempRateObject.versionId = Number(value?.id);
-									setRateObject(tempRateObject);
-									return value?.id;
-								}}
-								defaultValue={defaultRateVersion}
-								renderInput={(params) => (
-									<TextField
-										{...params}
-										helperText={errors.rateObject?.versionId?.message}
-										error={Boolean(errors.rateObject?.versionId)}
-										label="Rate Version"
-										required
-									/>
-								)}
-							/>
-						)}
-					/>
+					{rateVersion.length > 0 && (
+						<Controller
+							name="rateObject.versionId"
+							control={control}
+							rules={{
+								required: "Rate Version is required",
+							}}
+							render={({ ...field }) => (
+								<Autocomplete
+									{...field}
+									disablePortal
+									id="combo-box-demo"
+									options={rateVersion.map((version) => {
+										return { id: version.versionId, label: version.name };
+									})}
+									sx={{ width: "80%" }}
+									onChange={(_event, value) => {
+										control._formValues.rateObject.versionId = value?.id;
+										let tempRateObject: RateObject = rateObject;
+										tempRateObject.versionId = Number(value?.id);
+										setRateObject(tempRateObject);
+										return value?.id;
+									}}
+									isOptionEqualToValue={(option, value) => option === value}
+									defaultValue={defaultRateVersion}
+									renderInput={(params) => (
+										<TextField
+											{...params}
+											helperText={errors.rateObject?.versionId?.message}
+											error={Boolean(errors.rateObject?.versionId)}
+											label="Rate Version"
+											required
+										/>
+									)}
+								/>
+							)}
+						/>
+					)}
 				</Grid>
 				{rateObject.rates.map((rate) => (
 					<Grid
@@ -308,6 +380,8 @@ const AddItem = () => {
 						<Autocomplete
 							ref={sizeRef}
 							autoFocus
+							autoSelect
+							autoHighlight
 							disablePortal
 							id="combo-box-demo"
 							options={size.map((s) => {
@@ -321,11 +395,12 @@ const AddItem = () => {
 							renderInput={(params) => (
 								<TextField {...params} label="Size" required />
 							)}
+							isOptionEqualToValue={(option, value) => option == value}
 						/>
 						<TextField
 							sx={{ width: "27%" }}
 							type="number"
-							label="Cost Price"
+							label="Cost Price Per Unit"
 							InputProps={{
 								startAdornment: (
 									<InputAdornment position="start">₹</InputAdornment>
@@ -338,7 +413,7 @@ const AddItem = () => {
 						/>
 						<TextField
 							sx={{ width: "27%" }}
-							label="Selling Price"
+							label="Selling Price Per Unit"
 							type="number"
 							InputProps={{
 								startAdornment: (

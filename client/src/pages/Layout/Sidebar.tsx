@@ -162,7 +162,7 @@ export default function Sidebar() {
 							</>
 						)}
 						{menu.items.map((item) => (
-							<Box key={key++}>
+							<>
 								<Link
 									key={key++}
 									to={
@@ -288,16 +288,14 @@ export default function Sidebar() {
 											</ListItem>
 										</Link>
 									))}
-							</Box>
+							</>
 						))}
 					</>
 				))}
 				<Box>
 					<Card sx={{ width: "100%", display: "flex", alignItems: "center" }}>
 						<Avatar></Avatar>
-						<Typography>
-							NameasdfasdfasdfasdfasdNameasdfasdfasdfasdfasdNameasdfasdfasdfasdfasdNameasdfasdfasdfasdfasdNameasdfasdfasdfasdfasd
-						</Typography>
+						<Typography></Typography>
 					</Card>
 				</Box>
 			</Drawer>

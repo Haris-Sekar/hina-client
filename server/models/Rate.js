@@ -115,6 +115,8 @@ export default class Rate {
 						products.item_id as itemId,
 						products.item_name as itemName,
 						products.hsn_code as hsnCode,
+						products.unit as unit,
+						products.pcs_per_unit as pcsPerUnit,
 						item_group.name as item_group,
 						products.created_by as createdBy,
 						products.created_time as createdTime,

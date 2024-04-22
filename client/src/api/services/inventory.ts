@@ -98,7 +98,7 @@ async function updateItem(itemData: Item) {
 }
 
 async function deleteItem(ids: number[]) {
-    return toast.promise(API.delete(`/company/${companyId}/products/`, { params: { ids: ids } }), {
+    return toast.promise(API.delete(`/company/${companyId}/products`, { params: { ids: ids } }), {
         loading: "Deleting Item" + (ids.length > 1 ? 's' : ""),
         success: "Item" + (ids.length > 1 ? 's ' : " ") + "Deleted Successfully",
         error: (err: any) => err.message

@@ -168,15 +168,28 @@ const Items: GridColDef[] = [
 		renderHeader: () => getHeader("Item Group"),
 		flex: 1,
 	},
+	{
+		field: "unit",
+		headerName: "Unit",
+		renderHeader: () => getHeader("Unit"),
+		flex: 1,
+	},
+	{
+		field: "pcsPerUnit",
+		headerName: "Pcs Per Unit",
+		renderHeader: () => getHeader("Pcs Per Unit"),
+	},
 ];
 
 const createItemRow = (
 	id: number,
 	itemName: string,
 	hsnCode: number,
-	itemGroup: string
+	itemGroup: string,
+	unit: string,
+	pcsPerUnit: number
 ): ItemRowData => {
-	return { id, itemName, hsnCode, itemGroup };
+	return { id, itemName, hsnCode, itemGroup, unit, pcsPerUnit };
 };
 export {
 	Items,

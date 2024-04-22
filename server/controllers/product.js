@@ -12,7 +12,7 @@ export const createProduct = async (req, res) => {
 	createProductTry: try {
 		await db.beginTransaction();
 
-		let { itemName, itemGroupId, hsn, rateObject } = req.body;
+		let { itemName, itemGroupId, hsnCode, pcsPerUnit, unit, rateObject } = req.body;
 
 		let missingFields = [
 			!itemName ? "itemName" : "",
@@ -46,7 +46,7 @@ export const createProduct = async (req, res) => {
 			break createProductTry;
 		}
 
-		const productObject = new Product(itemName, hsn, itemGroupId);
+		const productObject = new Product(itemName, hsnCode, itemGroupId, pcsPerUnit, unit);
 		productObject.companyId = req.companyId;
 
 		const result = await productObject.createProduct(req.userId);
@@ -198,7 +198,7 @@ export const updateProduct = async (req, res) => {
 	updateProductTry: try {
 		await db.beginTransaction();
 
-		const { name, itemGroupId, hsn } = req.body;
+		const { name, itemGroupId, hsn, unit, pcsPerUnit } = req.body;
 		let { rateObject } = req.body;
 		const { itemId } = req.params;
 
@@ -226,7 +226,7 @@ export const updateProduct = async (req, res) => {
 			}
 		}
 
-		const productObj = new Product(name, hsn, itemGroupId);
+		const productObj = new Product(name, hsn, itemGroupId, pcsPerUnit, unit);
 		productObj.itemId = itemId;
 
 		const result = await productObj.updateProduct(req.userId);
@@ -284,6 +284,52 @@ export const updateProduct = async (req, res) => {
 	}
 	res.status(respCode).json(response);
 };
+
+
+
+export const deleteItems = async (req, res) => {
+	let respCode, response;
+	deleteItemGroupTry: try {
+		await db.beginTransaction();
+		const { ids } = req.query;
+
+		if (!ids) {
+			respCode = 403;
+			response = {
+				message: "Field validation error",
+				fields: "ids should be provided",
+			};
+			break deleteItemGroupTry;
+		}
+
+		const query = createDeleteQuery(Product.tableName, ids, "item_id");
+
+		const [result] = await db.query(query);
+
+		if (result.affectedRows > 0) {
+			await db.commit();
+			respCode = 204;
+			response = {};
+		} else {
+			await db.commit();
+			respCode = 404;
+			response = {
+				message: "No Item is available",
+				code: 404,
+			};
+		}
+	} catch (e) {
+		await db.rollback();
+		response = {
+			message: e.message,
+			code: 500,
+		};
+		respCode = 500;
+	}
+
+	res.status(respCode).json(response);
+}
+
 
 export const createSize = async (req, res) => {
 	let respCode, response;
@@ -818,6 +864,14 @@ export const updateRateVersion = async (req, res) => {
 			};
 			break updateRateVersionTry;
 		}
+		if (isDefault === true) {
+			const updateQuery = createUpdateQuery(
+				RateVersion.tableName,
+				{ is_default: false },
+				`company_id=${req.companyId}`
+			);
+			await db.query(updateQuery);
+		}
 
 		const rateVersionObj = new RateVersion();
 		rateVersionObj.isDefault = isDefault;
@@ -999,6 +1053,8 @@ function parseItemRateObjectsByVersion(data) {
 		itemId: data[0].itemId,
 		itemName: data[0].itemName,
 		hsnCode: data[0].hsnCode,
+		unit: data[0].unit,
+		pcsPerUnit: data[0].pcsPerUnit,
 		item_group: data[0].item_group,
 		createdBy: data[0].createdBy,
 		createdTime: data[0].createdTime,
@@ -1028,7 +1084,7 @@ function parseItemRateObjectsByVersion(data) {
 		rateVersionsMap.get(rateVersionKey).rates.push({
 			size: {
 				sizeId: item.sizeId,
-				sizeValue: item.size,
+				size: item.size,
 			},
 			costPrice: item.costPrice,
 			sellingPrice: item.sellingPrice,
@@ -1055,6 +1111,8 @@ const parseItemRateByItemAndRateVersion = (dataObject) => {
 				itemId: item.itemId,
 				itemName: item.itemName,
 				hsnCode: item.hsnCode,
+				unit: item.unit,
+				pcsPerUnit: item.pcsPerUnit,
 				item_group: item.item_group,
 				createdBy: item.createdBy,
 				createdTime: item.createdTime,
@@ -1088,7 +1146,7 @@ const parseItemRateByItemAndRateVersion = (dataObject) => {
 		rateVersions.get(String(item.versionId)).rates.push({
 			size: {
 				sizeId: item.sizeId,
-				sizeValue: item.size,
+				size: item.size,
 			},
 			costPrice: item.costPrice,
 			sellingPrice: item.sellingPrice,

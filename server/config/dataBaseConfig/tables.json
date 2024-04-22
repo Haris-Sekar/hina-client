@@ -361,6 +361,12 @@
 			{
 				"name": "hsn_code",
 				"dataType": "INT"
+			},{
+				"name" : "unit",
+				"dataType": "VARCHAR"
+			},{
+				"name": "pcs_per_unit",
+				"dataType": "INT"
 			},
 			{
 				"name": "item_group_id",

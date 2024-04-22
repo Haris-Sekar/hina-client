@@ -1,7 +1,10 @@
 import {
 	Autocomplete,
 	Box,
+	CircularProgress,
 	FormControl,
+	IconButton,
+	InputAdornment,
 	InputLabel,
 	MenuItem,
 	Paper,
@@ -15,19 +18,20 @@ import {
 	TextField,
 } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../store/store";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { fetchCustomers } from "../../store/Reducers/CustomerReducers";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
+import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
 import dayjs from "dayjs";
 import {
 	fetchItem,
 	fetchRateVersion,
 } from "../../store/Reducers/InventoryReducerts";
 import { Item, Size } from "../../Types/Inventory";
-import { editingStateInitializer } from "@mui/x-data-grid/internals";
 
 const CreateInvoice = () => {
 	const { customers, loading } = useAppSelector((state) => state.customer);
@@ -93,7 +97,52 @@ const CreateInvoice = () => {
 		}
 	}, [selectedItem]);
 
-	console.log(sizes);
+	interface LineItem {
+		itemId: number;
+		sizeId: number;
+		quantity: number;
+		rate: number;
+		discount: number;
+		unit: string;
+		pcsPerUnit: number;
+		totalPcs: number;
+	}
+
+	const initalLineItem: LineItem = {
+		itemId: 0,
+		sizeId: 0,
+		quantity: 1,
+		rate: 0,
+		discount: 0,
+		pcsPerUnit: 0,
+		unit: "Box",
+		totalPcs: 1,
+	};
+
+	const [currentLineItem, setCurrentLineItem] =
+		useState<LineItem>(initalLineItem);
+
+	const getAndSetRates = (sizeId: any) => {
+		const itemDets: any = itemWithRates.find(
+			(a: any) => a.itemDetails.itemId === currentLineItem.itemId
+		);
+		const rate = itemDets.rates[rateVersionState].rates.filter(
+			(e: any) => e.size.sizeId === sizeId
+		)[0];
+		setCurrentLineItem({
+			...currentLineItem,
+			sizeId: sizeId,
+			rate: rate.sellingPrice,
+		});
+	};
+
+	useEffect(() => {
+		setCurrentLineItem({
+			...currentLineItem,
+			totalPcs: currentLineItem.quantity * currentLineItem.pcsPerUnit,
+		});
+	}, [currentLineItem.quantity]);
+	const autoC = useRef(null);
 
 	return (
 		<>
@@ -129,6 +178,17 @@ const CreateInvoice = () => {
 								{...params}
 								required
 								placeholder="Select a customer to invoice"
+								InputProps={{
+									...params.InputProps,
+									endAdornment: (
+										<React.Fragment>
+											{loading ? (
+												<CircularProgress color="inherit" size={20} />
+											) : null}
+											{params.InputProps.endAdornment}
+										</React.Fragment>
+									),
+								}}
 							/>
 						)}
 					/>
@@ -214,11 +274,25 @@ const CreateInvoice = () => {
 								<TableHead>
 									<TableRow>
 										<TableCell>Item</TableCell>
-										<TableCell align="right">Size</TableCell>
-										<TableCell align="right">Quantity</TableCell>
-										<TableCell align="right">Rate</TableCell>
-										<TableCell align="right">Discount</TableCell>
-										<TableCell align="right">Net Rate</TableCell>
+										<TableCell align="right" sx={{ width: "10%" }}>
+											Size
+										</TableCell>
+										<TableCell align="right" sx={{ width: "10%" }}>
+											Quantity({currentLineItem.unit} /{" "}
+											{currentLineItem.pcsPerUnit})
+										</TableCell>
+										<TableCell align="right" sx={{ width: "10%" }}>
+											Pcs
+										</TableCell>
+										<TableCell align="right" sx={{ width: "10%" }}>
+											Rate
+										</TableCell>
+										<TableCell align="right" sx={{ width: "10%" }}>
+											Discount
+										</TableCell>
+										<TableCell align="right" sx={{ width: "10%" }}>
+											Net Rate
+										</TableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
@@ -230,87 +304,168 @@ const CreateInvoice = () => {
 												autoHighlight
 												options={items}
 												getOptionLabel={(option) => option.itemName}
-												isOptionEqualToValue
+												isOptionEqualToValue={(option, value) =>
+													option == value
+												}
 												autoFocus
 												autoSelect
 												loading={loading}
 												renderInput={(params) => (
-													<TextField {...params} required placeholder="Items" />
+													<TextField
+														{...params}
+														required
+														placeholder="Items"
+														InputProps={{
+															...params.InputProps,
+															endAdornment: (
+																<React.Fragment>
+																	{loading ? (
+																		<CircularProgress
+																			color="inherit"
+																			size={20}
+																		/>
+																	) : null}
+																	{params.InputProps.endAdornment}
+																</React.Fragment>
+															),
+														}}
+													/>
 												)}
-												onChange={(_e: any, itemDetails: Item | any) =>
-													setSelectedItem(itemDetails)
-												}
+												onChange={(_e: any, itemDetails: Item | any) => {
+													setSelectedItem(itemDetails);
+													setCurrentLineItem({
+														...currentLineItem,
+														itemId: itemDetails.itemId,
+														unit: itemDetails.unit,
+														pcsPerUnit: itemDetails.pcsPerUnit,
+														totalPcs: itemDetails.pcsPerUnit * 1,
+														rate: 0,
+														sizeId: 0,
+													});
+													const ele = autoC.current.getElementsByClassName(
+														"MuiAutocomplete-clearIndicator"
+													)[0];
+													if (ele) ele.click();
+												}}
 											/>
 										</TableCell>
-										<TableCell>
+										<TableCell sx={{ width: "10%" }}>
 											<Autocomplete
+												ref={autoC}
 												disablePortal
 												id="auto-highlight"
 												autoHighlight
 												options={sizes}
-												getOptionLabel={(option) => option.size}
 												autoFocus
-												loading={loading}
+												autoSelect
+												getOptionLabel={(option) => option.size}
+												isOptionEqualToValue={(option, value) =>
+													option == value
+												}
 												renderInput={(params) => (
 													<TextField {...params} required placeholder="Sizes" />
 												)}
+												onChange={(_e: any, size: Size | any) => {
+													if (size) {
+														getAndSetRates(size.sizeId);
+													}
+												}}
 											/>
 										</TableCell>
-										<TableCell>
-											<Autocomplete
-												disablePortal
-												id="auto-highlight"
-												autoHighlight
-												options={items}
-												getOptionLabel={(option) => option.itemName}
-												autoFocus
-												loading={loading}
-												renderInput={(params) => (
-													<TextField {...params} required placeholder="Items" />
-												)}
+										<TableCell align="center" sx={{ width: "10%" }}>
+											<TextField
+												type="number"
+												value={currentLineItem.quantity}
+												onChange={(e) => {
+													setCurrentLineItem({
+														...currentLineItem,
+														quantity: Number(e.target.value),
+													});
+												}}
+												InputProps={{
+													inputProps: {
+														style: {
+															textAlign: "center",
+														},
+													},
+													startAdornment: (
+														<InputAdornment position="start">
+															<IconButton
+																edge="start"
+																onClick={() =>
+																	setCurrentLineItem({
+																		...currentLineItem,
+																		quantity: ++currentLineItem.quantity,
+																	})
+																}
+															>
+																<AddCircleRoundedIcon
+																	color="primary"
+																	fontSize="large"
+																/>
+															</IconButton>
+														</InputAdornment>
+													),
+													endAdornment: (
+														<InputAdornment position="end">
+															<IconButton
+																edge="end"
+																onClick={() =>
+																	currentLineItem.quantity > 1 &&
+																	setCurrentLineItem({
+																		...currentLineItem,
+																		quantity: --currentLineItem.quantity,
+																	})
+																}
+															>
+																<RemoveCircleRoundedIcon
+																	color="primary"
+																	fontSize="large"
+																/>
+															</IconButton>
+														</InputAdornment>
+													),
+												}}
 											/>
 										</TableCell>
-										<TableCell>
-											<Autocomplete
-												disablePortal
-												id="auto-highlight"
-												autoHighlight
-												options={items}
-												getOptionLabel={(option) => option.itemName}
-												autoFocus
-												loading={loading}
-												renderInput={(params) => (
-													<TextField {...params} required placeholder="Items" />
-												)}
+										<TableCell align="right" sx={{ width: "10%" }}>
+											<TextField
+												type="number"
+												value={currentLineItem.totalPcs}
+												onChange={(e) => {
+													setCurrentLineItem({
+														...currentLineItem,
+														totalPcs: Number(e.target.value),
+													});
+												}}
 											/>
 										</TableCell>
-										<TableCell>
-											<Autocomplete
-												disablePortal
-												id="auto-highlight"
-												autoHighlight
-												options={items}
-												getOptionLabel={(option) => option.itemName}
-												autoFocus
-												loading={loading}
-												renderInput={(params) => (
-													<TextField {...params} required placeholder="Items" />
-												)}
+										<TableCell align="right" sx={{ width: "10%" }}>
+											<TextField
+												value={currentLineItem.rate}
+												onChange={(e) =>
+													setCurrentLineItem({
+														...currentLineItem,
+														rate: Number(e.target.value),
+													})
+												}
+												InputProps={{
+													startAdornment: (
+														<span style={{ paddingRight: "10%" }}>₹</span>
+													),
+												}}
 											/>
 										</TableCell>
-										<TableCell>
-											<Autocomplete
-												disablePortal
-												id="auto-highlight"
-												autoHighlight
-												options={items}
-												getOptionLabel={(option) => option.itemName}
-												autoFocus
-												loading={loading}
-												renderInput={(params) => (
-													<TextField {...params} required placeholder="Items" />
-												)}
+										<TableCell align="right" sx={{ width: "10%" }}>
+											<TextField
+												type="number"
+												InputProps={{
+													endAdornment: "%",
+												}}
 											/>
+										</TableCell>
+										<TableCell align="right" sx={{ width: "10%" }}>
+											Net Rate
 										</TableCell>
 									</TableRow>
 								</TableBody>

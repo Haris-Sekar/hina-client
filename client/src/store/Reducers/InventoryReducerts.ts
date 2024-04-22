@@ -145,7 +145,7 @@ export const InventoryReducer = createSlice({
             .addCase(fetchItem.fulfilled, (state, action) => {
                 if (action.payload.isRate) {
                     state.itemWithRates = action.payload.data;
- 
+
                 } else {
                     state.items = action.payload.data;
                 }

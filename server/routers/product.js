@@ -22,7 +22,7 @@ import {
 	getRateVersion,
 	deleteRateVersion,
 	deleteRateVersions,
-	getProductCount
+	getProductCount, deleteItems
 } from "../controllers/product.js";
 
 const router = express.Router({ mergeParams: true });
@@ -31,7 +31,12 @@ router.post("/", authenticateUser, authenticateCompany, createProduct);
 router.get("/", authenticateUser, authenticateCompany, getProduct);
 router.get("/count", authenticateUser, authenticateCompany, getProductCount);
 router.patch("/:itemId", authenticateUser, authenticateCompany, updateProduct);
-
+router.delete(
+	"/",
+	authenticateUser,
+	authenticateCompany,
+	deleteItems
+);
 router.post("/size", authenticateUser, authenticateCompany, createSize);
 router.patch(
 	"/size/:sizeId",

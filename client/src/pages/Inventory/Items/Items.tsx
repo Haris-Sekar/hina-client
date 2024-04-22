@@ -14,7 +14,7 @@ import {
 	fetchItemCount,
 } from "../../../store/Reducers/InventoryReducerts";
 import { Item, ItemRowData } from "../../../Types/Inventory";
-import { deleteItemGroup } from "../../../api/services/inventory";
+import { deleteItem, deleteItemGroup } from "../../../api/services/inventory";
 
 const Items = () => {
 	const { items, loading, itemCount } = useAppSelector(
@@ -41,7 +41,9 @@ const Items = () => {
 					group.itemId,
 					group.itemName,
 					group.hsnCode,
-					group.itemGroupId.name
+					group.itemGroupId.name,
+					group.unit,
+					group.pcsPerUnit
 				)
 			);
 		});
@@ -96,7 +98,7 @@ const Items = () => {
 		setDeleteDialogOpen(false);
 		const ids = JSON.parse(e) as number[];
 		setDeleteBtnLoading(true);
-		deleteItemGroup(ids)
+		deleteItem(ids)
 			.then(() => {
 				dispatch(fetchItem({}));
 				setDeleteBtnLoading(false);

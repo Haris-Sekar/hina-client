@@ -51,6 +51,8 @@ interface Item {
     itemId: number;
     itemName: string;
     hsnCode: number;
+    unit: string;
+    pcsPerUnit: number;
     itemGroupId: ItemGroup;
     createdBy: User;
     createdTime: number;
@@ -83,6 +85,8 @@ interface ItemRowData {
     itemName: string;
     hsnCode: number;
     itemGroup: string;
+    unit: string;
+    pcsPerUnit: number;
 }
 
 
