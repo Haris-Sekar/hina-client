@@ -1,6 +1,7 @@
 import {
 	Autocomplete,
 	Box,
+	Button,
 	CircularProgress,
 	FormControl,
 	IconButton,
@@ -30,8 +31,12 @@ import dayjs from "dayjs";
 import {
 	fetchItem,
 	fetchRateVersion,
+	fetchSize,
 } from "../../store/Reducers/InventoryReducerts";
 import { Item, Size } from "../../Types/Inventory";
+import { currencyFormatter } from "../../Constants/commonFunctions";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
 
 const CreateInvoice = () => {
 	const { customers, loading } = useAppSelector((state) => state.customer);
@@ -39,6 +44,8 @@ const CreateInvoice = () => {
 	const { itemWithRates, rateVersion } = useAppSelector(
 		(state) => state.inventory
 	);
+
+	const allSizes = useAppSelector((state) => state.inventory.size);
 
 	const [items, setItems] = useState<Item[]>([]);
 
@@ -69,6 +76,7 @@ const CreateInvoice = () => {
 			})
 		);
 		dispatch(fetchRateVersion({}));
+		dispatch(fetchSize({}));
 	}, []);
 
 	const [selectedItem, setSelectedItem] = useState<Item>();
@@ -142,7 +150,58 @@ const CreateInvoice = () => {
 			totalPcs: currentLineItem.quantity * currentLineItem.pcsPerUnit,
 		});
 	}, [currentLineItem.quantity]);
-	const autoC = useRef(null);
+
+	const sizeRef = useRef(null);
+	const itemRef = useRef(null);
+
+	const [lineItems, setLineItems] = useState<LineItem[]>([]);
+
+	const addLineItem = () => {
+		const existingLineItemIndex = lineItems.findIndex(
+			(item) =>
+				item.itemId === currentLineItem.itemId &&
+				item.sizeId === currentLineItem.sizeId
+		);
+
+		if (existingLineItemIndex === -1) {
+			const tempCurrLineItem = initalLineItem;
+			Object.assign(tempCurrLineItem, currentLineItem);
+			setLineItems([...lineItems, tempCurrLineItem]);
+		} else {
+			const existingLineItem = lineItems[existingLineItemIndex];
+			const newLineItem = {
+				...existingLineItem,
+				quantity: existingLineItem.quantity + currentLineItem.quantity,
+				totalPcs: existingLineItem.totalPcs + currentLineItem.totalPcs,
+				discount: currentLineItem.discount,
+			};
+
+			const updatedLineItems = [...lineItems];
+			updatedLineItems[existingLineItemIndex] = newLineItem;
+			setLineItems(updatedLineItems);
+		}
+		const item = itemRef.current.getElementsByClassName(
+			"MuiAutocomplete-clearIndicator"
+		)[0];
+		const size = sizeRef.current.getElementsByClassName(
+			"MuiAutocomplete-clearIndicator"
+		)[0];
+		if (size) size.click();
+		if (item) item.click();
+		setCurrentLineItem(initalLineItem);
+		itemRef.current.focus();
+	};
+
+	if (!loading) {
+		if (itemRef.current) itemRef.current.focus();
+	}
+
+	const findItemDetails = (itemId: number) => {
+		return items.find((e) => e.itemId === itemId);
+	};
+	const findSizeDetails = (sizeId: number) => {
+		return allSizes.find((e) => e.sizeId === sizeId);
+	};
 
 	return (
 		<>
@@ -285,7 +344,10 @@ const CreateInvoice = () => {
 											Pcs
 										</TableCell>
 										<TableCell align="right" sx={{ width: "10%" }}>
-											Rate
+											Rate/Pcs
+										</TableCell>
+										<TableCell align="right" sx={{ width: "10%" }}>
+											Total Amount
 										</TableCell>
 										<TableCell align="right" sx={{ width: "10%" }}>
 											Discount
@@ -293,6 +355,8 @@ const CreateInvoice = () => {
 										<TableCell align="right" sx={{ width: "10%" }}>
 											Net Rate
 										</TableCell>
+										<TableCell align="right" sx={{ width: "3%" }}></TableCell>
+										<TableCell align="right" sx={{ width: "3%" }}></TableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
@@ -301,6 +365,7 @@ const CreateInvoice = () => {
 											<Autocomplete
 												disablePortal
 												id="auto-highlight"
+												ref={itemRef}
 												autoHighlight
 												options={items}
 												getOptionLabel={(option) => option.itemName}
@@ -332,26 +397,28 @@ const CreateInvoice = () => {
 													/>
 												)}
 												onChange={(_e: any, itemDetails: Item | any) => {
-													setSelectedItem(itemDetails);
-													setCurrentLineItem({
-														...currentLineItem,
-														itemId: itemDetails.itemId,
-														unit: itemDetails.unit,
-														pcsPerUnit: itemDetails.pcsPerUnit,
-														totalPcs: itemDetails.pcsPerUnit * 1,
-														rate: 0,
-														sizeId: 0,
-													});
-													const ele = autoC.current.getElementsByClassName(
-														"MuiAutocomplete-clearIndicator"
-													)[0];
-													if (ele) ele.click();
+													if (itemDetails) {
+														setSelectedItem(itemDetails);
+														setCurrentLineItem({
+															...currentLineItem,
+															itemId: itemDetails.itemId,
+															unit: itemDetails.unit,
+															pcsPerUnit: itemDetails.pcsPerUnit,
+															totalPcs: itemDetails.pcsPerUnit * 1,
+															rate: 0,
+															sizeId: 0,
+														});
+														const ele = sizeRef.current.getElementsByClassName(
+															"MuiAutocomplete-clearIndicator"
+														)[0];
+														if (ele) ele.click();
+													}
 												}}
 											/>
 										</TableCell>
 										<TableCell sx={{ width: "10%" }}>
 											<Autocomplete
-												ref={autoC}
+												ref={sizeRef}
 												disablePortal
 												id="auto-highlight"
 												autoHighlight
@@ -456,20 +523,91 @@ const CreateInvoice = () => {
 												}}
 											/>
 										</TableCell>
+										<TableCell
+											align="right"
+											sx={{ width: "10%", fontWeight: "bolder" }}
+										>
+											{currencyFormatter(
+												currentLineItem.rate * currentLineItem.totalPcs
+											)}
+										</TableCell>
 										<TableCell align="right" sx={{ width: "10%" }}>
 											<TextField
 												type="number"
 												InputProps={{
 													endAdornment: "%",
 												}}
+												onChange={(e) => {
+													setCurrentLineItem({
+														...currentLineItem,
+														discount: Number(e.target.value),
+													});
+												}}
 											/>
 										</TableCell>
-										<TableCell align="right" sx={{ width: "10%" }}>
-											Net Rate
+										<TableCell
+											align="right"
+											sx={{ width: "10%", fontWeight: "bolder" }}
+										>
+											{currencyFormatter(
+												currentLineItem.rate * currentLineItem.totalPcs -
+													(currentLineItem.rate *
+														currentLineItem.totalPcs *
+														currentLineItem.discount) /
+														100
+											)}
+										</TableCell>
+										<TableCell align="right" sx={{ width: "3%" }}>
+											<Button
+												variant="contained"
+												startIcon={<AddBoxIcon />}
+												onClick={(_e) => addLineItem()}
+											>
+												Add
+											</Button>
+										</TableCell>
+										<TableCell align="right" sx={{ width: "3%" }}>
+											<Button
+												variant="contained"
+												startIcon={<DisabledByDefaultIcon />}
+											>
+												Clear
+											</Button>
 										</TableCell>
 									</TableRow>
+									{lineItems.map((lineItem) => (
+										<TableRow>
+											<TableCell>
+												{findItemDetails(lineItem.itemId)?.itemName}
+											</TableCell>
+											<TableCell>
+												{findSizeDetails(lineItem.sizeId)?.size}
+											</TableCell>
+											<TableCell>{lineItem.quantity}</TableCell>
+											<TableCell>{lineItem.totalPcs}</TableCell>
+											<TableCell>{currencyFormatter(lineItem.rate)}</TableCell>
+											<TableCell>
+												{currencyFormatter(lineItem.rate * lineItem.totalPcs)}
+											</TableCell>
+											<TableCell>{lineItem.discount}</TableCell>
+											<TableCell>
+												{currencyFormatter(
+													lineItem.rate * lineItem.totalPcs -
+														(lineItem.rate *
+															lineItem.totalPcs *
+															lineItem.discount) /
+															100
+												)}
+											</TableCell>
+											<TableCell>Edit</TableCell>
+											<TableCell>Delete</TableCell>
+										</TableRow>
+									))}
 								</TableBody>
 							</Table>
+						</TableContainer>
+						<TableContainer component={Paper} sx={{ width: "100%", mt: "2%" }}>
+							asdf
 						</TableContainer>
 					</Box>
 				</Box>
