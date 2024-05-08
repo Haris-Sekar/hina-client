@@ -2,6 +2,7 @@ import {
 	Autocomplete,
 	Box,
 	Button,
+	ButtonGroup,
 	CircularProgress,
 	FormControl,
 	IconButton,
@@ -17,6 +18,9 @@ import {
 	TableHead,
 	TableRow,
 	TextField,
+	ToggleButton,
+	ToggleButtonGroup,
+	Typography,
 } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../store/store";
 import React, { useEffect, useRef, useState } from "react";
@@ -37,6 +41,8 @@ import { Item, Size } from "../../Types/Inventory";
 import { currencyFormatter } from "../../Constants/commonFunctions";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import DisabledByDefaultIcon from "@mui/icons-material/DisabledByDefault";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { v4 } from "uuid";
 
 const CreateInvoice = () => {
 	const { customers, loading } = useAppSelector((state) => state.customer);
@@ -106,6 +112,7 @@ const CreateInvoice = () => {
 	}, [selectedItem]);
 
 	interface LineItem {
+		uuid: string;
 		itemId: number;
 		sizeId: number;
 		quantity: number;
@@ -117,6 +124,7 @@ const CreateInvoice = () => {
 	}
 
 	const initalLineItem: LineItem = {
+		uuid: v4(),
 		itemId: 0,
 		sizeId: 0,
 		quantity: 1,
@@ -126,7 +134,6 @@ const CreateInvoice = () => {
 		unit: "Box",
 		totalPcs: 1,
 	};
-
 	const [currentLineItem, setCurrentLineItem] =
 		useState<LineItem>(initalLineItem);
 
@@ -134,7 +141,7 @@ const CreateInvoice = () => {
 		const itemDets: any = itemWithRates.find(
 			(a: any) => a.itemDetails.itemId === currentLineItem.itemId
 		);
-		const rate = itemDets.rates[rateVersionState].rates.filter(
+		const rate = itemDets.rates[rateVersionState]?.rates.filter(
 			(e: any) => e.size.sizeId === sizeId
 		)[0];
 		setCurrentLineItem({
@@ -189,6 +196,13 @@ const CreateInvoice = () => {
 		if (size) size.click();
 		if (item) item.click();
 		setCurrentLineItem(initalLineItem);
+		setCurrentLineItem({
+			...initalLineItem,
+			uuid: v4(),
+			rate: 0,
+			totalPcs: 0,
+			quantity: 1,
+		});
 		itemRef.current.focus();
 	};
 
@@ -202,6 +216,9 @@ const CreateInvoice = () => {
 	const findSizeDetails = (sizeId: number) => {
 		return allSizes.find((e) => e.sizeId === sizeId);
 	};
+
+	const [grandDiscountType, setGrandDiscountType] =
+		useState<String>("percentage");
 
 	return (
 		<>
@@ -450,6 +467,7 @@ const CreateInvoice = () => {
 													});
 												}}
 												InputProps={{
+													value: currentLineItem.quantity,
 													inputProps: {
 														style: {
 															textAlign: "center",
@@ -537,6 +555,11 @@ const CreateInvoice = () => {
 												InputProps={{
 													endAdornment: "%",
 												}}
+												onKeyDown={(event) => {
+													if (event.keyCode === 13) {
+														addLineItem();
+													}
+												}}
 												onChange={(e) => {
 													setCurrentLineItem({
 														...currentLineItem,
@@ -580,17 +603,19 @@ const CreateInvoice = () => {
 											<TableCell>
 												{findItemDetails(lineItem.itemId)?.itemName}
 											</TableCell>
-											<TableCell>
+											<TableCell align="right">
 												{findSizeDetails(lineItem.sizeId)?.size}
 											</TableCell>
-											<TableCell>{lineItem.quantity}</TableCell>
-											<TableCell>{lineItem.totalPcs}</TableCell>
-											<TableCell>{currencyFormatter(lineItem.rate)}</TableCell>
-											<TableCell>
+											<TableCell align="right">{lineItem.quantity}</TableCell>
+											<TableCell align="right">{lineItem.totalPcs}</TableCell>
+											<TableCell align="right">
+												{currencyFormatter(lineItem.rate)}
+											</TableCell>
+											<TableCell align="right">
 												{currencyFormatter(lineItem.rate * lineItem.totalPcs)}
 											</TableCell>
-											<TableCell>{lineItem.discount}</TableCell>
-											<TableCell>
+											<TableCell align="right">{lineItem.discount}</TableCell>
+											<TableCell align="right">
 												{currencyFormatter(
 													lineItem.rate * lineItem.totalPcs -
 														(lineItem.rate *
@@ -599,16 +624,128 @@ const CreateInvoice = () => {
 															100
 												)}
 											</TableCell>
-											<TableCell>Edit</TableCell>
-											<TableCell>Delete</TableCell>
+											<TableCell>
+												<Button
+													color="error"
+													onClick={(_e) => {
+														setLineItems((prefItem) =>
+															prefItem.filter(
+																(item) => item.uuid !== lineItem.uuid
+															)
+														);
+													}}
+												>
+													<DeleteIcon />
+												</Button>
+											</TableCell>
 										</TableRow>
 									))}
 								</TableBody>
 							</Table>
 						</TableContainer>
-						<TableContainer component={Paper} sx={{ width: "100%", mt: "2%" }}>
-							asdf
-						</TableContainer>
+						<Box
+							sx={{
+								width: "100%",
+								mt: "2%",
+								display: "flex",
+								alignItems: "end",
+								justifyContent: "space-between",
+							}}
+						>
+							<Box
+								sx={{
+									width: "50%",
+									display: "flex",
+									alignItems: "end",
+								}}
+							>
+								asdf
+							</Box>
+							<Box
+								sx={{
+									width: "30%",
+									display: "flex",
+									justifyContent: "end",
+									backgroundColor: "#f7f7fa",
+									margin: "1%",
+									borderRadius: "10px",
+									height: "100%",
+								}}
+							>
+								<Table>
+									<TableBody>
+										<TableRow>
+											<TableCell sx={{ fontWeight: "bold", fontSize: "17px" }}>
+												Sub Total
+											</TableCell>
+											<TableCell
+												sx={{ fontWeight: "bolder", fontSize: "17px" }}
+											>
+												{currencyFormatter(500)}
+											</TableCell>
+										</TableRow>
+										<TableRow>
+											<TableCell>
+												<TableCell sx={{ borderBottom: 0 }}>Discount</TableCell>
+												<TableCell sx={{ borderBottom: 0, display: "flex" }}>
+													<TextField
+														InputProps={{
+															style: {
+																height: "50px",
+															},
+														}}
+													/>
+													<Paper
+														elevation={0}
+														sx={{
+															display: "flex",
+															border: (theme) =>
+																`1px solid ${theme.palette.divider}`,
+															flexWrap: "wrap",
+															padding: "1%",
+															height: "50px",
+														}}
+													>
+														<ToggleButtonGroup
+															value={grandDiscountType}
+															exclusive
+															onChange={(_e, value) =>
+																setGrandDiscountType(value)
+															}
+															aria-label="text alignment"
+															sx={{ width: "fit-content", height: "100%" }}
+														>
+															<ToggleButton
+																sx={{ fontWeight: "bolder", fontSize: "17px" }}
+																value="rupees"
+															>
+																₹
+															</ToggleButton>
+															<ToggleButton
+																sx={{ fontWeight: "bolder", fontSize: "17px" }}
+																value="percentage"
+															>
+																%
+															</ToggleButton>
+														</ToggleButtonGroup>
+													</Paper>
+												</TableCell>
+											</TableCell>
+
+											<TableCell>908</TableCell>
+										</TableRow>
+										<TableRow>
+											<TableCell>Tax</TableCell>
+											<TableCell></TableCell>
+										</TableRow>
+										<TableRow>
+											<TableCell>Discount</TableCell>
+											<TableCell></TableCell>
+										</TableRow>
+									</TableBody>
+								</Table>
+							</Box>
+						</Box>
 					</Box>
 				</Box>
 			</Paper>
