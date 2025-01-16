@@ -1,0 +1,33 @@
+.authContainer {
+    min-width: 40%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.logo {
+    width: 70px;
+    height: 70px;
+}
+
+@media only screen and (max-width: 1400px) {
+    .authContainer {
+        width: 70%;
+        height: 60%;
+    }
+}
+
+
+@media only screen and (max-width: 600px) {
+    .logo {
+        width: 72px;
+        height: 72px;
+    }
+}
+
+@media only screen and (max-width: 900px) {}
+
+@media only screen and (max-width: 1200px) {}
