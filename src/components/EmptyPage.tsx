@@ -2,6 +2,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { Box, Typography } from "@mui/material";
 
 interface IEmptyPage {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	image: any;
 	heading: string;
 	description: string;
@@ -12,7 +13,9 @@ interface IEmptyPage {
 
 interface IButton {
 	label: string;
+	// eslint-disable-next-line @typescript-eslint/ban-types
 	onchange?: Function;
+	// eslint-disable-next-line @typescript-eslint/ban-types
 	onclick?: Function;
 	isLoading?: boolean;
 	variant?: "text" | "outlined" | "contained";

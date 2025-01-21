@@ -10,9 +10,10 @@ interface Customer {
     email?: string,
     phone?: string,
     panCard?: string,
+    taxNumber?: string,
     billingAddress?: Address
     shippingAddress?: Address,
-    openingBalance?: number,
+    openingBalance?: string,
 }
 
 interface Address {

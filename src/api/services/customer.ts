@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import toast from "react-hot-toast";
 import { Customer, MainArea } from "../../Types/Customer";
 import { API } from "../axios";
@@ -25,7 +26,7 @@ async function addMainArea(mainAreaData: MainArea) {
 }
 
 async function updateCustomer(customerData: Customer) {
-    return toast.promise(API.patch(`/company/${companyId}/customer/${customerData.customerId}`, customerData), {
+    return toast.promise(API.patch(`/company/${companyId}/customer/${customerData.id}`, customerData), {
         loading: "Updating Customer",
         success: "Customer Updated Successfully",
         error: (err: any) => err.message

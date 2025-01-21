@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IAuthLogin, IAuthSignup } from "../../Types/User";
 import { API } from "../axios";
 import { customToast, toastPromise } from "../../Constants/commonFunctions";
@@ -62,9 +63,9 @@ async function getUserDetailsForVerification(token: string) {
 }
 
 async function verifyUser(token: string) {
-    toastPromise(API.get(`/users/confirm/${token}`), {
+    return toastPromise(API.get(`/users/confirm/${token}`), {
         loading: "Verifying User",
-        success: "User Verified Successfully",
+        success: "User Verified Successfully", 
         error: (err: any) => err.message
     });
 }
@@ -75,7 +76,7 @@ async function createCompany(data: Company) {
         success: "Company Created Successfully",
         error: (err: any) => {
             if (err?.response?.data?.errors) {
-                return `${JSON.stringify(err.response.data.errors.join())}`
+                return `${JSON.stringify(err.response.data.errors.join())}` 
             } else {
                 return `Something went wrong! please contact support or try again after sometime`
             }
