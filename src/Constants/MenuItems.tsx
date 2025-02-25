@@ -1,7 +1,5 @@
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import CurrencyRupeeTwoToneIcon from "@mui/icons-material/CurrencyRupeeTwoTone";
-import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import SupervisorAccountTwoToneIcon from "@mui/icons-material/SupervisorAccountTwoTone";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined";
@@ -12,6 +10,7 @@ import WorkspacesOutlinedIcon from "@mui/icons-material/WorkspacesOutlined";
 import SchemaOutlinedIcon from "@mui/icons-material/SchemaOutlined";
 import ShoppingBasketOutlinedIcon from "@mui/icons-material/ShoppingBasketOutlined";
 import { Navigation } from "@toolpad/core/AppProvider";
+
 const sidebarItems: Navigation = [
 	{
 		segment: "dashboard",
@@ -19,92 +18,83 @@ const sidebarItems: Navigation = [
 		kind: "page",
 		icon: <DashboardIcon />,
 	},
+
 	{
-		segment: "inventory",
-		pattern: "inventory{/:segment}*",
+		kind: "header",
+		title: "Sales",
+	},
+	{
+		icon: <PersonOutlinedIcon />,
+		title: "Customers",
+		segment: "sales/customer",
+	},
+	{
+		icon: <ReceiptLongOutlinedIcon />,
+		title: "Invoices",
+		segment: "sales/invoice",
+	},
+	{
+		icon: <ListAltOutlinedIcon />,
+		title: "Sales Order",
+		segment: "sales/order",
+	},
+	{
+		icon: <CurrencyRupeeTwoToneIcon />,
+		title: "Payments",
+		segment: "sales/payment",
+	},
+	{
+		kind: "header",
+		title: "Invnetory",
+	},
+	{
+		segment: "inventory/stock",
 		title: "Inventory",
 		icon: <Inventory2OutlinedIcon />,
-		children: [
-			{
-				segment: "items",
-				title: "Items",
-				icon: <ShoppingBasketOutlinedIcon />,
-			},
-			{
-				icon: <WorkspacesOutlinedIcon />,
-				title: "Item Group",
-				segment: "itemgroup",
-			},
-			{
-				icon: <StraightenOutlinedIcon />,
-				title: "Size",
-				segment: "size",
-			},
-			{
-				icon: <SchemaOutlinedIcon />,
-				title: "Rate Version",
-				segment: "rateversion",
-			},
-		],
 	},
 	{
-		segment: "sales",
-		title: "Sales",
-		icon: <ShoppingCartOutlinedIcon />,
-		pattern: "sales{/:segments}*",
-		children: [
-			{
-				icon: <PersonOutlinedIcon />,
-				title: "Customers",
-
-				segment: "customer",
-			},
-			{
-				icon: <ReceiptLongOutlinedIcon />,
-				title: "Invoices",
-				segment: "invoice",
-			},
-			{
-				icon: <ListAltOutlinedIcon />,
-				title: "Sales Order",
-				segment: "order",
-			},
-			{
-				icon: <CurrencyRupeeTwoToneIcon />,
-				title: "Payments",
-				segment: "payment",
-			},
-		],
+		segment: "inventory/items",
+		title: "Items",
+		icon: <ShoppingBasketOutlinedIcon />,
 	},
 	{
-		kind: "divider",
+		icon: <WorkspacesOutlinedIcon />,
+		title: "Item Group",
+		segment: "inventory/itemgroup",
 	},
 	{
-		segment: "purchase",
-		title: "Purchanse",
-		icon: <ShoppingBagOutlinedIcon />,
-		children: [
-			{
-				icon: <SupervisorAccountTwoToneIcon />,
-				title: "Vendors",
-				segment: "vendor",
-			},
-			{
-				icon: <ReceiptLongOutlinedIcon />,
-				title: "Bills",
-				segment: "bill",
-			},
-			{
-				icon: <ListAltOutlinedIcon />,
-				title: "Purchase Order",
-				segment: "order",
-			},
-			{
-				icon: <CurrencyRupeeTwoToneIcon />,
-				title: "Payments",
-				segment: "payment",
-			},
-		],
+		icon: <StraightenOutlinedIcon />,
+		title: "Size",
+		segment: "inventory/size",
+	},
+	{
+		icon: <SchemaOutlinedIcon />,
+		title: "Rate Version",
+		segment: "inventory/rateversion",
+	},
+	{
+		kind: "header",
+		title: "Purchase",
+	},
+	{
+		icon: <SupervisorAccountTwoToneIcon />,
+		title: "Vendors",
+		segment: "purchase/vendor",
+	},
+	{
+		icon: <ReceiptLongOutlinedIcon />,
+		title: "Bills",
+		segment: "purchase/bill",
+	},
+	{
+		icon: <ListAltOutlinedIcon />,
+		title: "Purchase Order",
+		segment: "purchase/order",
+	},
+	{
+		icon: <CurrencyRupeeTwoToneIcon />,
+		title: "Payments",
+		segment: "purchase/payment",
 	},
 ];
 

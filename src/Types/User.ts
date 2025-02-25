@@ -1,3 +1,5 @@
+import { IModule } from "./Module";
+
 interface IAuthLogin {
     email: string;
     phone: string;
@@ -17,7 +19,57 @@ interface User {
     firstName: string;
     lastName: string;
     email: string;
-    loggedOnTime?: number;
+    role: Role;
+    roleId?: number;
+    status: "ACTIVE" | "INACTIVE" | "SUSPENDED" | "READ_ONLY";
+    isVerified?: boolean;
+    createdTime?: string;
+    updatedTime?: string;
+    createdBy?: User;
+    updatedBy?: User;
 }
 
-export type { IAuthLogin, IAuthSignup, User };
+interface Role {
+    id: number;
+    name: string;
+    description?: string;
+    isDefault?: boolean | false;
+    isSystemAdded?: boolean | false;
+    createdTime?: string;
+    updatedTime?: string;
+    createdBy?: User;
+    updatedBy?: User;
+}
+
+interface Permission {
+    id: number;
+    module: IModule;
+    role: Role;
+    canRead: boolean;
+    canCreate: boolean;
+    canUpdate: boolean;
+    canDelete: boolean;
+    canReadAll: boolean;
+    canUpdateAll: boolean;
+    canDeleteAll: boolean;
+    createdTime?: string;
+    updatedTime?: string;
+    createdBy?: User;
+    updatedBy?: User;
+}
+
+interface userRowData {
+    id: number;
+    name: string;
+    email: string;
+    role: object;
+    status: string;
+    isVerified: boolean;
+    createdTime?: string;
+    createdBy?: object;
+    updatedTime?: string;
+    updatedBy?: object;
+}
+
+
+export type { IAuthLogin, IAuthSignup, User, userRowData, Role, Permission };

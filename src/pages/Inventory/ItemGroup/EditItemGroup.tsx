@@ -7,16 +7,13 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
-import { MainArea } from "../../../Types/Customer";
+import { Controller, useForm } from "react-hook-form"; 
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect, useState } from "react";
-import CancelIcon from "@mui/icons-material/Cancel";
-import { updateMainArea } from "../../../api/services/customer";
+import CancelIcon from "@mui/icons-material/Cancel"; 
 import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { useNavigate, useParams } from "react-router-dom";
-import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined";
-import { fetchMainArea } from "../../../store/Reducers/CustomerReducers";
+import ModeEditOutlinedIcon from "@mui/icons-material/ModeEditOutlined"; 
 import { fetchItemGroup } from "../../../store/Reducers/InventoryReducerts";
 import { ItemGroup } from "../../../Types/Inventory";
 import { updateItemGroup } from "../../../api/services/inventory";

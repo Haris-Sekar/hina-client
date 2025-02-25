@@ -21,6 +21,11 @@ API.interceptors.request.use(
         if (token) {
             response.headers.Authorization = `Bearer ${token}`
         }
+        const companyDetails = localStorage.getItem(consts.companyDetailsConst);
+        if (companyDetails) {
+            const id = JSON.parse(companyDetails).companyId;
+            response.headers.org_id = id;
+        }
         return response;
     },
     (err) => {

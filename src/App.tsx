@@ -1,8 +1,8 @@
 import { BrowserRouter as Router } from "react-router-dom";
 
-import AppRoutes from "./pages/AppRoutes";
+import AppRoutes from "./routes/AppRoutes";
 import { useEffect } from "react";
-import { apiAbortController } from "./api/axios.ts";
+import { apiAbortController } from "./api/axios.ts"; 
 
 function App() {
 	useEffect(() => {

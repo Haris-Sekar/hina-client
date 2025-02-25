@@ -4,13 +4,15 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import PageSettingsReducer from "./Reducers/PageSettingsReducers";
 import { CustomerReducer } from "./Reducers/CustomerReducers";
 import { InventoryReducer } from "./Reducers/InventoryReducerts";
+import { CustomizationReducer } from "./Reducers/CustomizationReducers";
 
 export const store = configureStore({
     reducer: {
         user: UserReducer.reducer,
         pageSettings: PageSettingsReducer,
         customer: CustomerReducer.reducer,
-        inventory: InventoryReducer.reducer
+        inventory: InventoryReducer.reducer,
+        customization: CustomizationReducer.reducer
     }
 });
 

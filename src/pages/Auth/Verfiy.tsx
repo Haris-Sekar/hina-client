@@ -30,12 +30,12 @@ const Verify = () => {
 			setIsLoading(true);
 			const response = await getUserDetailsForVerification(token);
 			if (response) {
-				setUserName(response.id.first_name + " " + response.id.last_name);
+				setUserName(response.first_name + " " + response.last_name);
 			} else {
 				setIsError(true);
 			}
-		} catch (error) {
-			console.log(error);
+		} catch (error) { 
+			setIsError(true);
 		} finally {
 			setIsLoading(false);
 		}

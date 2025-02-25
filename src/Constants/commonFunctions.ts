@@ -49,3 +49,12 @@ export const customToast = (type: string = "success", message: string) => {
     }
 
 }
+
+export const formatINR = (str: string): string => {
+    return !isNaN(parseFloat(str))
+        ? new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR'
+        }).format(parseFloat(str))
+        : 'Invalid amount';
+}

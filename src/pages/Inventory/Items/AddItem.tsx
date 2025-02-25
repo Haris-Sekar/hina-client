@@ -34,8 +34,7 @@ const AddItem = () => {
 
 	const navigate = useNavigate();
 
-	function onSubmit(e: Item, event: any) {
-		console.log(e);
+	function onSubmit(e: Item, event: any) { 
 
 		setIsLoading(true);
 		const tempRateObject = rateObject;

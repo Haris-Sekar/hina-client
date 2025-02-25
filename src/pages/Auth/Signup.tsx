@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
 	Box,
 	Grid,
@@ -48,14 +49,12 @@ const Signup = () => {
 
 		try {
 			const { data } = await signup(e);
-
-			console.log(data);
+ 
 			setIsLoading(false);
 			if (data.status === "success") {
 				setShowEmailSent(true);
 			}
-		} catch (error) {
-			console.log(error);
+		} catch (error) { 
 			setIsLoading(false);
 		}
 	};
@@ -125,6 +124,7 @@ const Signup = () => {
 										sx={{ width: "50%" }}
 										{...field}
 										label="First Name"
+										autoFocus
 										error={Boolean(errors.firstName)}
 										helperText={errors.firstName?.message}
 										autoComplete="given-name"

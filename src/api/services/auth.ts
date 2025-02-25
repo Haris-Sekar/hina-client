@@ -4,15 +4,14 @@ import { API } from "../axios";
 import { customToast, toastPromise } from "../../Constants/commonFunctions";
 import { Company } from "../../Types/Company";
 
-
 async function login(credentials: IAuthLogin) {
-    return toastPromise(API.post('/users/login', credentials), {
-        loading: "Logging you in",
-        success: "Logged Successfully",
-        error: (err: any) => {
-            if (err?.response?.data?.statusCode === 401) {
-                return err?.response?.data?.message;
-            }
+	return toastPromise(API.post('/users/login', credentials), {
+		loading: "Logging you in",
+		success: "Logged in Successfully",
+		error: (err: any) => {
+			if (err?.response?.data?.statusCode === 401) {
+				return err?.response?.data?.message;
+			}
             if (err?.response?.data?.errors) {
                 return `${JSON.stringify(err.response.data.errors.join())}`
             } else {
@@ -70,6 +69,14 @@ async function verifyUser(token: string) {
     });
 }
 
+async function acceptInvite(token: string, password: string) {
+    return toastPromise(API.post(`/users/accept/${token}`, { password }), {
+        loading: "Joining Organization",
+        success: "Joined Organization Successfully", 
+        error: (err: any) => err.message
+    });
+}
+
 async function createCompany(data: Company) {
     return toastPromise(API.post(`/company/create`, { name: data.name, gst_number: data.gstNumber, description: data.description }), {
         loading: "Creating Company",
@@ -84,4 +91,4 @@ async function createCompany(data: Company) {
     });
 }
 
-export { login, signup, getUserDetailsForVerification, verifyUser, createCompany }
+export { login, signup, getUserDetailsForVerification, verifyUser, createCompany, acceptInvite }

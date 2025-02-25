@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-types */
 import { LinearProgress } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
@@ -10,6 +12,11 @@ export default function ListView({
 	rowCount,
 	onRowSelect,
 	rowOnClick,
+	toolBar,
+	isServerSideSort,
+	onSortModelChange,
+	columnVisibilityModel,
+	checkboxSelection,
 }: {
 	rows: any;
 	columns: GridColDef[];
@@ -19,15 +26,20 @@ export default function ListView({
 	rowCount?: number;
 	onRowSelect: Function;
 	rowOnClick?: Function;
+	toolBar?: any;
+	isServerSideSort?: boolean;
+	onSortModelChange?: Function;
+	columnVisibilityModel?: Record<string, boolean>;
+	checkboxSelection?: boolean;
 }) {
 	return (
-		<div>
+		<div style={{ height: "100%" }}>
 			<DataGrid
 				rows={rows}
 				columns={columns}
 				initialState={{
 					pagination: {
-						paginationModel: { page: 0, pageSize: 10 },
+						paginationModel: { page: 0, pageSize: 25 },
 					},
 					filter: {
 						filterModel: {
@@ -35,30 +47,42 @@ export default function ListView({
 							quickFilterExcludeHiddenColumns: true,
 						},
 					},
+					columns: {
+						columnVisibilityModel: columnVisibilityModel,
+					},
 				}}
-				pageSizeOptions={[10, 20]}
-				checkboxSelection
+				pageSizeOptions={[25, 50, 100]}
+				checkboxSelection={checkboxSelection}
+				disableColumnFilter
+				rowHeight={40}
 				disableRowSelectionOnClick
 				slots={{
-					loadingOverlay: LinearProgress,
+					loadIcon: LinearProgress,
+					toolbar: toolBar,
 				}}
 				loading={isLoading}
 				sx={{
 					"&.MuiDataGrid-root .MuiDataGrid-cell:focus-within": {
 						outline: "none !important",
 					},
+					height: "100%",
+					border: "none",
 				}}
 				rowCount={rowCount}
 				paginationMode={isServerPagination ? "server" : "client"}
 				onPaginationModelChange={(e) =>
-					//@ts-ignore
-					isServerPagination ? onPaginationModelChange(e) : null
+					isServerPagination && onPaginationModelChange
+						? onPaginationModelChange(e)
+						: null
 				}
 				onRowSelectionModelChange={(e) => onRowSelect(e)}
-				style={{ borderRadius: "25px", padding: "2%" }}
-				autoHeight
-				//@ts-ignore
-				onRowClick={(e) => rowOnClick(e)}
+				onRowClick={(e) => rowOnClick && rowOnClick(e)}
+				editMode="cell"
+				slotProps={{
+					toolbar: {},
+				}}
+				sortingMode={isServerSideSort ? "server" : "client"}
+				onSortModelChange={(e) => onSortModelChange && onSortModelChange(e)}
 			/>
 		</div>
 	);

@@ -8,11 +8,16 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "./theme";
 import "./fonts/fonts.css";
 import { Toaster } from "react-hot-toast";
+ 
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.Fragment>
 		<Provider store={store}>
-			<ThemeProvider theme={theme}>
+			<ThemeProvider
+				theme={theme}
+				noSsr
+				disableTransitionOnChange 
+			>
 				<Toaster />
 				<CssBaseline />
 				<App />

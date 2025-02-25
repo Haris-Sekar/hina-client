@@ -14,6 +14,12 @@ interface Customer {
     billingAddress?: Address
     shippingAddress?: Address,
     openingBalance?: string,
+    currentBalance?: string,
+    paymentTerms: number,
+    createdTime?: string,
+    createdBy?: User
+    updatedTime?: string,
+    updatedBy?: User  
 }
 
 interface Address {
@@ -26,23 +32,23 @@ interface Address {
     zipCode?: string,
 }
 
-interface MainArea {
-    mainAreaId: number;
+interface PaymentTerm {
+    id?: number;
     name: string;
-    createdBy: User;
-    createdTime: number;
-    updatedBy: User;
-    updatedTime: number;
+    numberOfDays: number | undefined;
+    isDefault: boolean | false;
 }
 
 interface customerRowData {
-    id: number;
-    companyName: string;
-    name: string;
-    phoneNumber: number;
-    email: string;
-    gst: string;
-    mainArea: string;
+    id: number,
+    customerName: string,
+    phone?: string,
+    email?: string,
+    currentBalance?: string,
+    createdTime?: string,
+    createdBy?: object,
+    updatedTime?: string,
+    updatedBy?: object
 }
 
 interface mainAreaRowData {
@@ -50,5 +56,10 @@ interface mainAreaRowData {
     name: string;
 }
 
+interface paymentTermsRowData {
+    id: number;
+    name: string;
+    numberOfDays: number;
+}
 
-export type { Customer, MainArea, customerRowData, mainAreaRowData }
+export type { Customer, PaymentTerm, customerRowData, mainAreaRowData, paymentTermsRowData, Address }

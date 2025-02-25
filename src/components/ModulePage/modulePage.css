@@ -1,7 +1,3 @@
-.moduleContainer {
-    display: flex;
-    padding: 5%;
-    flex-direction: column;
-    gap: 20px;
-    height: 100%;
-}
+.moduleContainer {  
+    height: 100%; 
+} 

@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Grid, Paper, TextField, Typography } from "@mui/material";
 import Logo from "../../components/Logo";
 import { Controller, useForm } from "react-hook-form";
@@ -59,7 +61,7 @@ const CreateOrganizations = () => {
 			setIsLoading(false);
 		}
 	};
-	const onError = () => {};
+	const onError = () => { };
 
 	return (
 		<Box

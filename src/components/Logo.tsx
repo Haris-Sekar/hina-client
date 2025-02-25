@@ -1,18 +1,18 @@
+import { useColorScheme } from "@mui/material";
 import lightLogo from "../assets/512-black.png";
 import darkLogo from "../assets/512-white.png";
-import { useColorScheme } from "@mui/material";
+import { useEffect, useState } from "react";
 
 const Logo = () => {
-	const { mode, setMode } = useColorScheme();
+	const { mode } = useColorScheme();
 
-	return (
-		<img
-			src={mode === "dark" ? darkLogo : lightLogo}
-			alt="logo"
-			width="100%"
-			height="100%"
-		/>
-	);
+	const [logo, setLogo] = useState(mode === "dark" ? darkLogo : lightLogo);
+
+	useEffect(() => {
+		setLogo(mode === "dark" ? darkLogo : lightLogo);
+	}, [mode]);
+
+	return <img src={logo} alt="logo" width="100%" height="100%" />;
 };
 
 export default Logo;

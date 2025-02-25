@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Controller, useForm } from "react-hook-form";
 import { IAuthLogin } from "../../Types/User";
 import LoadingButton from "@mui/lab/LoadingButton";
@@ -16,16 +18,17 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Logo from "../../components/Logo";
 import React, { useEffect, useState } from "react";
-import { login } from "../../api/services/auth";
-import { Link, useNavigate } from "react-router-dom";
+import * as API from "../../api/services/auth";
+import { Link, useNavigate } from "react-router-dom"; 
 import { useAppDispatch } from "../../store/store";
+import { fetchCompanyDetails, fetchCurrentUserDetails } from "../../store/Reducers/UserReducers"; 
 
 const Auth = () => {
 	const {
 		control,
 		handleSubmit,
 		setError,
-		formState: { errors },
+		formState: { errors }, 
 	} = useForm<IAuthLogin>();
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -33,9 +36,11 @@ const Auth = () => {
 	const jwtToken = localStorage.getItem(consts.token);
 	useEffect(() => {
 		if (jwtToken) {
-			navigate("/app/dashboard");
+			navigate("/app");
 		}
 	}, [jwtToken]);
+	const dispatch = useAppDispatch();
+ 
 
 	async function onSubmit(e: IAuthLogin) {
 		setIsLoading(true);
@@ -54,11 +59,14 @@ const Auth = () => {
 				message: "Enter an valid email address",
 			});
 		}
+
+
 		try {
-			const { data } = await login(e);
-			localStorage.setItem(consts.token, data.token);
-			navigate("/app/dashboard");
+			const { data } = await API.login(e); 
+			localStorage.setItem(consts.token, data.token); 
 			setIsLoading(false);
+			dispatch(fetchCompanyDetails())
+			dispatch(fetchCurrentUserDetails())
 		} catch (error) {
 			setIsLoading(false);
 		}
@@ -69,7 +77,7 @@ const Auth = () => {
 
 	const handleClickShowPassword = () => {
 		setShowPassword((show) => !show);
-	};
+	}; 
 
 	return (
 		<Box
@@ -126,7 +134,8 @@ const Auth = () => {
 									fullWidth
 									error={Boolean(errors.email)}
 									helperText={errors.email?.message}
-									autoComplete="given-name"
+									autoComplete="given-name" 
+									autoFocus
 								/>
 							)}
 						/>

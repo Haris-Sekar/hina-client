@@ -10,4 +10,5 @@ interface Company {
     createdBy?: User
 }
 
+
 export type { Company }
