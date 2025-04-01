@@ -5,9 +5,10 @@ import {
     fetchUsers,
 } from "../../../store/Reducers/UserReducers";
 import ModulePage from "../../../components/ModulePage/ModulePage";
-import { createUserRow, userColDef } from "../../../Constants/DataTableColumn";
+import { createUserRow } from "../../../Constants/DataTableColumn";
 import { useNavigate } from "react-router-dom";
 import { GridPaginationModel, GridSortModel } from "@mui/x-data-grid";
+import { userColDef } from "../../../Constants/MUIDataTableColumns/UserManagement";
 
 const Users = () => {
     const dispatch = useAppDispatch();

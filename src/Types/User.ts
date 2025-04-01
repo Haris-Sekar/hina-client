@@ -27,6 +27,7 @@ interface User {
     updatedTime?: string;
     createdBy?: User;
     updatedBy?: User;
+    isSuperAdmin: boolean | false ;
 }
 
 interface Role {
@@ -69,6 +70,7 @@ interface userRowData {
     createdBy?: object;
     updatedTime?: string;
     updatedBy?: object;
+    isSuperAdmin: boolean | false ;
 }
 
 

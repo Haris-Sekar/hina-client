@@ -10,7 +10,7 @@ import {
 } from "../../Constants/CommonConstants";
 import { AppProvider } from "@toolpad/core/react-router-dom"; // React Router
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { sidebarItems } from "../../Constants/MenuItems";
+import { getSideBarItems, sidebarItems } from "../../Constants/MenuItems";
 import { Authentication, Router, Session } from "@toolpad/core/AppProvider";
 
 import Logo from "../../components/Logo";
@@ -26,7 +26,7 @@ const PageLayout = () => {
     }
   }, []);
 
-  const { companyDetails, currentUserDetails } = useAppSelector(
+  const { companyDetails, currentUserDetails, loginUserPermissions } = useAppSelector(
     (state) => state.user
   );
 
@@ -74,6 +74,9 @@ const PageLayout = () => {
       navigate("/auth");
     },
   };
+
+  console.log(getSideBarItems(loginUserPermissions));
+  
 
   return (
     <div className="pageLayoutContainer">

@@ -8,11 +8,10 @@ import {
 	RateVersionRowData,
 	SizeRowData,
 } from "../Types/Inventory";
-import { Avatar, Box, Chip, IconButton, Tooltip, Typography } from "@mui/material";
+import { Avatar, Box, IconButton, Typography } from "@mui/material";
 import { User, userRowData } from "../Types/User";
 import moment from "moment";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import ReplayOutlinedIcon from '@mui/icons-material/ReplayOutlined';
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz"; 
 
 
 function getHeader(name: string) {
@@ -171,136 +170,6 @@ const renderMoreIcon = () => {
 	);
 };
 
-const userColDef: GridColDef[] = [
-	{
-		field: "id",
-		headerName: "ID",
-		flex: 1,
-		renderHeader: () => getHeader(""),
-		renderCell: () => {
-			return renderMoreIcon();
-		},
-		hideable: false,
-		hideSortIcons: true,
-		sortable: false,
-		disableColumnMenu: true,
-		resizable: false,
-	},
-	{
-		field: "name",
-		headerName: "Name",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Name"),
-		renderCell: (e) => {
-			return (
-				<Chip
-					variant="outlined"
-					avatar={
-						<Avatar sx={{ bgcolor: getRandomColor(Number(e.id)) }}>
-							{e.value.charAt(0).toUpperCase()}
-						</Avatar>
-					}
-					label={e.value}
-				/>
-			);
-		},
-	},
-	{
-		field: "email",
-		headerName: "Email",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Email"),
-	},
-	{
-		field: "role",
-		headerName: "Role",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Role"),
-		renderCell: (e) => {
-			return <Chip color="default" label={e.value.name} />;
-		},
-	},
-	{
-		field: "status",
-		headerName: "Status",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Status"),
-		renderCell: (e) => {
-			const color =
-				e.value === "ACTIVE"
-					? e.row.isVerified ? "success" : "warning"
-					: e.value === "SUSPENDED" || e.value === "INACTIVE"
-						? "error"
-						: e.value === "READ_ONLY"
-							? "default"
-							: "default";
-
-
-			return <Chip color={color} label={e.value} />;
-		},
-	},
-	{
-		field: "isVerified",
-		headerName: "Is Verified",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Is Verified"),
-		renderCell: (e) => {
-			return (
-				<Box>
-					<Chip color="default" label={e.value ? "Yes" : "No"} />
-					{!e.value && (
-						<Tooltip title="Re-Invite" arrow>
-							<IconButton>
-								<ReplayOutlinedIcon fontSize="small" />
-							</IconButton>
-						</Tooltip>
-					)}
-				</Box>
-			);
-		},
-	},
-	{
-		field: "createdTime",
-		headerName: "Created Time",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Created Time"),
-		hideable: true,
-		renderCell: (e) => renderDateAndTime(e),
-	},
-	{
-		field: "createdBy",
-		headerName: "Created By",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Created By"),
-		hideable: true,
-		renderCell: (e) => renderUser(e),
-	},
-	{
-		field: "updatedTime",
-		headerName: "Updated Time",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Updated Time"),
-		hideable: true,
-		renderCell: (e) => renderDateAndTime(e),
-	},
-	{
-		field: "updatedBy",
-		headerName: "Updated By",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Updated By"),
-		renderCell: (e) => renderUser(e),
-	},
-];
-
 const mainArea: GridColDef[] = [
 	{
 		field: "name",
@@ -364,6 +233,7 @@ const createUserRow = (user: User): userRowData => {
 		createdBy: user.createdBy,
 		updatedTime: user.updatedTime,
 		updatedBy: user.updatedBy,
+		isSuperAdmin: user.isSuperAdmin || false,
 	};
 };
 
@@ -485,7 +355,6 @@ export {
 	rateVersion,
 	createRateVersionRow,
 	paymentTermsColDef,
-	userColDef,
 	createUserRow,
 };
 

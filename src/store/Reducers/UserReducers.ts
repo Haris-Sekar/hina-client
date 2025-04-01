@@ -67,6 +67,7 @@ export const fetchCurrentUserDetails = createAsyncThunk<
       updatedTime: data.data.updated_time,
       createdBy: data.data.created_by,
       updatedBy: data.data.updated_by,
+      isSuperAdmin: data.data.is_super_admin,
     };
 
     localStorage.setItem(userDetailsConst, JSON.stringify(userDetails));
@@ -149,6 +150,7 @@ export const fetchUsers = createAsyncThunk<
         createdBy: user.created_by_user,
         updatedBy: user.updated_by_user,
         role: user.role,
+        isSuperAdmin: user.is_super_admin,
       });
     });
     return users;

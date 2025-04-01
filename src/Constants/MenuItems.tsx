@@ -9,7 +9,8 @@ import StraightenOutlinedIcon from "@mui/icons-material/StraightenOutlined";
 import WorkspacesOutlinedIcon from "@mui/icons-material/WorkspacesOutlined";
 import SchemaOutlinedIcon from "@mui/icons-material/SchemaOutlined";
 import ShoppingBasketOutlinedIcon from "@mui/icons-material/ShoppingBasketOutlined";
-import { Navigation } from "@toolpad/core/AppProvider";
+import { Navigation } from "@toolpad/core/AppProvider"; 
+import { Permission } from "../Types/User";
 
 const sidebarItems: Navigation = [
 	{
@@ -98,4 +99,20 @@ const sidebarItems: Navigation = [
 	},
 ];
 
-export { sidebarItems };
+const getSideBarItems = (permissions: Permission[]) => {
+	const items = sidebarItems.map((item) => {
+		const permission = permissions.find(
+			(permission) => permission.module.name === item.title
+		);
+		if (permission && permission.canRead) {
+			return {
+				...item,
+			};
+		}
+		return null;
+	});
+
+	return items.filter((item) => item !== null);
+}
+
+export { sidebarItems, getSideBarItems };

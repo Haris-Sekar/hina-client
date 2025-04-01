@@ -5,6 +5,7 @@ import APIError from "../../Types/APIError";
 import { companyDetailsConst } from "../../Constants/CommonConstants";
 import { Company } from "../../Types/Company";
 import { Address, Customer, PaymentTerm } from "../../Types/Customer";
+import { store } from "../store";
 
 interface customerState {
 	customers: Customer[];

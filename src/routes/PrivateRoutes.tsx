@@ -35,13 +35,13 @@ function PrivateRoutes() {
     }
     dispatch(fetchCurrentUserDetails());
     dispatch(fetchCompanyDetails());
-    dispatch(fetchUserRoleAndPermissions());
   }, [dispatch]);
-
+ 
   useEffect(() => {
     if (currentUserDetails) {
       if (companyDetails) {
         setIsVerified(true);
+        dispatch(fetchUserRoleAndPermissions());
       } else {
         navigate("/organization/new");
       }
