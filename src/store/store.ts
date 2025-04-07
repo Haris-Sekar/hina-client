@@ -3,7 +3,7 @@ import { UserReducer } from "./Reducers/UserReducers";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import PageSettingsReducer from "./Reducers/PageSettingsReducers";
 import { CustomerReducer } from "./Reducers/CustomerReducers";
-import { InventoryReducer } from "./Reducers/InventoryReducerts";
+import { InventoryReducer } from "./Reducers/InventoryReducers";
 import { CustomizationReducer } from "./Reducers/CustomizationReducers";
 
 export const store = configureStore({

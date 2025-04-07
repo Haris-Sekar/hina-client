@@ -33,6 +33,8 @@ export interface IDialogBox {
     id: string;
     title: string;
     description: React.ReactElement;
+    needCheckbox?: boolean | false;
+    checkboxContent?: string;
     failureBtnText: string;
     successBtnText: string;
 }

@@ -4,9 +4,6 @@ import { GridColDef } from "@mui/x-data-grid";
 import { customerRowData, mainAreaRowData } from "../Types/Customer";
 import {
 	ItemGroupRowData,
-	ItemRowData,
-	RateVersionRowData,
-	SizeRowData,
 } from "../Types/Inventory";
 import { Avatar, Box, IconButton, Typography } from "@mui/material";
 import { User, userRowData } from "../Types/User";
@@ -240,120 +237,14 @@ const createUserRow = (user: User): userRowData => {
 const createMainAreaRow = (id: number, name: string): mainAreaRowData => {
 	return { id, name };
 };
+ 
 
-const itemGroup: GridColDef[] = [
-	{
-		field: "name",
-		headerName: "Group Name",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Group Name"),
-	},
-];
-
-const createItemGroupRow = (id: number, name: string): ItemGroupRowData => {
-	return { id, name };
-};
-
-const size: GridColDef[] = [
-	{
-		field: "size",
-		headerName: "Size",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Size"),
-	},
-];
-
-const rateVersion: GridColDef[] = [
-	{
-		field: "name",
-		headerName: "Name",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Name"),
-	},
-	{
-		field: "isDefault",
-		headerName: "Is Default",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Is Default"),
-	},
-];
-
-const createSizeRow = (id: number, size: string): SizeRowData => {
-	return { id, size };
-};
-const createRateVersionRow = (
-	id: number,
-	name: string,
-	isDefault: boolean
-): RateVersionRowData => {
-	return {
-		id,
-		name,
-		isDefault,
-	};
-};
-
-const Items: GridColDef[] = [
-	{
-		field: "itemName",
-		headerName: "Item Name",
-		minWidth: 200,
-		flex: 1,
-		renderHeader: () => getHeader("Item Name"),
-	},
-	{
-		field: "hsnCode",
-		headerName: "HSN Code",
-		flex: 1,
-		renderHeader: () => getHeader("HSN Code"),
-		renderCell: (e) => (e.value > 0 ? e.value : "-"),
-	},
-	{
-		field: "itemGroup",
-		headerName: "Item Group",
-		renderHeader: () => getHeader("Item Group"),
-		flex: 1,
-	},
-	{
-		field: "unit",
-		headerName: "Unit",
-		renderHeader: () => getHeader("Unit"),
-		flex: 1,
-	},
-	{
-		field: "pcsPerUnit",
-		headerName: "Pcs Per Unit",
-		renderHeader: () => getHeader("Pcs Per Unit"),
-	},
-];
-
-const createItemRow = (
-	id: number,
-	itemName: string,
-	hsnCode: number,
-	itemGroup: string,
-	unit: string,
-	pcsPerUnit: number
-): ItemRowData => {
-	return { id, itemName, hsnCode, itemGroup, unit, pcsPerUnit };
-};
-export {
-	Items,
-	createItemRow,
+ 
+export { 
 	customer,
 	createCustomerRow,
 	mainArea,
-	createMainAreaRow,
-	itemGroup,
-	createItemGroupRow,
-	size,
-	createSizeRow,
-	rateVersion,
-	createRateVersionRow,
+	createMainAreaRow, 
 	paymentTermsColDef,
 	createUserRow,
 };

@@ -12,6 +12,8 @@ import { token } from "../Constants/CommonConstants";
 import SettingsRoutes from "../pages/Settings/SettingsRoutes";
 import { AuthGuard } from "./AuthGaurd";
 import { fetchUserRoleAndPermissions } from "../store/Thunks/UserThunks";
+import ItemGroup from "../pages/Inventory/ItemGroup/ItemGroup";
+import AddItemGroup from "../pages/Inventory/ItemGroup/AddItemGroup";
 
 const DashboardPage = lazy(() => import("../pages/Dashboard/Dashboard"));
 const CustomerPage = lazy(() => import("../pages/Customer/Customer"));
@@ -65,9 +67,11 @@ function PrivateRoutes() {
             <Route path="/sales/customer" element={<CustomerPage />} />
             <Route path="/sales/customer/add" element={<AddCustomerPage />} />
             <Route
-              path="/sales/customer/edit/:id"
+              path="/sales/customer/:id/edit"
               element={<EditCustomerPage />}
             />
+            <Route path="/inventory/itemgroup" element={<ItemGroup />} />
+            <Route path="/inventory/itemgroup/add" element={<AddItemGroup />} />
             <Route path="*" />
           </Route>
         </Routes>

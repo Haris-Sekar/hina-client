@@ -45,6 +45,7 @@ import {
 import ModulePage from "../../components/ModulePage/ModulePage";
 import { paymentTermsColDef } from "../../Constants/DataTableColumn";
 import DialogBox from "../../components/DialogBox";
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 const EditCustomer = () => {
 	const navigate = useNavigate();
@@ -953,21 +954,11 @@ const EditCustomer = () => {
 							variant="contained"
 							sx={{ mt: 3, mb: 2, width: "fit-content" }}
 							loading={isLoading}
-							startIcon={<AddCircleIcon />}
+							startIcon={<EditOutlinedIcon />}
 							id="saveAndClose"
 						>
-							Save And Close
-						</LoadingButton>
-						<LoadingButton
-							type="submit"
-							variant="outlined"
-							sx={{ mt: 3, mb: 2, width: "fit-content" }}
-							loading={isLoading}
-							startIcon={<AddCircleIcon />}
-							id="saveAndNew"
-						>
-							Save And New
-						</LoadingButton>
+							Edit And Close
+						</LoadingButton> 
 						<Button
 							variant="contained"
 							color="error"

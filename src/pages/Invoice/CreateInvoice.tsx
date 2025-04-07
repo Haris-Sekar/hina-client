@@ -36,7 +36,7 @@ import {
 	fetchItem,
 	fetchRateVersion,
 	fetchSize,
-} from "../../store/Reducers/InventoryReducerts";
+} from "../../store/Reducers/InventoryReducers";
 import { Item, Size } from "../../Types/Inventory";
 import { currencyFormatter } from "../../Constants/commonFunctions";
 import AddBoxIcon from "@mui/icons-material/AddBox";
