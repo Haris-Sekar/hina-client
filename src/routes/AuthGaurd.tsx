@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { Navigate, } from 'react-router-dom'; 
 import { useAppDispatch, useAppSelector } from '../store/store';
 import { fetchUserRoleAndPermissions } from '../store/Thunks/UserThunks';
@@ -17,10 +17,14 @@ export const AuthGuard = ({
   const { loginUserPermissions, metaDataLoading } = useAppSelector((state) => state.user);   
 
   const dispatch = useAppDispatch();
+  
+  useEffect(() => {
+    if(loginUserPermissions.length === 0) {
+      dispatch(fetchUserRoleAndPermissions());
+    }
+  }, [dispatch])
 
-  if(loginUserPermissions.length === 0) {
-    dispatch(fetchUserRoleAndPermissions());
-  }
+  
 
   if(metaDataLoading){
     return <CircularProgress />

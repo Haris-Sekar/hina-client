@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Outlet, useNavigate } from "react-router-dom";
 import "./layout.css";
-import { useAppSelector } from "../../store/store";
+import { useAppDispatch, useAppSelector } from "../../store/store";
 import React, { useEffect } from "react";
 import {
   companyDetailsConst,
@@ -10,23 +10,26 @@ import {
 } from "../../Constants/CommonConstants";
 import { AppProvider } from "@toolpad/core/react-router-dom"; // React Router
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { getSideBarItems, sidebarItems } from "../../Constants/MenuItems";
+import { sidebarItems } from "../../Constants/MenuItems";
 import { Authentication, Router, Session } from "@toolpad/core/AppProvider";
 
 import Logo from "../../components/Logo";
 import theme from "../../theme";
 import NavbarRightPanel from "./NavbarRightPanel";
+import { fetchUserRoleAndPermissions } from "../../store/Thunks/UserThunks";
 
 const PageLayout = () => {
   const navigate = useNavigate();
-
+  const dispatch = useAppDispatch();
   useEffect(() => {
     if (!localStorage.getItem(token)) {
       navigate("/auth");
+      dispatch(fetchUserRoleAndPermissions())
     }
+    
   }, []);
 
-  const { companyDetails, currentUserDetails, loginUserPermissions } = useAppSelector(
+  const { companyDetails, currentUserDetails } = useAppSelector(
     (state) => state.user
   );
 
@@ -74,8 +77,7 @@ const PageLayout = () => {
       navigate("/auth");
     },
   };
-
-  console.log(getSideBarItems(loginUserPermissions));
+ 
   
 
   return (

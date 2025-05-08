@@ -80,7 +80,7 @@ export const fetchCurrentUserDetails = createAsyncThunk<
 });
 
 export const fetchCompanyDetails = createAsyncThunk<
-  Company,
+  Company | null,
   void,
   { rejectValue: string }
 >("users/fetchCompanyDetails", async (_, thunkApi) => {
@@ -92,6 +92,10 @@ export const fetchCompanyDetails = createAsyncThunk<
     }
 
     const { data } = await API.get("/company");
+
+    if(data.data.length === 0) {
+      return null;
+    }
 
     const companyDetails = {
       name: data.data[0].name,

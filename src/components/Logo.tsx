@@ -5,12 +5,20 @@ import { useEffect, useState } from "react";
 
 const Logo = () => {
 	const { mode } = useColorScheme();
-
+	console.log(mode);
 	const [logo, setLogo] = useState(mode === "dark" ? darkLogo : lightLogo);
 
+
+
 	useEffect(() => {
-		setLogo(mode === "dark" ? darkLogo : lightLogo);
+		if(mode === "system") {
+			const isMatch = window.matchMedia("(prefers-color-scheme: dark)").matches;
+			setLogo(isMatch? darkLogo : lightLogo);
+		} else {
+			setLogo(mode === "dark"? darkLogo : lightLogo);
+		}
 	}, [mode]);
+	
 
 	return <img src={logo} alt="logo" width="100%" height="100%" />;
 };

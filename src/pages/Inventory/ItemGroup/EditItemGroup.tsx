@@ -1,22 +1,21 @@
-import { Box, Button, Divider, TextField, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ItemGroup } from "../../../Types/Inventory";
-import { addItemGroup } from "../../../api/services/inventory";
-import { useAppDispatch } from "../../../store/store";
+import { updateItemGroup } from "../../../api/services/inventory";
+import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { fetchItemGroup } from "../../../store/Thunks/InventoryThunks";
 import CustomTooltip from "../../../components/Tooltip";
 
-const AddItemGroup = () => {
+const EditItemGroup = () => {
   const {
     control,
     handleSubmit,
     reset,
-    setFocus,
     formState: { errors },
   } = useForm<ItemGroup>();
 
@@ -24,36 +23,50 @@ const AddItemGroup = () => {
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
   const from = searchParams.get("from");
+  const { id } = useParams();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
-  function onSubmit(data: ItemGroup, event: any) {
-    setIsLoading(true);
-    addItemGroup(data)
-      .then(() => {
-        setIsLoading(false);
-        if (event.nativeEvent.submitter.id !== "saveAndNew") {
+  const { itemGroups, loading } = useAppSelector((state) => state.inventory);
+
+  useEffect(() => {
+    if (id && itemGroups.length > 0) {
+      const itemGroup = itemGroups.find(
+        (group) => group.groupId === parseInt(id)
+      );
+      if (itemGroup) {
+        reset(itemGroup);
+        setInitialLoading(false);
+      }
+    } else if (id) {
+      dispatch(fetchItemGroup({ id: parseInt(id) }));
+    }
+  }, [itemGroups]);
+ 
+  console.log(itemGroups);
+  
+
+  function onSubmit(data: ItemGroup) {
+    if (id) {
+      setIsLoading(true);
+      updateItemGroup(data)
+        .then(() => {
+          setIsLoading(false);
           dispatch(fetchItemGroup({}));
           navigate("/app/inventory/itemgroup");
-        } else {
-          reset();
-          // Use setTimeout to ensure the field is mounted after reset
-          setTimeout(() => {
-            setFocus("name");
-          }, 0);
-        }
-      })
-      .catch(() => {
-        setIsLoading(false);
-      });
+        })
+        .catch(() => {
+          setIsLoading(false);
+        });
+    }
   }
 
-  // Add useEffect to focus on mount
-  useEffect(() => {
-    setFocus("name");
-  }, []); // Focus on initial render
-
   function onError() {}
+
+  if (initialLoading) {
+    return null;
+  }
 
   return (
     <Box
@@ -81,7 +94,7 @@ const AddItemGroup = () => {
           }}
         >
           <Typography sx={{ fontSize: "20px", fontWeight: "bolder" }}>
-            New Item Group
+            Edit Item Group
           </Typography>
         </Box>
         <Box
@@ -107,7 +120,6 @@ const AddItemGroup = () => {
             <Controller
               name="name"
               control={control}
-              defaultValue=""
               rules={{
                 required: "Group name is required",
               }}
@@ -136,7 +148,6 @@ const AddItemGroup = () => {
             <Controller
               name="hsnCode"
               control={control}
-              defaultValue=""
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -159,7 +170,6 @@ const AddItemGroup = () => {
             <Controller
               name="description"
               control={control}
-              defaultValue=""
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -191,19 +201,8 @@ const AddItemGroup = () => {
           sx={{ mt: 3, mb: 2, width: "fit-content" }}
           loading={isLoading}
           startIcon={<AddCircleIcon />}
-          id="saveAndClose"
         >
-          Save And Close
-        </LoadingButton>
-        <LoadingButton
-          type="submit"
-          variant="outlined"
-          sx={{ mt: 3, mb: 2, width: "fit-content" }}
-          loading={isLoading}
-          startIcon={<AddCircleIcon />}
-          id="saveAndNew"
-        >
-          Save And New
+          Save
         </LoadingButton>
         <Button
           variant="contained"
@@ -223,4 +222,4 @@ const AddItemGroup = () => {
   );
 };
 
-export default AddItemGroup;
+export default EditItemGroup;

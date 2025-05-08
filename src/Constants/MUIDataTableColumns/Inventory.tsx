@@ -1,6 +1,11 @@
 import { GridColDef } from "@mui/x-data-grid";
 import { getHeader, renderDateAndTime, renderUser } from "../DataTableColumn";
-import { ItemGroup, ItemGroupRowData } from "../../Types/Inventory";
+import {
+  ItemGroup,
+  ItemGroupRowData,
+  Size,
+  SizeRowData,
+} from "../../Types/Inventory";
 import {
   Box,
   Divider,
@@ -17,14 +22,15 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DialogBox from "../../components/DialogBox";
 import { useAppDispatch, useAppSelector } from "../../store/store";
-import { deleteItemGroup } from "../../api/services/inventory";
-import { fetchItemGroup } from "../../store/Thunks/InventoryThunks";
+import { deleteItemGroup, deleteSize } from "../../api/services/inventory";
+import { fetchItemGroup, fetchSize } from "../../store/Thunks/InventoryThunks";
 
 const createItemGroupRow = (group: ItemGroup): ItemGroupRowData => {
   return {
     id: group.groupId,
     name: group.name,
     description: group.description,
+    hsnCode: group.hsnCode,
     createdBy: group.createdBy,
     createdTime: group.createdTime,
     updatedBy: group.updatedBy,
@@ -38,7 +44,12 @@ const itemGroup: GridColDef[] = [
     headerName: "ID",
     renderHeader: () => getHeader(""),
     renderCell: (e) => {
-      return RenderMoreIcon(e);
+      return RenderMoreIcon(e, {
+        name: "Item Group",
+        apiName: "itemgroup",
+        deleteEntity: deleteItemGroup,
+        fetchEntity: fetchItemGroup,
+      });
     },
     hideable: false,
     hideSortIcons: true,
@@ -52,7 +63,7 @@ const itemGroup: GridColDef[] = [
     headerName: "Name",
     minWidth: 200,
     flex: 1,
-    renderHeader: () => getHeader("Name"),
+    renderHeader: () => getHeader("Group Name"),
   },
   {
     field: "description",
@@ -60,6 +71,13 @@ const itemGroup: GridColDef[] = [
     minWidth: 200,
     flex: 1,
     renderHeader: () => getHeader("Description"),
+  },
+  {
+    field: "hsnCode",
+    headerName: "HSN Code",
+    minWidth: 200,
+    flex: 1,
+    renderHeader: () => getHeader("HSN Code"),
   },
   {
     field: "createdBy",
@@ -95,7 +113,84 @@ const itemGroup: GridColDef[] = [
   },
 ];
 
-const RenderMoreIcon = (e: GridRenderCellParams) => {
+const createSizeRow = (size: Size): SizeRowData => {
+  return {
+    id: size.id,
+    name: size.name,
+    createdBy: size.createdBy,
+    createdTime: size.createdTime,
+    updatedBy: size.updatedBy,
+    updatedTime: size.updatedTime,
+  };
+};
+
+const size: GridColDef[] = [
+  {
+    field: "id",
+    headerName: "ID",
+    renderHeader: () => getHeader(""),
+    renderCell: (e) => {
+      return RenderMoreIcon(e, {name: "Size", apiName: "size", deleteEntity: deleteSize, fetchEntity: fetchSize});
+    },
+    hideable: false,
+    hideSortIcons: true,
+    sortable: false,
+    disableColumnMenu: true,
+    resizable: false,
+    maxWidth: 10,
+  },
+  {
+    field: "name",
+    headerName: "Name",
+    minWidth: 200,
+    flex: 1,
+    renderHeader: () => getHeader("Size"),
+  },
+  {
+    field: "createdBy",
+    headerName: "Created By",
+    minWidth: 200,
+    flex: 1,
+    renderHeader: () => getHeader("Created By"),
+    renderCell: (e) => renderUser(e),
+    hideSortIcons: true
+  },
+  {
+    field: "createdTime",
+    headerName: "Created Time",
+    minWidth: 200,
+    flex: 1,
+    renderHeader: () => getHeader("Created Time"),
+    renderCell: (e) => renderDateAndTime(e),
+  },
+  {
+    field: "updatedBy",
+    headerName: "Updated By",
+    minWidth: 200,
+    flex: 1,
+    renderHeader: () => getHeader("Updated By"),
+    renderCell: (e) => renderUser(e),
+    hideSortIcons: true
+  },
+  {
+    field: "updatedTime",
+    headerName: "Updated Time",
+    minWidth: 200,
+    flex: 1,
+    renderHeader: () => getHeader("Updated Time"),
+    renderCell: (e) => renderDateAndTime(e),
+  }
+];
+
+const RenderMoreIcon = (
+  e: GridRenderCellParams,
+  moduleName: {
+    name: string;
+    apiName: string;
+    deleteEntity: Function;
+    fetchEntity: Function;
+  }
+) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -111,7 +206,8 @@ const RenderMoreIcon = (e: GridRenderCellParams) => {
   const { loginUserPermissions } = useAppSelector((state) => state.user);
 
   const inventoryModulePermissions = loginUserPermissions.find(
-    (module) => module.module.name.toLowerCase() === "item group"
+    (module) =>
+      module.module.name.toLowerCase() === moduleName.name.toLowerCase()
   );
 
   const menus = [
@@ -120,7 +216,9 @@ const RenderMoreIcon = (e: GridRenderCellParams) => {
         name: "Edit",
         icon: <EditOutlinedIcon sx={{ fontSize: "20px" }} />,
         action: (id: number) => {
-          navigate(`/app/inventory/itemgroup/${id}/edit?from=detail`);
+          navigate(
+            `/app/inventory/${moduleName.apiName}/${id}/edit?from=detail`
+          );
         },
         color: "primary.main",
         isHidden: !inventoryModulePermissions?.canUpdate,
@@ -140,7 +238,9 @@ const RenderMoreIcon = (e: GridRenderCellParams) => {
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const onDelete = () => {
-    deleteItemGroup(e.id as number).then(() => dispatch(fetchItemGroup({}))); 
+    moduleName
+      .deleteEntity(e.id as number)
+      .then(() => dispatch(moduleName.fetchEntity({})));
     setDeleteOpen(false);
   };
 
@@ -148,18 +248,17 @@ const RenderMoreIcon = (e: GridRenderCellParams) => {
     <>
       <DialogBox
         dialogDetails={{
-          title: "Delete Item Group",
+          title: `Delete ${moduleName.name}`,
           description: (
             <Typography>
-              Are you sure you want to delete this item group? This action
-              cannot be undone.
+              Are you sure you want to delete this {moduleName.name}? This
+              action cannot be undone.
             </Typography>
           ),
           failureBtnText: "Cancel",
           successBtnText: "Delete",
           id: e.id.toString(),
-          checkboxContent:
-            "I understand that deleting this item group will affect all related items.",
+          checkboxContent: `I understand that deleting this ${moduleName.name} will affect all related items.`,
           needCheckbox: true,
         }}
         open={deleteOpen}
@@ -247,4 +346,4 @@ const RenderMoreIcon = (e: GridRenderCellParams) => {
   );
 };
 
-export { createItemGroupRow, itemGroup };
+export { createItemGroupRow, itemGroup, createSizeRow, size };

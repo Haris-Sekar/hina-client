@@ -1,19 +1,23 @@
-import { createSlice } from "@reduxjs/toolkit"; 
-import APIError from "../../Types/APIError"; 
-import { ItemGroup } from "../../Types/Inventory";
-import { fetchItemGroup } from "../Thunks/InventoryThunks";
+import { createSlice } from "@reduxjs/toolkit";
+import APIError from "../../Types/APIError";
+import { ItemGroup, Size } from "../../Types/Inventory";
+import { fetchItemGroup, fetchSize } from "../Thunks/InventoryThunks";
 
 
 
 interface inventoryState {
-    itemGroup: ItemGroup[]; 
+    itemGroups: ItemGroup[];
+    totalSize: number;  
+    sizes: Size[];
     loading: boolean;
     error: APIError;
     itemWithRates: [];
 }
 
 const initialState: inventoryState = {
-    itemGroup: [], 
+    itemGroups: [],
+    totalSize: 0,
+    sizes: [],
     loading: false,
     itemWithRates: [],
     error: {
@@ -31,13 +35,25 @@ export const InventoryReducer = createSlice({
                 state.loading = true;
             })
             .addCase(fetchItemGroup.fulfilled, (state, action) => {
-                state.itemGroup = action.payload;
+                state.itemGroups = action.payload;
                 state.loading = false;
             })
             .addCase(fetchItemGroup.rejected, (state, action) => {
                 state.loading = false;
                 state.error.message = action.error.message || 'something went wrong'
-            }) 
+            })
+            .addCase(fetchSize.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchSize.fulfilled, (state, action) => {
+                state.sizes = action.payload.size;
+                state.totalSize = action.payload.total;
+                state.loading = false;
+            })
+            .addCase(fetchSize.rejected, (state, action) => {
+                state.loading = false;
+                state.error.message = action.error.message || 'something went wrong'
+            })
 
     }
 });

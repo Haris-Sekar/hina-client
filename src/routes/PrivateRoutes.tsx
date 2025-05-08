@@ -14,11 +14,17 @@ import { AuthGuard } from "./AuthGaurd";
 import { fetchUserRoleAndPermissions } from "../store/Thunks/UserThunks";
 import ItemGroup from "../pages/Inventory/ItemGroup/ItemGroup";
 import AddItemGroup from "../pages/Inventory/ItemGroup/AddItemGroup";
+import EditItemGroup from "../pages/Inventory/ItemGroup/EditItemGroup";
+import Size from "../pages/Inventory/Size/Size";
+import AddSize from "../pages/Inventory/Size/AddSize";
+import EditSize from "../pages/Inventory/Size/EditSize";
 
 const DashboardPage = lazy(() => import("../pages/Dashboard/Dashboard"));
 const CustomerPage = lazy(() => import("../pages/Customer/Customer"));
 const AddCustomerPage = lazy(() => import("../pages/Customer/AddCustomer"));
 const EditCustomerPage = lazy(() => import("../pages/Customer/EditCustomer"));
+const CreateOrganizations = lazy(() => import("../pages/Organization/Create"));
+const CompanyList = lazy(() => import("../pages/Organization/List"));
 
 function PrivateRoutes() {
   const dispatch = useAppDispatch();
@@ -38,14 +44,14 @@ function PrivateRoutes() {
     dispatch(fetchCurrentUserDetails());
     dispatch(fetchCompanyDetails());
   }, [dispatch]);
- 
+
   useEffect(() => {
     if (currentUserDetails) {
-      if (companyDetails) {
-        setIsVerified(true);
+      setIsVerified(true);
+      if (!companyDetails) {
         dispatch(fetchUserRoleAndPermissions());
       } else {
-        navigate("/organization/new");
+        navigate("/app/organization");
       }
     }
   }, [currentUserDetails, companyDetails]);
@@ -54,6 +60,8 @@ function PrivateRoutes() {
     <>
       {!metaDataLoading && isVerified ? (
         <Routes>
+          <Route path="/organization" element={<CompanyList />} />
+          <Route path="/organization/new" element={<CreateOrganizations />} />
           <Route path="/settings/*" element={<SettingsRoutes />} />
           <Route path="/" element={<PageLayout />}>
             <Route
@@ -72,6 +80,13 @@ function PrivateRoutes() {
             />
             <Route path="/inventory/itemgroup" element={<ItemGroup />} />
             <Route path="/inventory/itemgroup/add" element={<AddItemGroup />} />
+            <Route
+              path="/inventory/itemgroup/:id/edit"
+              element={<EditItemGroup />}
+            />
+            <Route path="/inventory/size" element={<Size />} />
+            <Route path="/inventory/size/add" element={<AddSize />} />
+            <Route path="/inventory/size/:id/edit" element={<EditSize />} />
             <Route path="*" />
           </Route>
         </Routes>

@@ -7,7 +7,9 @@ interface Company {
     gstNumber: string;
     ownerDetails?: User
     createdTime?: number
-    createdBy?: User
+    createdBy?: User,
+    updatedTime?: number
+    updatedBy?: User,
 }
 
 

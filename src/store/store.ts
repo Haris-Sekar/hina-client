@@ -5,6 +5,8 @@ import PageSettingsReducer from "./Reducers/PageSettingsReducers";
 import { CustomerReducer } from "./Reducers/CustomerReducers";
 import { InventoryReducer } from "./Reducers/InventoryReducers";
 import { CustomizationReducer } from "./Reducers/CustomizationReducers";
+import { OrgReducers } from "./Reducers/OrgReducers";
+
 
 export const store = configureStore({
     reducer: {
@@ -12,7 +14,8 @@ export const store = configureStore({
         pageSettings: PageSettingsReducer,
         customer: CustomerReducer.reducer,
         inventory: InventoryReducer.reducer,
-        customization: CustomizationReducer.reducer
+        customization: CustomizationReducer.reducer,
+        organizations: OrgReducers.reducer
     }
 });
 

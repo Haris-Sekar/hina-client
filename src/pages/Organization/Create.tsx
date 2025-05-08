@@ -32,7 +32,7 @@ const CreateOrganizations = () => {
 			if (companyDetails) {
 				navigate("/app/dashboard");
 			} else {
-				navigate("/organization/new");
+				navigate("/app/organization/new");
 			}
 		}
 	}, [currentUserDetails, companyDetails]);
