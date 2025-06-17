@@ -1,23 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Routes, Route, useNavigate } from "react-router-dom";
-import { lazy, useEffect, useState } from "react";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { lazy, useEffect } from "react";
 import PageLayout from "../pages/Layout/PageLayout";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import {
-  fetchCompanyDetails,
-  fetchCurrentUserDetails,
-} from "../store/Reducers/UserReducers";
 import { Box, CircularProgress } from "@mui/material";
-import { token } from "../Constants/CommonConstants";
 import SettingsRoutes from "../pages/Settings/SettingsRoutes";
 import { AuthGuard } from "./AuthGaurd";
-import { fetchUserRoleAndPermissions } from "../store/Thunks/UserThunks";
 import ItemGroup from "../pages/Inventory/ItemGroup/ItemGroup";
 import AddItemGroup from "../pages/Inventory/ItemGroup/AddItemGroup";
 import EditItemGroup from "../pages/Inventory/ItemGroup/EditItemGroup";
 import Size from "../pages/Inventory/Size/Size";
 import AddSize from "../pages/Inventory/Size/AddSize";
 import EditSize from "../pages/Inventory/Size/EditSize";
+import { useAuth } from "../context/useAuth";
 
 const DashboardPage = lazy(() => import("../pages/Dashboard/Dashboard"));
 const CustomerPage = lazy(() => import("../pages/Customer/Customer"));
@@ -27,38 +21,52 @@ const CreateOrganizations = lazy(() => import("../pages/Organization/Create"));
 const CompanyList = lazy(() => import("../pages/Organization/List"));
 
 function PrivateRoutes() {
-  const dispatch = useAppDispatch();
-
-  const { metaDataLoading, currentUserDetails, companyDetails } =
-    useAppSelector((state) => state.user);
-
-  const [isVerified, setIsVerified] = useState<boolean>(false);
-
+  const { isAuthenticated, isLoading, currentUserDetails, companyDetails } =
+    useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
+  // Redirect to /auth if not authenticated and not loading
   useEffect(() => {
-    const jwtToken = localStorage.getItem(token);
-    if (!jwtToken) {
+    if (!isAuthenticated && !isLoading) {
       navigate("/auth");
     }
-    dispatch(fetchCurrentUserDetails());
-    dispatch(fetchCompanyDetails());
-  }, [dispatch]);
+  }, [isAuthenticated, isLoading, navigate]);
 
   useEffect(() => {
-    if (currentUserDetails) {
-      setIsVerified(true);
-      if (!companyDetails) {
-        dispatch(fetchUserRoleAndPermissions());
-      } else {
-        navigate("/app/organization");
-      }
+    if (
+      isAuthenticated &&
+      !isLoading &&
+      currentUserDetails &&
+      !companyDetails &&
+      !location.pathname.startsWith("/app/organization")
+    ) {
+      navigate("/app/organization", { replace: true });
     }
-  }, [currentUserDetails, companyDetails]);
+  }, [
+    isAuthenticated,
+    isLoading,
+    currentUserDetails,
+    companyDetails,
+    location.pathname,
+    navigate,
+  ]);
 
   return (
     <>
-      {!metaDataLoading && isVerified ? (
+      {isLoading ? (
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+            height: "100vh",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
         <Routes>
           <Route path="/organization" element={<CompanyList />} />
           <Route path="/organization/new" element={<CreateOrganizations />} />
@@ -90,18 +98,6 @@ function PrivateRoutes() {
             <Route path="*" />
           </Route>
         </Routes>
-      ) : (
-        <Box
-          sx={{
-            display: "flex",
-            width: "100%",
-            height: "100vh",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <CircularProgress />
-        </Box>
       )}
     </>
   );

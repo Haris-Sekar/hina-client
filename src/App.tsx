@@ -1,4 +1,5 @@
 import { BrowserRouter as Router } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
 
 import AppRoutes from "./routes/AppRoutes";
 import { useEffect } from "react";
@@ -10,14 +11,16 @@ function App() {
 	}, []);
 
 	return (
-		<Router
-			future={{
-				v7_relativeSplatPath: true,
-				v7_startTransition: true,
-			}}
-		>
-			<AppRoutes />
-		</Router>
+		<AuthProvider>
+			<Router
+				future={{
+					v7_relativeSplatPath: true,
+					v7_startTransition: true,
+				}}
+			>
+				<AppRoutes />
+			</Router>
+		</AuthProvider>
 	);
 }
 

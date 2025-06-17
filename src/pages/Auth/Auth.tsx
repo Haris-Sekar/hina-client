@@ -17,67 +17,78 @@ import "./Auth.css";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Logo from "../../components/Logo";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import * as API from "../../api/services/auth";
-import { Link, useNavigate } from "react-router-dom"; 
-import { useAppDispatch } from "../../store/store";
-import { fetchCompanyDetails, fetchCurrentUserDetails } from "../../store/Reducers/UserReducers"; 
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/useAuth";
 
 const Auth = () => {
 	const {
 		control,
 		handleSubmit,
 		setError,
-		formState: { errors }, 
+		formState: { errors },
 	} = useForm<IAuthLogin>();
 	const [isLoading, setIsLoading] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
 
 	const navigate = useNavigate();
-	const jwtToken = localStorage.getItem(consts.token);
+	const { login, setCompanyDetails } = useAuth();
+
 	useEffect(() => {
+		const jwtToken = localStorage.getItem(consts.token);
 		if (jwtToken) {
 			navigate("/app");
 		}
-	}, [jwtToken]);
-	const dispatch = useAppDispatch();
- 
+	}, [navigate]);
+
+	const validateEmail = (email: string) =>
+		/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 	async function onSubmit(e: IAuthLogin) {
 		setIsLoading(true);
+
+		let hasError = false;
 		if (e.password.length < 6) {
 			setError("password", {
 				type: "minLength",
-				message: "Passsword length should be greated than 6",
+				message: "Password length should be greater than 6",
 			});
+			hasError = true;
 		}
-		const validateEmail = (email: any) => {
-			return email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
-		};
 		if (!validateEmail(e.email)) {
 			setError("email", {
-				type: "minLength",
-				message: "Enter an valid email address",
+				type: "pattern",
+				message: "Enter a valid email address",
 			});
+			hasError = true;
+		}
+		if (hasError) {
+			setIsLoading(false);
+			return;
 		}
 
-
 		try {
-			const { data } = await API.login(e); 
-			localStorage.setItem(consts.token, data.token); 
+			const { data } = await API.login(e);
+			localStorage.setItem(consts.token, data.token);
+			login(data.user); // set user in context
+			setCompanyDetails(data.company ?? null); // set company in context if available
 			setIsLoading(false);
-			dispatch(fetchCompanyDetails())
-			dispatch(fetchCurrentUserDetails())
-		} catch (error) {
+			navigate("/app");
+		} catch (error: any) {
 			setIsLoading(false);
+			setError("email", {
+				type: "manual",
+				message: error?.response?.data?.message || "Login failed",
+			});
 		}
 	}
 
 	function onError() {}
-	const [showPassword, setShowPassword] = React.useState(false);
 
 	const handleClickShowPassword = () => {
 		setShowPassword((show) => !show);
-	}; 
+	};
 
 	return (
 		<Box
@@ -134,7 +145,7 @@ const Auth = () => {
 									fullWidth
 									error={Boolean(errors.email)}
 									helperText={errors.email?.message}
-									autoComplete="given-name" 
+									autoComplete="given-name"
 									autoFocus
 								/>
 							)}
@@ -155,7 +166,7 @@ const Auth = () => {
 									fullWidth
 									error={Boolean(errors.password)}
 									helperText={errors.password?.message}
-									autoComplete="given-name"
+									autoComplete="current-password"
 									type={showPassword ? "text" : "password"}
 									InputProps={{
 										endAdornment: (

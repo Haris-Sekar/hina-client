@@ -76,12 +76,7 @@ const ItemGroup = () => {
       })
       .catch(() => setDeleteBtnLoading(false));
   }
- 
-
-  async function onSearch(e: string) { 
-    await store.dispatch(fetchItemGroup({ filters: { name: e } }));
-    return;
-  }
+  
 
   return (
     <>
@@ -102,9 +97,7 @@ const ItemGroup = () => {
         editCallBack={editCallback}
         deleteCallBack={deleteCallBack}
         isServerPagination={false}
-        deleteBtnLoading={deleteBtnLoading}
-        showSearch={true}
-        onSearch={onSearch}
+        deleteBtnLoading={deleteBtnLoading} 
       />
     </>
   );

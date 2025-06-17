@@ -1,34 +1,43 @@
-import { createContext, useContext, useState, FC, ReactNode } from 'react';
+import { useState, useEffect, FC, ReactNode } from 'react';
 import { User } from '../Types/User';
-
-type AuthContextType = {
-  user: User | null;
-  isAuthenticated: boolean;
-  login: (userData: User) => void;
-  logout: () => void;
-};
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+import { Company } from '../Types/Company';
+import { AuthContext } from './AuthContextObject';
+ 
 
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => !!localStorage.getItem('token'));
+  const [companyDetails, setCompanyDetails] = useState<Company | null>(null);
 
-  const login = (userData: User) => setUser(userData);
-  const logout = () => setUser(null);
+  useEffect(() => {
+    const token = localStorage.getItem('TOKEN'); // Use your actual token key
+    setIsAuthenticated(!!token);
+  }, []);
+
+  const login = (userData: User) => {
+    setUser(userData);
+    setIsAuthenticated(true);
+  };
+
+  const logout = () => {
+    setUser(null);
+    setCompanyDetails(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem('token');
+  };
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, login, logout }}
+      value={{
+        user,
+        isAuthenticated,
+        login,
+        logout,
+        companyDetails,
+        setCompanyDetails,
+      }}
     >
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = (): AuthContextType => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };
