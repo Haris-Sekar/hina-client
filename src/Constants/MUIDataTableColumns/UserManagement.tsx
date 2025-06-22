@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react-refresh/only-export-components */
 import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 
@@ -29,7 +30,9 @@ import DialogBox from "../../components/DialogBox";
 import { useState } from "react";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 import { customToast } from "../commonFunctions";
-import { useAppSelector } from "../../store/store";
+import { useAppDispatch, useAppSelector } from "../../store/store";
+import { deleteUser, reInviteUser } from "../../api/services/user";
+import { fetchUsers } from "../../store/Reducers/UserReducers";
 
 const userColDef: GridColDef[] = [
 	{
@@ -55,15 +58,30 @@ const userColDef: GridColDef[] = [
 		renderHeader: () => getHeader("Name"),
 		renderCell: (e) => {
 			return (
-				<Chip
-					variant="outlined"
-					avatar={
-						<Avatar sx={{ bgcolor: getRandomColor(Number(e.id)) }}>
-							{e.value.charAt(0).toUpperCase()}
-						</Avatar>
-					}
-					label={e.value}
-				/>
+				<Box
+					sx={{
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "center",
+					}}
+				>
+					<Chip
+						variant="outlined"
+						avatar={
+							<Avatar sx={{ bgcolor: getRandomColor(Number(e.id)) }}>
+								{e.value.charAt(0).toUpperCase()}
+							</Avatar>
+						}
+						label={e.value}
+					/>
+					{e.row.isSuperAdmin ? (
+						<Tooltip title="Super Admin" arrow placement="bottom">
+							<span className="material-symbols-outlined">shield_person</span>
+						</Tooltip>
+					) : (
+						""
+					)}
+				</Box>
 			);
 		},
 	},
@@ -91,18 +109,47 @@ const userColDef: GridColDef[] = [
 		flex: 1,
 		renderHeader: () => getHeader("Status"),
 		renderCell: (e) => {
-			const color =
-				e.value === "ACTIVE"
-					? e.row.isVerified
-						? "success"
-						: "warning"
-					: e.value === "SUSPENDED" || e.value === "INACTIVE"
-						? "error"
-						: e.value === "READ_ONLY"
-							? "default"
-							: "default";
-
-			return <Chip color={color} label={e.value} />;
+			let color = "#e0e0e0";
+			let textColor = "#000";
+			switch (e.value) {
+				case "ACTIVE":
+					color = "#4caf50"; // Green for active & verified
+					textColor = "#fff";
+					break;
+				case "SUSPENDED":
+					color = "#f44336"; // Red for suspended
+					textColor = "#fff";
+					break;
+				case "INACTIVE":
+					color = "#9e9e9e"; // Grey for inactive
+					textColor = "#fff";
+					break;
+				case "READ_ONLY":
+					color = "#2196f3"; // Blue for read only
+					textColor = "#fff";
+					break;
+				default:
+					color = "#e0e0e0"; // Default light grey
+					textColor = "#000";
+			}
+			return (
+				<div
+					className="no-padding"
+					style={{
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
+						backgroundColor: color,
+						userSelect: "none",
+					}}
+				>
+					<span
+						style={{ color: textColor, fontWeight: "bold", fontSize: "15px" }}
+					>
+						{e.value}
+					</span>
+				</div>
+			);
 		},
 	},
 	{
@@ -116,8 +163,15 @@ const userColDef: GridColDef[] = [
 				<Box>
 					<Chip color="default" label={e.value ? "Yes" : "No"} />
 					{!e.value && (
-						<Tooltip title="Re-Invite" arrow>
-							<IconButton>
+						<Tooltip title="Re-Invite User" arrow>
+							<IconButton
+								onClick={(event) => {
+									reInviteUser(e.row.id).then(() => {
+										event.currentTarget.disabled = true;
+										event.currentTarget.style.cursor = "not-allowed";
+									});
+								}}
+							>
 								<ReplayOutlinedIcon fontSize="small" />
 							</IconButton>
 						</Tooltip>
@@ -346,11 +400,24 @@ const RenderMoreIcon = (e: GridRenderCellParams) => {
 	};
 	const navigate = useNavigate();
 
-	const { loginUserPermissions } = useAppSelector((state) => state.user);
+	const { loginUserPermissions, currentUserDetails } = useAppSelector(
+		(state) => state.user
+	);
+
+	console.log(e.row.id);
 
 	const userModulePermissions = loginUserPermissions.find(
 		(module) => module.module.name.toLowerCase() === "users"
 	);
+
+	//e.row.id == currentUserDetails.userId ? e.row.isSuperAdmin || !userModulePermissions?.canUpdate,
+	// if currenct user is super admin he can edit all the users
+	if (!currentUserDetails) {
+		return <></>;
+	}
+	const canUpdate = e.row.isSuperAdmin
+		? currentUserDetails.userId == e.row.id
+		: userModulePermissions?.canUpdate;
 
 	const menus = [
 		[
@@ -361,7 +428,7 @@ const RenderMoreIcon = (e: GridRenderCellParams) => {
 					navigate(`/app/settings/users/${id}/edit`);
 				},
 				color: "primary.main",
-				isHidden: e.row.isSuperAdmin || !userModulePermissions?.canUpdate,
+				isHidden: !canUpdate,
 			},
 			{
 				name: "Delete",
@@ -389,7 +456,14 @@ const RenderMoreIcon = (e: GridRenderCellParams) => {
 		],
 	];
 	const [deleteOpen, setDelteOpen] = useState(false);
-	const onDelete = () => setDelteOpen(true);
+	const dispatch = useAppDispatch();
+
+	const onDelete = (_e: unknown, id: string) => {
+		deleteUser(parseInt(id)).then(() => {
+			dispatch(fetchUsers({ page: 0, range: 25 }));
+		});
+		setDelteOpen(false);
+	};
 
 	return (
 		<>
@@ -407,7 +481,7 @@ const RenderMoreIcon = (e: GridRenderCellParams) => {
 					id: e.id.toString(),
 					checkboxContent:
 						"I understand the consequences and want to delete this user.",
-            needCheckbox: true
+					needCheckbox: true,
 				}}
 				open={deleteOpen}
 				setOpen={setDelteOpen}

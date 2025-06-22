@@ -5,6 +5,7 @@ interface IModule {
     name: string;
     description?: string;
     isActive: boolean;
+    isDefault: boolean | false; // Default value set to false
     createdBy: User
     createdTime: number
     updatedBy: User

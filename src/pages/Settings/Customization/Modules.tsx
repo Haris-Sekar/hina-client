@@ -66,7 +66,8 @@ const Modules = () => {
           position: "sticky",
           top: 0,
           paddingLeft: 2,
-          zIndex: 999,
+          zIndex: 10,
+          backgroundColor: "background.paper",
         }}
       >
         <Typography sx={{ fontSize: "20px", fontWeight: "bolder" }}>

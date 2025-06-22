@@ -28,11 +28,12 @@ export const fetchModules = createAsyncThunk<
         const { data } = await API.get(api);
         const modules = data.data.modules;
 
-        return modules.map((module: { id: any; name: any; is_active: any; created_by_user: any; created_time: any; updated_by_user: any; updated_time: any; }) => {
+        return modules.map((module: { id: any; name: any; is_active: any; is_default: any, created_by_user: any; created_time: any; updated_by_user: any; updated_time: any; }) => {
             return {
                 id: module.id,
                 name: module.name,
                 isActive: module.is_active,
+                isDefault: module.is_default,
                 createdBy: module.created_by_user,
                 createdTime: module.created_time,
                 updatedBy: module.updated_by_user,

@@ -142,9 +142,7 @@ const Customer = () => {
 				rowOnClick={rowOnClick}
 				isServerSideSort={true}
 				onSortModelChange={onSortModelChange} 
-				checkboxSelection={true}
-				hasBulkEdit={true}
-				hasBulkDelete={true}
+				checkboxSelection={false}	
 			/>
 		</>
 	);

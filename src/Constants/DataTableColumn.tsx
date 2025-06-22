@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
-import { GridColDef } from "@mui/x-data-grid";
+import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { customerRowData, mainAreaRowData } from "../Types/Customer";
-import {
-	ItemGroupRowData,
-} from "../Types/Inventory";
-import { Avatar, Box, IconButton, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import { User, userRowData } from "../Types/User";
 import moment from "moment";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz"; 
-
+import ContextMenu, { MenuItem } from "../components/ContextMenu";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 function getHeader(name: string) {
 	return <strong style={{ fontSize: "16px" }}>{name}</strong>;
@@ -26,10 +24,7 @@ const getRandomColor = (userId: number) => {
 			return parsedUserBasedColor?.[userId.toString()];
 		} else {
 			parsedUserBasedColor[userId.toString()] = `#${color}`;
-			localStorage.setItem(
-				"user-colors",
-				JSON.stringify(parsedUserBasedColor)
-			);
+			localStorage.setItem("user-colors", JSON.stringify(parsedUserBasedColor));
 			return `#${color}`;
 		}
 	} else {
@@ -43,7 +38,52 @@ const getRandomColor = (userId: number) => {
 	}
 };
 
+const RenderCustomerMoreIcon = (e: GridRenderCellParams) => {
+	const menuItems: MenuItem[][] = [
+		[
+			{
+				name: "Edit",
+				icon: <EditOutlinedIcon sx={{ fontSize: "20px" }} />,
+				color: "primary.main",
+				isHidden: false,
+				...e,
+			},
+			{
+				name: "Delete",
+				icon: <DeleteOutlineOutlinedIcon sx={{ fontSize: "20px" }} />,
+				color: "red",
+				isHidden: false,
+				...e,
+			},
+		],
+	];
+
+	return (
+		<ContextMenu
+			menuItems={menuItems}
+			onMenuItemClick={(item) => {
+				console.log(item);
+			}}
+		/>
+	);
+};
+
 const customer: GridColDef[] = [
+	
+	{
+		field: "id",
+		headerName: "",
+		renderHeader: () => getHeader(""),
+		renderCell: (e) => {
+			return RenderCustomerMoreIcon(e);
+		},
+		hideable: false,
+		hideSortIcons: true,
+		sortable: false,
+		disableColumnMenu: true,
+		resizable: false,
+		maxWidth: 10,
+	},
 	{
 		field: "customerName",
 		headerName: "Customer Name",
@@ -159,14 +199,6 @@ const renderDateAndTime = (e: any) => {
 	return moment(e.value).format("DD MMM YYYY, hh:mm A");
 };
 
-const renderMoreIcon = () => {
-	return (
-		<IconButton>
-			<MoreHorizIcon />
-		</IconButton>
-	);
-};
-
 const mainArea: GridColDef[] = [
 	{
 		field: "name",
@@ -237,22 +269,14 @@ const createUserRow = (user: User): userRowData => {
 const createMainAreaRow = (id: number, name: string): mainAreaRowData => {
 	return { id, name };
 };
- 
 
- 
-export { 
+export {
 	customer,
 	createCustomerRow,
 	mainArea,
-	createMainAreaRow, 
+	createMainAreaRow,
 	paymentTermsColDef,
 	createUserRow,
 };
 
-export {
-	renderDateAndTime,
-	renderUser,
-	getHeader,
-	renderMoreIcon,
-	getRandomColor
-}
+export { renderDateAndTime, renderUser, getHeader, getRandomColor };

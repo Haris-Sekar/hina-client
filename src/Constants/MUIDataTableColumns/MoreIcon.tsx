@@ -78,7 +78,7 @@ const RenderMoreIcon = (
 	};
 
 	return (
-		<>
+		<Box>
 			<DialogBox
 				dialogDetails={{
 					title: `Delete ${moduleName.name}`,
@@ -175,7 +175,7 @@ const RenderMoreIcon = (
 					</Box>
 				))}
 			</Menu>
-		</>
+		</Box>
 	);
 };
 

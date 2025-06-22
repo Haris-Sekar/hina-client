@@ -1,13 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
-import { Box, Button } from "@mui/material";
-import AddCircleOutlinedIcon from "@mui/icons-material/AddCircleOutlined";
-import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
-import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import ListView from "./ListView";
 import { GridColDef } from "@mui/x-data-grid";
 import { useState } from "react";
-import LoadingButton from "@mui/lab/LoadingButton";
 interface IModulePage {
 	moduleName: string;
 	rows: any;
@@ -16,7 +11,7 @@ interface IModulePage {
 	isServerPagination: boolean;
 	onPaginationModelChange?: Function;
 	rowCount?: number;
-	addCallBack: Function;
+	addCallBack: () => void;
 	editCallBack: Function;
 	deleteCallBack: Function;
 	deleteBtnLoading?: boolean;
@@ -42,9 +37,7 @@ const ModulePage = ({
 	deleteCallBack,
 	addCallBack,
 	isServerPagination,
-	deleteBtnLoading,
 	rowOnClick,
-	isModal = false,
 	isServerSideSort,
 	onSortModelChange,
 	columnVisibilityModel,
@@ -58,65 +51,21 @@ const ModulePage = ({
 		setSelectedIds(ids);
 	}
 
-	const toolBar = () => {
-		if (!(hasBulkDelete || hasBulkEdit || hasAdd)) {
-			return null;
+	function onBulkEdit() {
+		if (selectedIds.length > 0) {
+			editCallBack(selectedIds);
 		}
+	}
 
-		return (
-			<Box>
-				<Box
-					sx={{
-						display: "flex",
-						justifyContent: "space-between",
-						padding: "10px",
-					}}
-				>
-					<div>
-						{selectedIds.length > 0 && (
-							<Box sx={{ display: "flex", gap: "10px" }}>
-								{hasBulkEdit && (
-									<Button
-										startIcon={<ModeEditOutlineOutlinedIcon />}
-										variant="contained"
-										onClick={() => editCallBack(selectedIds)}
-									>
-										Edit {!isModal && moduleName}
-									</Button>
-								)}
-								{hasBulkDelete && (
-									<LoadingButton
-										variant="contained"
-										color="error"
-										endIcon={<DeleteForeverOutlinedIcon />}
-										onClick={() => deleteCallBack(selectedIds)}
-										loading={deleteBtnLoading}
-									>
-										Delete {!isModal && moduleName}
-									</LoadingButton>
-								)}
-							</Box>
-						)}
-					</div>
-					{hasAdd && (
-						<Button
-							variant="contained"
-							sx={{ width: "fit-content" }}
-							startIcon={<AddCircleOutlinedIcon />}
-							onClick={(e) => addCallBack(e)}
-						>
-							Add {!isModal && moduleName}
-						</Button>
-					)}
-				</Box>
-			</Box>
-		);
-	};
+	function onBulkDelete() {
+		if (selectedIds.length > 0) {
+			deleteCallBack(selectedIds);
+		}
+	}
 
 	return (
 		<div style={{ height: "100%" }}>
 			<ListView
-				toolBar={toolBar}
 				rows={rows}
 				columns={columns}
 				isLoading={isLoading}
@@ -129,6 +78,15 @@ const ModulePage = ({
 				onSortModelChange={onSortModelChange}
 				columnVisibilityModel={columnVisibilityModel}
 				checkboxSelection={checkboxSelection}
+				toolBarProps={{
+					moduleName: moduleName,
+					showAddButton: hasAdd,
+					showBulkEdit: hasBulkEdit,
+					showBulkDelete: hasBulkDelete,
+					addCallBack: addCallBack,
+					editCallBack: onBulkEdit,
+					deleteCallBack: onBulkDelete, 
+				}}
 			/>
 		</div>
 	);
