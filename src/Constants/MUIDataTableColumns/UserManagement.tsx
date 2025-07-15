@@ -247,7 +247,7 @@ const roleColumn: GridColDef[] = [
       return (
         <RenderListViewCell
           showViewDetail
-          onCellClick={() => { 
+          onCellClick={() => {
             navigate(`${e.row.id}`);
           }}
           text={e.row.name}
@@ -606,8 +606,6 @@ const RenderMoreIcon = (e: GridRenderCellParams) => {
 };
 
 const RenderRoleMoreIcon = (e: GridRenderCellParams) => {
-  const navigate = useNavigate();
-
   const { loginUserPermissions } = useAppSelector((state) => state.user);
 
   const modulePermissions = loginUserPermissions.find(
@@ -637,7 +635,7 @@ const RenderRoleMoreIcon = (e: GridRenderCellParams) => {
     ],
   ];
 
-  const changeStatus = async (row: any) => {};
+  const changeStatus = async (_row: any) => {};
 
   return (
     <ContextMenu

@@ -4,8 +4,7 @@ import { API } from "../../api/axios";
 import APIError from "../../Types/APIError";
 import { companyDetailsConst } from "../../Constants/CommonConstants";
 import { Company } from "../../Types/Company";
-import { Address, Customer, PaymentTerm } from "../../Types/Customer";
-import { store } from "../store";
+import { Address, Customer, PaymentTerm } from "../../Types/Customer"; 
 
 interface customerState {
 	customers: Customer[];

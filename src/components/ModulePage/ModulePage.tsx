@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
 import ListView from "./ListView";
-import { GridColDef, GridRowEditStopParams, GridRowId } from "@mui/x-data-grid";
+import { GridColDef } from "@mui/x-data-grid";
 import { useState } from "react";
 interface IModulePage {
   moduleName: string;

@@ -25,6 +25,7 @@ export const fetchUserRoleAndPermissions = createAsyncThunk<
           id: permission.module.id,
           name: permission.module.name,
           isActive: permission.module.is_active,
+          isDefault: permission.module.is_default,
           description: permission.module.description,
           createdTime: permission.module.created_time,
           updatedTime: permission.module.updated_time,

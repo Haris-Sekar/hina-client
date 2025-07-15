@@ -4,7 +4,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ItemGroup } from "../../../Types/Inventory";
 import { updateItemGroup } from "../../../api/services/inventory";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
@@ -21,14 +21,12 @@ const EditItemGroup = () => {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [searchParams] = useSearchParams();
-  const from = searchParams.get("from");
   const { id } = useParams();
 
   const [isLoading, setIsLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  const { itemGroups, loading } = useAppSelector((state) => state.inventory);
+  const { itemGroups } = useAppSelector((state) => state.inventory);
 
   useEffect(() => {
     if (id && itemGroups.length > 0) {
@@ -42,8 +40,7 @@ const EditItemGroup = () => {
     } else if (id) {
       dispatch(fetchItemGroup({ id: parseInt(id) }));
     }
-  }, [itemGroups]); 
-  
+  }, [itemGroups]);
 
   function onSubmit(data: ItemGroup) {
     if (id) {
@@ -206,7 +203,7 @@ const EditItemGroup = () => {
           variant="contained"
           color="error"
           sx={{ mt: 3, mb: 2, width: "fit-content" }}
-          onClick={() => navigate(-1) }
+          onClick={() => navigate(-1)}
           endIcon={<CancelIcon />}
         >
           Cancel

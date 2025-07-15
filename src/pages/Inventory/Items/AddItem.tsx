@@ -50,8 +50,6 @@ import DoneAllIcon from "@mui/icons-material/DoneAll";
 const AddItem = () => {
   const {
     control,
-    handleSubmit,
-    reset,
     getValues,
     formState: { errors },
   } = useForm<Item>();
@@ -470,6 +468,7 @@ const AddItem = () => {
               control={control}
               render={({ field }) => (
                 <Autocomplete
+                  // @ts-ignore
                   value={itemGroup}
                   onChange={(_, value) => setItemGroup(value)}
                   onOpen={handleOpen}

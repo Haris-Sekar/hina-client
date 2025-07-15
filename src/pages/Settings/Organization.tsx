@@ -1,33 +1,13 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  Divider,
-  Paper,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Divider, Paper, Typography } from "@mui/material";
 import { useAppSelector } from "../../store/store";
-import officeImg from "../../assets/office-building.png";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Logo from "../../components/Logo";
 
 const Organization = () => {
   const navigate = useNavigate();
 
-  const { orgId } = useParams();
-
-  const { currentUserDetails, companyDetails } = useAppSelector(
-    (state) => state.user
-  );
-  let initials = "";
-
-  if (currentUserDetails?.firstName && currentUserDetails?.lastName) {
-    initials =
-      currentUserDetails.firstName.charAt(0).toUpperCase() +
-      currentUserDetails.lastName.charAt(0).toUpperCase();
-  }
+  const { companyDetails } = useAppSelector((state) => state.user);
 
   return (
     <Box>

@@ -4,18 +4,18 @@ import {
   itemGroup as DItemGroup,
 } from "../../../Constants/MUIDataTableColumns/Inventory";
 import ModulePage from "../../../components/ModulePage/ModulePage";
-import { store, useAppDispatch, useAppSelector } from "../../../store/store";
+import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { useNavigate } from "react-router-dom";
 import DialogBox from "../../../components/DialogBox";
 import { IDialogBox } from "../../../Types/Form";
 import { Typography } from "@mui/material";
 import { ItemGroupRowData } from "../../../Types/Inventory";
-import { deleteItemGroup } from "../../../api/services/inventory-temp";
 import { fetchItemGroup } from "../../../store/Thunks/InventoryThunks";
-import { GridRowEditStopParams } from "@mui/x-data-grid";
-import { updateItemGroup } from "../../../api/services/inventory";
+import {
+  deleteItemGroup,
+  updateItemGroup,
+} from "../../../api/services/inventory";
 import { customToast } from "../../../Constants/commonFunctions";
-import { AxiosError } from "axios";
 
 const ItemGroup = () => {
   const { itemGroups, loading } = useAppSelector((state) => state.inventory);
@@ -73,7 +73,7 @@ const ItemGroup = () => {
     setDeleteDialogOpen(false);
     const ids = JSON.parse(e) as number[];
     setDeleteBtnLoading(true);
-    deleteItemGroup(ids)
+    deleteItemGroup(ids[0])
       .then(() => {
         dispatch(fetchItemGroup({}));
         setDeleteBtnLoading(false);

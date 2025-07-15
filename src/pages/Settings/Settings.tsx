@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { AppProvider, Navigation, Router } from "@toolpad/core/AppProvider";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { IconButton, Stack, Typography } from "@mui/material";
@@ -12,11 +12,7 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
 import ContrastOutlinedIcon from "@mui/icons-material/ContrastOutlined";
-import {
-  CustomThemeProvider,
-  FONT_STORAGE_KEY,
-  getAppTheme,
-} from "../../theme";
+import { CustomThemeProvider } from "../../theme";
 const ToolbarActions = () => {
   const navigate = useNavigate();
   const { orgId } = useParams();

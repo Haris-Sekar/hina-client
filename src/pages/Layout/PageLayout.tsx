@@ -2,7 +2,7 @@
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import "./layout.css";
 import { useAppDispatch, useAppSelector } from "../../store/store";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 import {
   companyDetailsConst,
   token,
@@ -14,11 +14,7 @@ import { getSideBarItems } from "../../Constants/MenuItems";
 import { Authentication, Router, Session } from "@toolpad/core/AppProvider";
 
 import Logo from "../../components/Logo";
-import {
-  CustomThemeProvider,
-  FONT_STORAGE_KEY,
-  getAppTheme,
-} from "../../theme";
+import { CustomThemeProvider } from "../../theme";
 import NavbarRightPanel from "./NavbarRightPanel";
 import { fetchUserRoleAndPermissions } from "../../store/Thunks/UserThunks";
 

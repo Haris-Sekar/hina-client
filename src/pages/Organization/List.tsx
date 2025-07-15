@@ -4,15 +4,13 @@ import { fetchOrgs } from "../../store/Thunks/OrgThunks";
 import { useEffect } from "react";
 import {
   Box,
-  Typography,
-  Paper,
+  Typography, 
   List,
   ListItem,
   ListItemText,
   Button,
   Card,
-  ListItemIcon,
-  ListItemButton,
+  ListItemIcon, 
 } from "@mui/material";
 import EmptyPage, { IButton } from "../../components/EmptyPage";
 import officeImg from "../../assets/office-building.png";

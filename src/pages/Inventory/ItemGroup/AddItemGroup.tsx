@@ -1,10 +1,10 @@
-import { Box, Button, Divider, TextField, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ItemGroup } from "../../../Types/Inventory";
 import { addItemGroup } from "../../../api/services/inventory";
 import { useAppDispatch } from "../../../store/store";
@@ -21,9 +21,7 @@ const AddItemGroup = () => {
   } = useForm<ItemGroup>();
 
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const [searchParams] = useSearchParams();
-  const from = searchParams.get("from");
+  const dispatch = useAppDispatch(); 
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -209,9 +207,7 @@ const AddItemGroup = () => {
           variant="contained"
           color="error"
           sx={{ mt: 3, mb: 2, width: "fit-content" }}
-          onClick={() =>
-            navigate(-1)
-          }
+          onClick={() => navigate(-1)}
           endIcon={<CancelIcon />}
         >
           Cancel

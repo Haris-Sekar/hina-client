@@ -4,7 +4,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect, useState } from "react";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Size } from "../../../Types/Inventory";
 import { createSize } from "../../../api/services/inventory";
 import { useAppDispatch } from "../../../store/store";

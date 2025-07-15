@@ -9,7 +9,7 @@ import StraightenOutlinedIcon from "@mui/icons-material/StraightenOutlined";
 import WorkspacesOutlinedIcon from "@mui/icons-material/WorkspacesOutlined";
 import SchemaOutlinedIcon from "@mui/icons-material/SchemaOutlined";
 import ShoppingBasketOutlinedIcon from "@mui/icons-material/ShoppingBasketOutlined";
-import { Navigation } from "@toolpad/core/AppProvider";
+import { Navigation, NavigationItem } from "@toolpad/core/AppProvider";
 import { Permission } from "../Types/User";
 
 const sidebarItems: Navigation = [
@@ -101,11 +101,12 @@ const sidebarItems: Navigation = [
 ];
 
 const getSideBarItems = (permissions: Permission[]) => {
-  const items = sidebarItems.map((item) => {
+  const items = sidebarItems.map((item: NavigationItem) => {
     if (item.kind === "header") {
       return item; // Keep headers as they are
     }
     const permission = permissions.find(
+      // @ts-ignore
       (permission) => permission.module.name === item.title
     );
     if (permission && permission?.module.isActive && permission.canRead) {

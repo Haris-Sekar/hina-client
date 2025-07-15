@@ -9,8 +9,7 @@ import {
   moduleListView,
   moduleListViewRow,
 } from "../../../Constants/MUIDataTableColumns/Modules";
-import { GridPaginationModel, GridSortModel } from "@mui/x-data-grid";
-import { Box, Divider, Typography } from "@mui/material";
+import { GridPaginationModel, GridSortModel } from "@mui/x-data-grid"; 
 
 const Modules = () => {
   const dispatch = useAppDispatch();
