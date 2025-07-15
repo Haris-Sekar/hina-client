@@ -5,9 +5,9 @@ import {
 	fetchCurrentUserDetails,
 	fetchCompanyDetails,
 } from "../store/Reducers/UserReducers";
-import { fetchUserRoleAndPermissions } from "../store/Thunks/UserThunks";
+import { fetchUserRoleAndPermissions } from "../store/Thunks/UserThunks"; 
 
-export function useAuth() {
+export function useAuth() { 
 	const context = useContext(AuthContext);
 	if (!context) {
 		throw new Error("useAuth must be used within an AuthProvider");
@@ -57,7 +57,7 @@ export function useAuth() {
 		() =>
 			metaDataLoading ||
 			(context.isAuthenticated &&
-				(!currentUserDetails || !reduxCompanyDetails)) ||
+				(!currentUserDetails)) ||
 			// Loader while token exists but context not yet initialized
 			(typeof window !== "undefined" &&
 				localStorage.getItem("TOKEN") &&

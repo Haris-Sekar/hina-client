@@ -18,6 +18,7 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
+
 import { Controller, useForm } from "react-hook-form";
 import ModeEditOutlineOutlinedIcon from "@mui/icons-material/ModeEditOutlineOutlined";
 import { Customer, PaymentTerm } from "../../Types/Customer";
@@ -66,7 +67,7 @@ const AddCustomer = () => {
 			.then(() => {
 				setIsLoading(false);
 				if (event.nativeEvent.submitter.id !== "saveAndNew") {
-					navigate("/app/sales/customer");
+					navigate(-1);
 				} else {
 					reset();
 				}
@@ -982,7 +983,7 @@ const AddCustomer = () => {
 					color="error"
 					sx={{ mt: 3, mb: 2, width: "fit-content" }}
 					endIcon={<CancelIcon />}
-					onClick={() => navigate("/app/sales/customer")}
+					onClick={() => navigate(-1)}
 				>
 					Cancel
 				</Button>

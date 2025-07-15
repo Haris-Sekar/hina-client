@@ -12,6 +12,10 @@ import { Typography } from "@mui/material";
 import { ItemGroupRowData } from "../../../Types/Inventory";
 import { deleteItemGroup } from "../../../api/services/inventory-temp";
 import { fetchItemGroup } from "../../../store/Thunks/InventoryThunks";
+import { GridRowEditStopParams } from "@mui/x-data-grid";
+import { updateItemGroup } from "../../../api/services/inventory";
+import { customToast } from "../../../Constants/commonFunctions";
+import { AxiosError } from "axios";
 
 const ItemGroup = () => {
   const { itemGroups, loading } = useAppSelector((state) => state.inventory);
@@ -32,11 +36,11 @@ const ItemGroup = () => {
   const navigate = useNavigate();
 
   function addItemGroup() {
-    navigate("/app/inventory/itemgroup/add?from=detail");
+    navigate("add?from=detail");
   }
 
   function editCallback(e: number[]) {
-    navigate(`/app/inventory/itemgroup/${e[0]}/edit?from=detail`);
+    navigate(`${e[0]}/edit?from=detail`);
   }
 
   const [deleteBtnLoading, setDeleteBtnLoading] = useState(false);
@@ -76,7 +80,31 @@ const ItemGroup = () => {
       })
       .catch(() => setDeleteBtnLoading(false));
   }
-  
+
+  async function inlineEdit(
+    newValue: ItemGroupRowData,
+    _oldValue: ItemGroupRowData,
+    _params: {}
+  ) {
+    try {
+      const updateValue = {
+        groupId: newValue.id,
+        name: newValue.name,
+        description: newValue.description,
+        hsnCode: newValue.hsnCode,
+      };
+      const { data } = await updateItemGroup(updateValue, false);
+      return { ...newValue, updatedTime: data.data.updated_time };
+    } catch (err: any) {
+      let message = "";
+      if (err?.status === 403 && err?.response?.data.errors) {
+        message = err.response.data.errors;
+      } else {
+        message = err.message;
+      }
+      customToast("error", message);
+    }
+  }
 
   return (
     <>
@@ -97,7 +125,8 @@ const ItemGroup = () => {
         editCallBack={editCallback}
         deleteCallBack={deleteCallBack}
         isServerPagination={false}
-        deleteBtnLoading={deleteBtnLoading} 
+        deleteBtnLoading={deleteBtnLoading}
+        inlineEditCallback={inlineEdit}
       />
     </>
   );

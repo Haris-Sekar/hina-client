@@ -1,118 +1,80 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
+import { fetchRoles } from "../../../store/Reducers/UserReducers";
+import { Box, Divider, Typography } from "@mui/material";
+import ModulePage from "../../../components/ModulePage/ModulePage";
 import {
-    fetchRoles,
-} from "../../../store/Reducers/UserReducers";
-import { Avatar, Box, Chip, Divider, IconButton, Stack, Tooltip, Typography } from "@mui/material";
-import { getRandomColor } from "../../../Constants/DataTableColumn";
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import { useNavigate } from "react-router-dom";
+  roleColumn,
+  roleListViewRow,
+} from "../../../Constants/MUIDataTableColumns/UserManagement";
+import { GridPaginationModel, GridSortModel } from "@mui/x-data-grid";
 const Roles = () => {
-    const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        dispatch(fetchRoles({}));
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(fetchRoles({}));
+  }, [dispatch]);
 
-    const { roles } = useAppSelector((state) => state.user);
+  const { roles, loading, roleCount } = useAppSelector((state) => state.user);
 
-    const navigate = useNavigate();
+  const rows = roles && roles.map((role) => roleListViewRow(role));
 
-    return (
-        <>
-
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                }}
-            >
-
-                <Box
-                    sx={{
-                        p: "10px",
-                        position: "sticky",
-                        top: 0,
-                        paddingLeft: 2,
-                        zIndex: 999,
-                    }}
-                >
-                    <Typography sx={{ fontSize: "20px", fontWeight: "bolder" }}>
-                        Role & Permissions
-                    </Typography>
-                </Box>
-                <Divider />
-
-                {roles.length > 0 &&
-                    roles.map((role) => (
-                        <Box
-                            sx={{
-                                cursor: "pointer",
-                                ":hover": { backgroundColor: "background.paper" },
-                                userSelect: 'none'
-                            }}
-                            onClick={() => navigate(`/app/settings/roles/${role.id}`)}
-                        >
-                            <Box
-                                key={role.id}
-                                sx={{
-                                    display: "flex",
-                                    gap: "20px",
-                                    margin: "15px",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Avatar
-                                    sx={{
-                                        bgcolor: getRandomColor(role.id),
-                                        width: "46px",
-                                        height: "46px",
-                                    }}
-                                >
-                                    <Typography
-                                        sx={{ fontSize: "22px", color: "white" }}
-                                    >
-                                        {role.name
-                                            .split(" ")
-                                            .map((word) => word.charAt(0) + word.charAt(1))
-                                            .join("")
-                                            .toUpperCase()}
-                                    </Typography>
-                                </Avatar>
-                                <Box>
-                                    <Typography sx={{ fontSize: "17px", fontWeight: "bolder" }}>{role.name}</Typography>
-                                    <Typography
-                                        variant="caption"
-                                        color="text.secondary"
-                                    >
-                                        {role.description}
-                                    </Typography>
-                                </Box>
-                                <Stack direction="row" spacing={1}>
-                                    {role.isDefault && <Chip label="Default" color="primary" />}
-                                </Stack>
-                                <Box sx={{ marginLeft: "auto" }}>
-                                    <Stack direction="row" spacing={1} key={role.id}>
-                                        <Tooltip title="Edit" arrow>
-                                            <IconButton sx={{ ":hover": { color: "secondary.main" } }}>
-                                                <EditOutlinedIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title="Delete" arrow>
-                                            <IconButton sx={{ ":hover": { color: "secondary.main" } }}>
-                                                <DeleteOutlineOutlinedIcon fontSize="small" />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Stack>
-                                </Box>
-                            </Box>
-                            <Divider />
-                        </Box>
-                    ))}
-            </Box>
-        </>
+  const onSortModelChange = (e: GridSortModel) => {
+    const sortObj = e[0];
+    if (sortObj && sortObj.sort) {
+      let fieldName = sortObj.field;
+      const sortOrder = sortObj.sort.toUpperCase();
+      if (sortObj.field === "name") {
+        fieldName = "name";
+      }
+      if (sortObj.field === "createdTime") {
+        fieldName = "created_time";
+      }
+      if (sortObj.field === "updatedTime") {
+        fieldName = "updated_time";
+      }
+      dispatch(
+        fetchRoles({ sortBy: fieldName, sortOrder, page: 0, range: 25 })
+      );
+    } else {
+      dispatch(fetchRoles({ page: 0, range: 25 }));
+    }
+  };
+  function onPaginationModelChange(e: GridPaginationModel) {
+    dispatch(
+      fetchRoles({
+        page: e.page,
+        range: e.pageSize,
+      })
     );
+  }
+
+  return (
+    <>
+      {roles && roles.length > 0 ? (
+        <ModulePage
+          moduleName="Roles & Permission"
+          rowCount={roleCount}
+          isLoading={loading}
+          isServerPagination
+          columns={roleColumn}
+          rows={rows}
+          addCallBack={() => {}}
+          deleteCallBack={() => {}}
+          editCallBack={() => {}}
+          hasAdd={false}
+          onPaginationModelChange={onPaginationModelChange}
+          onSortModelChange={onSortModelChange}
+          isServerSideSort={true}
+          checkboxSelection={false}
+          hasBulkEdit={false}
+          hasBulkDelete={false}
+        />
+      ) : (
+        <></>
+      )}
+    </>
+  );
 };
 
 export default Roles;

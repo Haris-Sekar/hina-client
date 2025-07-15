@@ -50,7 +50,7 @@ const updateUser = (user: User) => {
 		params.status = user.status;
 	}
 
-	return toastPromise(API.patch(`/user/${user.userId}/update`, params), {
+	return toastPromise(API.patch(`/users/update/${user.userId}`, params), {
 		loading: "Updating User",
 		success: "User updated successfully",
 		error: (err: any) => {

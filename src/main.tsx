@@ -4,24 +4,19 @@ import App from "./App.tsx";
 import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import theme from "./theme";
+import { CssBaseline } from "@mui/material";
+import { CustomThemeProvider } from "./theme"; // 👈 dynamic theme provider
 import "./fonts/fonts.css";
 import { Toaster } from "react-hot-toast";
- 
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-	<React.Fragment>
-		<Provider store={store}>
-			<ThemeProvider
-				theme={theme}
-				noSsr
-				disableTransitionOnChange 
-			>
-				<Toaster />
-				<CssBaseline />
-				<App />
-			</ThemeProvider>
-		</Provider>
-	</React.Fragment>
+  <React.Fragment>
+    <Provider store={store}>
+      <CustomThemeProvider>
+        <Toaster />
+        <CssBaseline />
+        <App />
+      </CustomThemeProvider>
+    </Provider>
+  </React.Fragment>
 );

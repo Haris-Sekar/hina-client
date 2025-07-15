@@ -34,7 +34,7 @@ const AddItemGroup = () => {
         setIsLoading(false);
         if (event.nativeEvent.submitter.id !== "saveAndNew") {
           dispatch(fetchItemGroup({}));
-          navigate("/app/inventory/itemgroup");
+          navigate(-1);
         } else {
           reset();
           // Use setTimeout to ensure the field is mounted after reset
@@ -210,9 +210,7 @@ const AddItemGroup = () => {
           color="error"
           sx={{ mt: 3, mb: 2, width: "fit-content" }}
           onClick={() =>
-            from === "detail"
-              ? navigate("/app/inventory/itemgroup")
-              : navigate(-1)
+            navigate(-1)
           }
           endIcon={<CancelIcon />}
         >

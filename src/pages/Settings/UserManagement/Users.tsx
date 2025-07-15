@@ -30,7 +30,7 @@ const Users = () => {
 	const navigate = useNavigate();
 
 	const addCallback = () => {
-		navigate("/app/settings/users/add");
+		navigate("add");
 	};
 
 	function onPaginationModelChange(e: GridPaginationModel) {
@@ -62,7 +62,7 @@ const Users = () => {
 		} else {
 			dispatch(fetchUsers({ page: 0, range: 25 }));
 		}
-	}; 
+	};
 	return (
 		<>
 			<ModulePage
@@ -73,8 +73,8 @@ const Users = () => {
 				isLoading={loading}
 				isServerPagination={true}
 				addCallBack={addCallback}
-				editCallBack={() => {}}
-				deleteCallBack={() => {}}
+				editCallBack={() => { }}
+				deleteCallBack={() => { }}
 				isServerSideSort={true}
 				onSortModelChange={onSortModelChange}
 				columnVisibilityModel={{}}

@@ -20,17 +20,17 @@ interface IButton {
 	isLoading?: boolean;
 	variant?: "text" | "outlined" | "contained";
 	color?:
-		| "inherit"
-		| "error"
-		| "success"
-		| "primary"
-		| "secondary"
-		| "info"
-		| "warning";
+	| "inherit"
+	| "error"
+	| "success"
+	| "primary"
+	| "secondary"
+	| "info"
+	| "warning";
 }
 
 const EmptyPage = (details: IEmptyPage) => {
-	document.title = "Page not found";
+	document.title = details.heading;
 	return (
 		<Box
 			sx={{

@@ -49,12 +49,14 @@ const itemGroup: GridColDef[] = [
     headerName: "Name",
     minWidth: 200,
     flex: 1,
+    editable: true,
     renderHeader: () => getHeader("Group Name"),
   },
   {
     field: "description",
     headerName: "Description",
     minWidth: 200,
+    editable: true,
     flex: 1,
     renderHeader: () => getHeader("Description"),
   },
@@ -62,6 +64,7 @@ const itemGroup: GridColDef[] = [
     field: "hsnCode",
     headerName: "HSN Code",
     minWidth: 200,
+    editable: true,
     flex: 1,
     renderHeader: () => getHeader("HSN Code"),
   },
@@ -116,7 +119,12 @@ const size: GridColDef[] = [
     headerName: "ID",
     renderHeader: () => getHeader(""),
     renderCell: (e) => {
-      return RenderMoreIcon(e, {name: "Size", apiName: "size", deleteEntity: deleteSize, fetchEntity: fetchSize});
+      return RenderMoreIcon(e, {
+        name: "Size",
+        apiName: "size",
+        deleteEntity: deleteSize,
+        fetchEntity: fetchSize,
+      });
     },
     hideable: false,
     hideSortIcons: true,
@@ -128,6 +136,7 @@ const size: GridColDef[] = [
   {
     field: "name",
     headerName: "Name",
+    editable: true,
     minWidth: 200,
     flex: 1,
     renderHeader: () => getHeader("Size"),
@@ -139,7 +148,7 @@ const size: GridColDef[] = [
     flex: 1,
     renderHeader: () => getHeader("Created By"),
     renderCell: (e) => renderUser(e),
-    hideSortIcons: true
+    hideSortIcons: true,
   },
   {
     field: "createdTime",
@@ -156,7 +165,7 @@ const size: GridColDef[] = [
     flex: 1,
     renderHeader: () => getHeader("Updated By"),
     renderCell: (e) => renderUser(e),
-    hideSortIcons: true
+    hideSortIcons: true,
   },
   {
     field: "updatedTime",
@@ -165,9 +174,7 @@ const size: GridColDef[] = [
     flex: 1,
     renderHeader: () => getHeader("Updated Time"),
     renderCell: (e) => renderDateAndTime(e),
-  }
+  },
 ];
-
-
 
 export { createItemGroupRow, itemGroup, createSizeRow, size };

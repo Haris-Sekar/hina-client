@@ -98,7 +98,7 @@ const EditCustomer = () => {
 			.then(() => {
 				setIsLoading(false);
 				if (event.nativeEvent.submitter.id !== "saveAndNew") {
-					navigate("/app/sales/customer");
+					navigate(-1);
 				} else {
 					reset();
 				}
@@ -964,7 +964,7 @@ const EditCustomer = () => {
 							color="error"
 							sx={{ mt: 3, mb: 2, width: "fit-content" }}
 							endIcon={<CancelIcon />}
-							onClick={() => navigate("/app/sales/customer")}
+							onClick={() => navigate(-1)}
 						>
 							Cancel
 						</Button>

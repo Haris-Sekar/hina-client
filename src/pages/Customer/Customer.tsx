@@ -64,11 +64,11 @@ const Customer = () => {
 	const navigate = useNavigate();
 
 	function addCustomer() {
-		navigate("/app/sales/customer/add?from=detail");
+		navigate("add?from=detail");
 	}
 
 	function editCallback(e: number[]) {
-		navigate(`/app/sales/customer/${e[0]}/edit?from=detail`);
+		navigate(`${e[0]}/edit?from=detail`);
 	}
 
 	function deleteCallBack(e: number[]) {

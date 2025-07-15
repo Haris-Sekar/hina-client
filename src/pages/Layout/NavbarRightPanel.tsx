@@ -1,12 +1,14 @@
 import { Box, IconButton, Stack, Tooltip } from "@mui/material";
 import { ThemeSwitcher } from "@toolpad/core/DashboardLayout";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector } from "../../store/store";
 const NavbarRightPanel = () => {
-	const navigate = useNavigate();
+	const { orgId } = useParams();
+	const navigate = useNavigate(); 
+
 	const onSettingsClick = () => {
-		navigate("/app/settings");
+		navigate(`/app/${orgId}/settings/account`);
 	};
 
 	const { loginUserPermissions } = useAppSelector((state) => state.user);

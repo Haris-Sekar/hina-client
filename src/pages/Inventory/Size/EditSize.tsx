@@ -25,24 +25,24 @@ const EditSize = () => {
     const from = searchParams.get("from");
     const { id } = useParams();
 
-    const {sizes} = useAppSelector((state) => state.inventory);
+    const { sizes } = useAppSelector((state) => state.inventory);
 
     const [isLoading, setIsLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
 
     useEffect(() => {
         if (id && sizes.length > 0) {
-          const size = sizes.find(
-            (size) => size.id === parseInt(id)
-          );
-          if (size) {
-            reset(size);
-            setInitialLoading(false);
-          }
+            const size = sizes.find(
+                (size) => size.id === parseInt(id)
+            );
+            if (size) {
+                reset(size);
+                setInitialLoading(false);
+            }
         } else if (id) {
-          dispatch(fetchSize({ id: parseInt(id) }));
+            dispatch(fetchSize({ id: parseInt(id), page: 1, range: 1 }));
         }
-      }, [sizes]);
+    }, [sizes]);
 
     function onSubmit(data: Size) {
         if (id) {
@@ -50,8 +50,11 @@ const EditSize = () => {
             updateSize(data)
                 .then(() => {
                     setIsLoading(false);
-                    dispatch(fetchSize({}));
-                    navigate("/app/inventory/size");
+                    dispatch(fetchSize({
+                        page: 0,
+                        range: 25
+                    }));
+                    navigate(-1);
                 })
                 .catch(() => {
                     setIsLoading(false);
@@ -159,11 +162,7 @@ const EditSize = () => {
                     variant="contained"
                     color="error"
                     sx={{ mt: 3, mb: 2, width: "fit-content" }}
-                    onClick={() =>
-                        from === "detail"
-                            ? navigate("/app/inventory/size")
-                            : navigate(-1)
-                    }
+                    onClick={() => navigate(-1)}
                     endIcon={<CancelIcon />}
                 >
                     Cancel

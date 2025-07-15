@@ -42,9 +42,7 @@ const EditItemGroup = () => {
     } else if (id) {
       dispatch(fetchItemGroup({ id: parseInt(id) }));
     }
-  }, [itemGroups]);
- 
-  console.log(itemGroups);
+  }, [itemGroups]); 
   
 
   function onSubmit(data: ItemGroup) {
@@ -54,7 +52,7 @@ const EditItemGroup = () => {
         .then(() => {
           setIsLoading(false);
           dispatch(fetchItemGroup({}));
-          navigate("/app/inventory/itemgroup");
+          navigate(-1);
         })
         .catch(() => {
           setIsLoading(false);
@@ -208,11 +206,7 @@ const EditItemGroup = () => {
           variant="contained"
           color="error"
           sx={{ mt: 3, mb: 2, width: "fit-content" }}
-          onClick={() =>
-            from === "detail"
-              ? navigate("/app/inventory/itemgroup")
-              : navigate(-1)
-          }
+          onClick={() => navigate(-1) }
           endIcon={<CancelIcon />}
         >
           Cancel

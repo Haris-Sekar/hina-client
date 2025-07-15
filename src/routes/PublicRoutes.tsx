@@ -9,6 +9,9 @@ const AcceptInvitePage = lazy(() => import("../pages/Auth/AcceptInvite"));
 // 
 
 function PublicRoutes() {
+
+	document.title = "Hina Invoice"
+
 	return (
 		<Routes>
 			<Route path="/" element={<Navigate to="/app" replace />} />

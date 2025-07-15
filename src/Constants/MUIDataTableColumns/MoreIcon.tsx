@@ -51,7 +51,7 @@ const RenderMoreIcon = (
 				icon: <EditOutlinedIcon sx={{ fontSize: "20px" }} />,
 				action: (id: number) => {
 					navigate(
-						`/app/inventory/${moduleName.apiName}/${id}/edit?from=detail`
+						`${id}/edit?from=detail`
 					);
 				},
 				color: "primary.main",

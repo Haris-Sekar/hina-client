@@ -60,21 +60,6 @@ const Modules = () => {
 
   return (
     <>
-      <Box
-        sx={{
-          p: "10px",
-          position: "sticky",
-          top: 0,
-          paddingLeft: 2,
-          zIndex: 10,
-          backgroundColor: "background.paper",
-        }}
-      >
-        <Typography sx={{ fontSize: "20px", fontWeight: "bolder" }}>
-          Modules
-        </Typography>
-      </Box>
-      <Divider />
       <ModulePage
         moduleName="Modules"
         rowCount={moduleCount}

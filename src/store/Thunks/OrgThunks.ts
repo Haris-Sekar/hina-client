@@ -6,10 +6,7 @@ export const fetchOrgs = createAsyncThunk<Company[], void, { rejectValue: string
     "org/fetchOrgs",
     async (_, thunkApi) => {
         try {
-            const { data } = await API.get(`/company`);
-
-            console.log(data);
-
+            const { data } = await API.get(`/company`); 
             if(Array.isArray(data.data)) {
                 const orgs: Company[] = data.data.map((org: any) => ({
                     companyId: org.id,

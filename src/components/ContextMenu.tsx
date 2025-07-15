@@ -17,6 +17,7 @@ interface ContextMenuProps {
 }
 
 interface MenuItem {
+	key: string;
 	name: string;
 	icon: JSX.Element;
 	color: string;

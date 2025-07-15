@@ -25,7 +25,7 @@ const CreateOrganizations = () => {
 
 	const { currentUserDetails, companyDetails } = useAppSelector(
 		(state) => state.user
-	);
+	); 
 
 	useEffect(() => {
 		if (currentUserDetails) {
@@ -43,7 +43,7 @@ const CreateOrganizations = () => {
 				/^[0-9]{2}[A-Z0-9]{5}[0-9]{4}[A-Z]{1}[0-9A-Z]{1}Z[0-9A-Z]{1}$/
 			);
 		};
-		if (!validateGst(e.gstNumber)) {
+		if (e.gstNumber && !validateGst(e.gstNumber)) {
 			setError("gstNumber", {
 				type: "minLength",
 				message: "Enter an valid GST Number",
@@ -107,7 +107,8 @@ const CreateOrganizations = () => {
 								<TextField
 									fullWidth
 									{...field}
-									label="Company Name *"
+									label="Company Name"
+									required
 									error={Boolean(errors.name)}
 									helperText={errors.name?.message}
 								/>
@@ -128,14 +129,11 @@ const CreateOrganizations = () => {
 						<Controller
 							name="gstNumber"
 							control={control}
-							defaultValue=""
-							rules={{
-								required: "Gst Number is required",
-							}}
+							defaultValue="" 
 							render={({ field }) => (
 								<TextField
 									{...field}
-									label="GST Number *"
+									label="GST Number"
 									fullWidth
 									error={Boolean(errors.gstNumber)}
 									helperText={
