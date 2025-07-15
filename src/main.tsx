@@ -8,7 +8,7 @@ import { CssBaseline } from "@mui/material";
 import { CustomThemeProvider } from "./theme"; // 👈 dynamic theme provider
 import "./fonts/fonts.css";
 import { Toaster } from "react-hot-toast";
-import { Analytics } from "@vercel/analytics/next";
+import { Analytics } from "@vercel/analytics/react";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.Fragment>
