@@ -3,12 +3,18 @@ import { getHeader, renderDateAndTime, renderUser } from "../DataTableColumn";
 import {
   ItemGroup,
   ItemGroupRowData,
+  RateVersion,
+  RateVersionRowData,
   Size,
   SizeRowData,
 } from "../../Types/Inventory";
 
 import { deleteItemGroup, deleteSize } from "../../api/services/inventory";
-import { fetchItemGroup, fetchSize } from "../../store/Thunks/InventoryThunks";
+import {
+  fetchItemGroup,
+  fetchRateVersion,
+  fetchSize,
+} from "../../store/Thunks/InventoryThunks";
 import RenderMoreIcon from "./MoreIcon";
 
 const createItemGroupRow = (group: ItemGroup): ItemGroupRowData => {
@@ -177,4 +183,97 @@ const size: GridColDef[] = [
   },
 ];
 
-export { createItemGroupRow, itemGroup, createSizeRow, size };
+const createRateVersionRow = (rateVersion: RateVersion): RateVersionRowData => {
+  return {
+    ...rateVersion,
+  };
+};
+
+const rateVersionColDef: GridColDef[] = [
+  {
+    field: "id",
+    headerName: "ID",
+    renderHeader: () => getHeader(""),
+    renderCell: (e) => {
+      return RenderMoreIcon(e, {
+        name: "Rate Version",
+        apiName: "rate-version",
+        deleteEntity: deleteSize,
+        fetchEntity: fetchRateVersion,
+      });
+    },
+    hideable: false,
+    hideSortIcons: true,
+    sortable: false,
+    disableColumnMenu: true,
+    resizable: false,
+    maxWidth: 10,
+  },
+  {
+    field: "name",
+    headerName: "Name",
+    editable: true,
+    minWidth: 200,
+    flex: 1,
+    renderHeader: () => getHeader("Name"),
+  },
+  {
+    field: "isActive",
+    headerName: "is Active",
+    editable: true,
+    minWidth: 200,
+    flex: 1,
+    renderHeader: () => getHeader("Is Active"),
+  },
+  {
+    field: "isDefault",
+    headerName: "Is Default",
+    editable: true,
+    minWidth: 200,
+    flex: 1,
+    renderHeader: () => getHeader("Is Default"),
+  },
+  {
+    field: "createdBy",
+    headerName: "Created By",
+    minWidth: 200,
+    flex: 1,
+    renderHeader: () => getHeader("Created By"),
+    renderCell: (e) => renderUser(e),
+    hideSortIcons: true,
+  },
+  {
+    field: "createdTime",
+    headerName: "Created Time",
+    minWidth: 200,
+    flex: 1,
+    renderHeader: () => getHeader("Created Time"),
+    renderCell: (e) => renderDateAndTime(e),
+  },
+  {
+    field: "updatedBy",
+    headerName: "Updated By",
+    minWidth: 200,
+    flex: 1,
+    renderHeader: () => getHeader("Updated By"),
+    renderCell: (e) => renderUser(e),
+    hideSortIcons: true,
+  },
+  {
+    field: "updatedTime",
+    headerName: "Updated Time",
+    minWidth: 200,
+    flex: 1,
+    renderHeader: () => getHeader("Updated Time"),
+    renderCell: (e) => renderDateAndTime(e),
+  },
+];
+
+export {
+  createItemGroupRow,
+  itemGroup,
+  createSizeRow,
+  size,
+  createRateVersionRow,
+  rateVersionColDef,
+};

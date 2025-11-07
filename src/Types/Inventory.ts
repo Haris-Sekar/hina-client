@@ -65,6 +65,17 @@ interface Item {
 interface RateVersion {
   id: number;
   name: string;
+  isDefault?: boolean;
+  isActive?: boolean;
+  createdBy?: User;
+  createdTime?: number;
+  updatedBy?: User;
+  updatedTime?: number;
+}
+
+interface RateVersionRowData {
+  id: number;
+  name: string;
   isDefault: boolean;
   isActive: boolean;
   createdBy?: User;
@@ -94,4 +105,5 @@ export type {
   Item,
   RateVersion,
   Rate,
+  RateVersionRowData,
 };
