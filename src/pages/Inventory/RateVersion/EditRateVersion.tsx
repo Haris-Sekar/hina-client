@@ -2,15 +2,15 @@ import { Box, Button, Checkbox, TextField, Typography } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { useEffect, useState } from "react";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { useNavigate } from "react-router-dom";
+import EditIcon from "@mui/icons-material/Edit";
+import { useNavigate, useParams } from "react-router-dom";
 import { RateVersion } from "../../../Types/Inventory";
-import { createRateVersion } from "../../../api/services/inventory";
+import { updateRateVersion } from "../../../api/services/inventory";
 import { useAppDispatch } from "../../../store/store";
 import { fetchRateVersion } from "../../../store/Thunks/InventoryThunks";
 
-const AddRateVersion = () => {
+const EditRateVersion = () => {
 	const {
 		control,
 		handleSubmit,
@@ -24,24 +24,41 @@ const AddRateVersion = () => {
 
 	const [isLoading, setIsLoading] = useState(false);
 
+	const { id } = useParams();
+
 	useEffect(() => {
 		setFocus("name");
 	}, [setFocus]);
 
-	function onSubmit(data: RateVersion, event: any) {
+	useEffect(() => {
+		if (!id) return;
+		// fetch single rate version using existing thunk pattern
+		dispatch(
+			// fetchRateVersion expects page & range; pass id as filter
+			// @ts-ignore
+			fetchRateVersion({ page: 0, range: 25, id: Number(id) })
+		).then((res: any) => {
+			const items = res?.payload?.rateVersions || [];
+			if (items.length > 0) {
+				const rv: RateVersion = items[0];
+				reset({
+					id: rv.id,
+					name: rv.name,
+					isDefault: rv.isDefault,
+					isActive: rv.isActive,
+				});
+			}
+		});
+	}, [id, dispatch, reset]);
+
+	function onSubmit(data: RateVersion) {
 		setIsLoading(true);
-		createRateVersion(data)
+		// call update when editing
+		updateRateVersion(data)
 			.then(() => {
 				setIsLoading(false);
-				if (event.nativeEvent.submitter.id !== "saveAndNew") {
-					dispatch(fetchRateVersion({ page: 0, range: 25 }));
-					navigate(-1);
-				} else {
-					reset();
-					setTimeout(() => {
-						setFocus("name");
-					}, 0);
-				}
+				dispatch(fetchRateVersion({ page: 0, range: 25 }));
+				navigate(-1);
 			})
 			.catch(() => {
 				setIsLoading(false);
@@ -76,7 +93,7 @@ const AddRateVersion = () => {
 					}}
 				>
 					<Typography sx={{ fontSize: "20px", fontWeight: "bolder" }}>
-						New Rate Version
+						Edit Rate Version
 					</Typography>
 				</Box>
 				<Box
@@ -129,7 +146,9 @@ const AddRateVersion = () => {
 						<Controller
 							name="isDefault"
 							control={control}
-							render={({ field }) => <Checkbox {...field} />}
+							render={({ field }) => (
+								<Checkbox checked={field.value} {...field} />
+							)}
 						/>
 					</Box>
 				</Box>
@@ -152,20 +171,10 @@ const AddRateVersion = () => {
 					variant="contained"
 					sx={{ mt: 3, mb: 2, width: "fit-content" }}
 					loading={isLoading}
-					startIcon={<AddCircleIcon />}
+					startIcon={<EditIcon />}
 					id="saveAndClose"
 				>
-					Save And Close
-				</LoadingButton>
-				<LoadingButton
-					type="submit"
-					variant="outlined"
-					sx={{ mt: 3, mb: 2, width: "fit-content" }}
-					loading={isLoading}
-					startIcon={<AddCircleIcon />}
-					id="saveAndNew"
-				>
-					Save And New
+					Save
 				</LoadingButton>
 				<Button
 					variant="contained"
@@ -181,4 +190,4 @@ const AddRateVersion = () => {
 	);
 };
 
-export default AddRateVersion;
+export default EditRateVersion;
