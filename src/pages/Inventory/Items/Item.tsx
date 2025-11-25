@@ -1,16 +1,13 @@
 import { useEffect } from "react";
 import {
-    createItemRow,
-    createSizeRow,
-    size as DSize,
+    createItemRow, 
     itemColDef,
 } from "../../../Constants/MUIDataTableColumns/Inventory";
 import ModulePage from "../../../components/ModulePage/ModulePage";
 import { useAppDispatch, useAppSelector } from "../../../store/store";
 import { useNavigate } from "react-router-dom";
-import { fetchItems, fetchSize } from "../../../store/Thunks/InventoryThunks";
-import { ItemRowData, SizeRowData } from "../../../Types/Inventory";
-import { updateSize } from "../../../api/services/inventory";
+import { fetchItems } from "../../../store/Thunks/InventoryThunks";
+import { ItemRowData } from "../../../Types/Inventory";
 
 const Items = () => {
     const { items, loading, totalItems } = useAppSelector(
@@ -71,14 +68,14 @@ const Items = () => {
         _oldValue: ItemRowData,
         _params: {}
     ) {
-        const updateValue = {
-            id: newValue.id,
-            name: newValue.name,
-        };
-        const { data } = await updateSize(updateValue, false);
-        console.log(data);
+        // const updateValue = {
+        //     id: newValue.id,
+        //     name: newValue.name,
+        // };
+        // const { data } = await updateSize(updateValue, false);
+        // console.log(data);
 
-        return { ...newValue, updatedTime: data.data.updated_time };
+        return { ...newValue };
     }
 
     return (

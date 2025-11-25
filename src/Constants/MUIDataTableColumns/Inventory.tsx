@@ -189,6 +189,8 @@ const size: GridColDef[] = [
 const createRateVersionRow = (rateVersion: RateVersion): RateVersionRowData => {
   return {
     ...rateVersion,
+    isDefault: rateVersion.isDefault || false,
+    isActive: rateVersion.isActive || false,
   };
 };
 
@@ -273,7 +275,7 @@ const rateVersionColDef: GridColDef[] = [
 ];
 
 
-const deleteItem = (id: number) => {
+const deleteItem = (_id: number) => {
 
 }
 

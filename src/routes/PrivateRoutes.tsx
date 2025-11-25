@@ -13,10 +13,10 @@ import AddSize from "../pages/Inventory/Size/AddSize";
 import EditSize from "../pages/Inventory/Size/EditSize";
 import { useAuth } from "../context/useAuth";
 import AddItem from "../pages/Inventory/Items/AddItem";
-import RateVersion from "../pages/Inventory/RateVersion/RateVersion";
-import AddRateVersion from "../pages/Inventory/RateVersion/AddRateVersion";
-import EditRateVersion from "../pages/Inventory/RateVersion/EditRateVersion";
 import Items from "../pages/Inventory/Items/Item";
+import AddRateVersion from "../pages/Inventory/RateVersion/AddRateVersion";
+import RateVersion from "../pages/Inventory/RateVersion/RateVersion";
+import EditRateVersion from "../pages/Inventory/RateVersion/EditRateVersion";
 
 const DashboardPage = lazy(() => import("../pages/Dashboard/Dashboard"));
 const CustomerPage = lazy(() => import("../pages/Customer/Customer"));
@@ -24,9 +24,7 @@ const AddCustomerPage = lazy(() => import("../pages/Customer/AddCustomer"));
 const EditCustomerPage = lazy(() => import("../pages/Customer/EditCustomer"));
 const CreateOrganizations = lazy(() => import("../pages/Organization/Create"));
 const CompanyList = lazy(() => import("../pages/Organization/List"));
-const RateVersionPage = lazy(
-	() => import("../pages/Inventory/RateVersion/RateVersion")
-);
+
 function PrivateRoutes() {
 	const { isAuthenticated, isLoading, currentUserDetails, companyDetails } =
 		useAuth();
@@ -118,7 +116,7 @@ function PrivateRoutes() {
 						<Route path="inventory/size" element={<Size />} />
 						<Route path="inventory/size/add" element={<AddSize />} />
 						<Route path="inventory/size/:id/edit" element={<EditSize />} />
-						<Route path="inventory/rateversion" element={<RateVersionPage />} />
+						<Route path="inventory/rateversion" element={<RateVersion />} />
 						<Route
 							path="inventory/rateversion/add"
 							element={<AddRateVersion />}

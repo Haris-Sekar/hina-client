@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { API } from "../../api/axios";
-import { Item, ItemGroup, RateVersion, Size } from "../../Types/Inventory";
-import { itemGroup } from "../../Constants/MUIDataTableColumns/Inventory";
+import { Item, ItemGroup, RateVersion, Size } from "../../Types/Inventory"; 
 
 export const fetchItemGroup = createAsyncThunk<
   ItemGroup[],
