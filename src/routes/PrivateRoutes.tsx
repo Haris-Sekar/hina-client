@@ -16,6 +16,7 @@ import AddItem from "../pages/Inventory/Items/AddItem";
 import RateVersion from "../pages/Inventory/RateVersion/RateVersion";
 import AddRateVersion from "../pages/Inventory/RateVersion/AddRateVersion";
 import EditRateVersion from "../pages/Inventory/RateVersion/EditRateVersion";
+import Items from "../pages/Inventory/Items/Item";
 
 const DashboardPage = lazy(() => import("../pages/Dashboard/Dashboard"));
 const CustomerPage = lazy(() => import("../pages/Customer/Customer"));
@@ -126,6 +127,7 @@ function PrivateRoutes() {
 							path="inventory/rateversion/:id/edit"
 							element={<EditRateVersion />}
 						/>
+						<Route path="inventory/items" element={<Items />} />
 						<Route path="inventory/items/add" element={<AddItem />} />
 						<Route path="*" />
 					</Route>

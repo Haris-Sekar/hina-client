@@ -143,6 +143,14 @@ const deleteRateVersion = async (id: number) => {
   });
 };
 
+const addItem = async (item: any) => {
+  return toastPromise(API.post(`/items/create`, item), {
+    loading: "Adding Item",
+    success: "Item Added Successfully",
+    error: (err: any) => err.message,
+  });
+};
+
 export {
   addItemGroup,
   deleteItemGroup,
@@ -153,4 +161,5 @@ export {
   createRateVersion,
   updateRateVersion,
   deleteRateVersion,
+  addItem
 };

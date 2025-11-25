@@ -1,8 +1,10 @@
 import { GridColDef } from "@mui/x-data-grid";
 import { getHeader, renderDateAndTime, renderUser } from "../DataTableColumn";
 import {
+  Item,
   ItemGroup,
   ItemGroupRowData,
+  ItemRowData,
   RateVersion,
   RateVersionRowData,
   Size,
@@ -12,6 +14,7 @@ import {
 import { deleteItemGroup, deleteSize } from "../../api/services/inventory";
 import {
   fetchItemGroup,
+  fetchItems,
   fetchRateVersion,
   fetchSize,
 } from "../../store/Thunks/InventoryThunks";
@@ -269,6 +272,95 @@ const rateVersionColDef: GridColDef[] = [
   },
 ];
 
+
+const deleteItem = (id: number) => {
+
+}
+
+const itemColDef: GridColDef[] = [
+  {
+    field: "id",
+    headerName: "ID",
+    renderHeader: () => getHeader(""),
+    renderCell: (e) => {
+      return RenderMoreIcon(e, {
+        name: "Item",
+        apiName: "item",
+        deleteEntity: deleteItem,
+        fetchEntity: fetchItems,
+      });
+    },
+    hideable: false,
+    hideSortIcons: true,
+    sortable: false,
+    disableColumnMenu: true,
+    resizable: false,
+    maxWidth: 10,
+  },
+  {
+    field: "name",
+    headerName: "name",
+    renderHeader: () => getHeader("Name"),
+    editable: true,
+    minWidth: 200,
+    flex: 1,
+  },
+  {
+    field: "description",
+    headerName: "description",
+    renderHeader: () => getHeader("Description"),
+    editable: true,
+    minWidth: 200,
+    flex: 1,
+  },
+  {
+    field: "sku",
+    headerName: "sku",
+    renderHeader: () => getHeader("SKU"),
+    editable: true,
+    minWidth: 200,
+    flex: 1,
+  },
+  {
+    field: "createdBy",
+    headerName: "createdBy",
+    renderHeader: () => getHeader("Created By"),
+    renderCell: (e) => renderUser(e),
+    minWidth: 200,
+    flex: 1,
+  },
+  {
+    field: "createdTime",
+    headerName: "createdTime",
+    renderHeader: () => getHeader("Created Time"),
+    renderCell: (e) => renderDateAndTime(e),
+    minWidth: 200,
+    flex: 1,
+  },
+  {
+    field: "updatedBy",
+    headerName: "updatedBy",
+    renderHeader: () => getHeader("Updated By"),
+    renderCell: (e) => renderUser(e),
+    minWidth: 200,
+    flex: 1,
+  },
+  {
+    field: "updatedTime",
+    headerName: "updatedTime",
+    renderHeader: () => getHeader("Updated Time"),
+    renderCell: (e) => renderDateAndTime(e),
+    minWidth: 200,
+    flex: 1,
+  },
+]
+
+const createItemRow = (item: Item): ItemRowData => {
+  return {
+    ...item,
+  };
+}
+
 export {
   createItemGroupRow,
   itemGroup,
@@ -276,4 +368,6 @@ export {
   size,
   createRateVersionRow,
   rateVersionColDef,
+  createItemRow,
+  itemColDef,
 };

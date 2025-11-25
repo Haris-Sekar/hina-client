@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { API } from "../../api/axios";
-import { ItemGroup, RateVersion, Size } from "../../Types/Inventory";
+import { Item, ItemGroup, RateVersion, Size } from "../../Types/Inventory";
+import { itemGroup } from "../../Constants/MUIDataTableColumns/Inventory";
 
 export const fetchItemGroup = createAsyncThunk<
   ItemGroup[],
@@ -178,6 +179,76 @@ export const fetchRateVersion = createAsyncThunk<
   } catch (error: any) {
     return thunkApi.rejectWithValue(
       error?.message || "Failed to fetch rate versions"
+    );
+  }
+});
+
+export const fetchItems = createAsyncThunk<
+  { items: Item[]; total: number },
+  {
+    page: number;
+    range: number;
+    sortBy?: string;
+    sortOrder?: string;
+    id?: number;
+  },
+  { rejectValue: string }
+>("inventory/fetchItems", async (_, thunkApi) => {
+  try {
+    console.log("fetching items");
+
+    let api = `/items`;
+    const index = _.page * _.range;
+    api += `?index=${index}&range=${_.range}`;
+
+    if (_.sortBy && _.sortOrder) {
+      if (api.includes("?")) {
+        api += "&";
+      } else {
+        api += "?";
+      }
+      api += `sort_by=${_.sortBy}&sort_order=${_.sortOrder}`;
+    }
+    if (_.id) {
+      if (api.includes("?")) {
+        api += "&";
+      } else {
+        api += "?";
+      }
+      const filter = { id: _.id };
+      api += `filters=${JSON.stringify(filter)}`;
+    }
+    const { data } = await API.get(api);
+    console.log(data);
+
+    const items = data.data.items;
+
+    const parsedItems: Item[] = items.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      hsnCode: item.hsn_code,
+      sku: item.sku,
+      barcode: item.barcode,
+      hasSize: item.has_size,
+      unitOfMeasure: item.unit_of_measure,
+      unitOfBill: item.unit_of_bill,
+      quantity: item.quantity,
+      manageStock: item.manage_stock,
+      reOrderPoint: item.re_order_point,
+      isActive: item.is_active,
+      itemGroup: item.ItemGroup,
+      createdBy: item.CreatedBy,
+      createdTime: item.created_time,
+      updatedBy: item.UpdatedBy,
+      updatedTime: item.updated_time,
+    }));
+    console.log(parsedItems);
+
+    return { items: parsedItems, total: data.data.total };
+  } catch (error: any) {
+    return thunkApi.rejectWithValue(
+      error?.message || "Failed to fetch items"
     );
   }
 });

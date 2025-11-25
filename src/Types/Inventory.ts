@@ -41,6 +41,8 @@ interface SizeRowData {
 }
 
 interface Item {
+  costPrice: never;
+  sellingPrice: never;
   id: number;
   itemGroup: ItemGroup;
   name: string;
@@ -56,6 +58,18 @@ interface Item {
   reorderPoint: number;
   isActive?: boolean | true;
   rate?: Rate;
+  createdBy?: User;
+  createdTime?: number;
+  updatedBy?: User;
+  updatedTime?: number;
+  rates: Rate[];
+}
+
+interface ItemRowData {
+  id: number;
+  name: string;
+  description: string;
+  sku: string;
   createdBy?: User;
   createdTime?: number;
   updatedBy?: User;
@@ -103,6 +117,7 @@ export type {
   Size,
   SizeRowData,
   Item,
+  ItemRowData,
   RateVersion,
   Rate,
   RateVersionRowData,
